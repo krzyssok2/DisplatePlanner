@@ -1,7 +1,4 @@
 ﻿namespace DisplatePlanner.Models;
-
-// Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-
 public record LuminoResponse(LuminoListings LuminoListings);
 
 public record LuminoListings
@@ -11,13 +8,7 @@ public record LuminoListings
 
 public record PlateInfo
 (
-    //int internalId,
-    //int externalId,
     DateTime StartDate,
-    //DateTime finishDate ,
-    //int availableQuantity ,
-    //string status ,
-    //Author author
     string Title,
     Image Image
 );

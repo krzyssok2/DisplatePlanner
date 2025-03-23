@@ -1,0 +1,926 @@
+﻿@page "/planner"
+
+@inject HttpClient HttpClient
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject IJSRuntime JsRuntime
+
+@using Blazored.LocalStorage
+@using DisplatePlanner.Models
+@using Microsoft.AspNetCore.Components.Web
+@using System.Linq
+
+<div class="main-container">
+    <div oncontextmenu="return false;" class="grid" id="grid" tabindex="0"
+         @onkeydown="OnKeyDown" @onkeydown:preventDefault
+         @onwheel="OnZoom"
+         @onmousemove="OnMouseMove"
+         @onmouseup="OnMouseUp"
+         @onmousedown="OnMouseDown" autofocus="true">
+        @foreach (var rect in plates)
+        {
+                <div class="Plate @((selectedPlates.Contains(rect)) ? "selected" : "")"
+                     style="width: @($"{rect.Width * zoomLevel}px");
+                        height: @($"{rect.Height * zoomLevel}px");
+                        top: @($"{rect.Y * zoomLevel}px");
+                        left: @($"{rect.X * zoomLevel}px");"
+                     @onclick="(e) => SelectAPlate(e,rect)"
+                     @onmousedown="(e) => StartDrag(e, rect)" @onmousedown:stopPropagation>
+                    <div class="PlateContainer" style="@(GetRotationStyle(rect, zoomLevel)) transform: rotate(@($"{rect.Rotation}deg"))">
+                        <img loading="lazy" class="img-test" tabindex="-1" src="@rect.ImageUrl" draggable="false" />
+                    </div>
+                </div>
+        }
+
+        @if (alignmentLines.Any())
+        {
+            @foreach (var line in alignmentLines)
+            {
+                        <div class="alignment-line"
+                             style="left: @($"{line.X * zoomLevel}px");
+                            top: @($"{line.Y * zoomLevel}px");
+                            width: @($"{(!line.isVertical ? line.Lenght * zoomLevel : 2)}px");
+                            height: @($"{(line.isVertical ? line.Lenght * zoomLevel : 2)}px");" />
+            }
+        }
+
+        @if (CurrentState == State.Selecting)
+        {
+                <div class="selection-box"
+                     style="left: @($"{Math.Min(selectionBoxStartX, selectionBoxEndX)}px");
+                        top: @($"{Math.Min(selectionBoxStartY, selectionBoxEndY)}px");
+                        width: @($"{Math.Abs(selectionBoxEndX - selectionBoxStartX)}px");
+                        height: @($"{Math.Abs(selectionBoxEndY - selectionBoxStartY)}px");" />
+        }
+    </div>
+
+    <div class="selection-container">
+        <input type="text" @bind="searchTerm" @oninput="FilterPlates" placeholder="Search" class="search-box" />
+        <div class="selection-items-container">
+            <Virtualize Items="@filteredPlates" Context="plate">
+                <div class="selection-item" @onclick="() => AddPlate(plate)">
+                    <img loading="lazy" src="@plate.ImageUrl" />
+                    <span>@plate.Name</span>
+                </div>
+            </Virtualize>
+        </div>
+    </div>
+</div>
+
+@code {
+    private State CurrentState = State.None;
+    private const int plateLimit = 100;
+    private const int historyLimit = 50;
+    private const double snapValue = 0.25;
+    private LinkedList<List<Plate>> platesHistory = new LinkedList<List<Plate>>();
+    private LinkedList<List<Plate>> redoHistory = new LinkedList<List<Plate>>();
+    private double selectionBoxStartX = 0;
+    private double selectionBoxStartY = 0;
+    private double selectionBoxEndX = 0;
+    private double selectionBoxEndY = 0;
+    private double gridContainerStartX, gridContainerStartY;
+    private List<PlateData> platesData = new List<PlateData>();
+    private List<Plate> plates = new List<Plate>();
+    private List<Plate> selectedPlates = new List<Plate>();
+    private List<Plate> draggingPlates = new List<Plate>();
+    private List<Plate> clipboard = new List<Plate>();
+    private List<PlateData> filteredPlates = new();
+    private string searchTerm = "";
+    private double zoomLevel = 5.0; // Zoom level
+    private double offsetX = 0;
+    private double offsetY = 0;
+    private bool wasDragged = false;
+    private bool hasLoaded = false;
+
+    private record AlignmentLine(bool isVertical, double X, double Y, double Lenght);
+    private List<AlignmentLine> alignmentLines = new();
+    private void CalculateAlignmentLines()
+    {
+        alignmentLines.Clear();
+
+        foreach (var plate in plates)
+        {
+            if (draggingPlates.Contains(plate)) continue;
+
+            foreach (var draggingPlate in draggingPlates)
+            {
+                CheckAlignment(plate, draggingPlate, true);
+                CheckAlignment(plate, draggingPlate, false);
+            }
+        }
+    }
+
+    private void CheckAlignment(Plate plate, Plate selectedPlate, bool isVertical)
+    {
+        double plateCenter = isVertical ? plate.X + plate.Width / 2 : plate.Y + plate.Height / 2;
+        double draggingCenter = isVertical ? selectedPlate.X + selectedPlate.Width / 2 : selectedPlate.Y + selectedPlate.Height / 2;
+
+        if (IsAligned(plateCenter, draggingCenter))
+        {
+            AddAlignmentLine(isVertical, plateCenter, plate, selectedPlate); // Middle alignment
+        }
+        else
+        {
+            double plateStart = isVertical ? plate.X : plate.Y;
+            double plateEnd = isVertical ? plate.X + plate.Width : plate.Y + plate.Height;
+            double selectedStart = isVertical ? selectedPlate.X : selectedPlate.Y;
+            double selectedEnd = isVertical ? selectedPlate.X + selectedPlate.Width : selectedPlate.Y + selectedPlate.Height;
+
+            TryAddAlignment(isVertical, plate, selectedPlate, plateStart, selectedStart); // Start alignment
+            TryAddAlignment(isVertical, plate, selectedPlate, plateEnd, selectedStart); // End to start alignment
+            TryAddAlignment(isVertical, plate, selectedPlate, plateStart, selectedEnd); // Start to end alignment
+            TryAddAlignment(isVertical, plate, selectedPlate, plateEnd, selectedEnd); // End alignment
+        }
+    }
+
+    private bool IsAligned(double pos1, double pos2) => Math.Abs(pos1 - pos2) < snapValue;
+
+    private void TryAddAlignment(bool isVertical, Plate plate, Plate selectedPlate, double pos1, double pos2)
+    {
+        if (IsAligned(pos1, pos2))
+        {
+            AddAlignmentLine(isVertical, pos1, plate, selectedPlate);
+        }
+    }
+
+    private void AddAlignmentLine(bool isVertical, double position, Plate plate, Plate selectedPlate)
+    {
+        alignmentLines.Add(new AlignmentLine(isVertical,
+            isVertical ? position : Math.Min(plate.X, selectedPlate.X),
+            isVertical ? Math.Min(plate.Y, selectedPlate.Y) : position,
+            isVertical
+                ? Math.Max(plate.Y + plate.Height, selectedPlate.Y + selectedPlate.Height) - Math.Min(plate.Y, selectedPlate.Y)
+                : Math.Max(plate.X + plate.Width, selectedPlate.X + selectedPlate.Width) - Math.Min(plate.X, selectedPlate.X)));
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPlates();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JsRuntime.InvokeVoidAsync("myUtils.addZoomPreventingHandler", "grid", "wheel");
+        }
+
+        if (firstRender && !hasLoaded)
+        {
+            await LoadStateFromLocalStorage();
+            hasLoaded = true;
+        }
+    }
+
+    private async void OnMouseDown(MouseEventArgs e)
+    {
+        if (e.Button != 0)
+        {
+            return;
+        }
+
+        var scroll = await GetGridScrollData();
+        if (scroll == null)
+        {
+            return;
+        }
+
+        // Get the absolute position of the grid container by using the first mouse event
+        if (gridContainerStartX == 0 && gridContainerStartY == 0)
+        {
+            gridContainerStartX = e.ClientX - e.OffsetX;
+            gridContainerStartY = e.ClientY - e.OffsetY;
+        }
+
+        // Calculate relative start position
+        selectionBoxStartX = e.ClientX - gridContainerStartX + scroll.ScrollLeft;
+        selectionBoxStartY = e.ClientY - gridContainerStartY + scroll.ScrollTop;
+        selectionBoxEndX = selectionBoxStartX;
+        selectionBoxEndY = selectionBoxStartY;
+
+        CurrentState = State.Selecting;
+    }
+
+    private async void OnMouseMove(MouseEventArgs e)
+    {
+        switch (CurrentState)
+        {
+            case State.Dragging:
+                DragSelectedPlates(e);
+                break;
+
+            case State.Selecting:
+
+                var scroll = await GetGridScrollData();
+
+                if (scroll == null)
+                {
+                    return;
+                }
+
+                selectionBoxEndX = e.ClientX - gridContainerStartX + scroll.ScrollLeft;
+                selectionBoxEndY = e.ClientY - gridContainerStartY + scroll.ScrollTop;
+
+                //UpdateSelectedPlatesWithinTheBox();
+                break;
+        }
+    }
+
+    private void OnMouseUp(MouseEventArgs e)
+    {
+        switch (CurrentState)
+        {
+            case State.Dragging:
+                draggingPlates.Clear();
+                alignmentLines.Clear();
+                break;
+
+            case State.Selecting:
+                UpdateSelectedPlatesWithinTheBox();
+                break;
+        }
+
+        CurrentState = State.None;
+
+    }
+
+    private void UpdateSelectedPlatesWithinTheBox()
+    {
+        var selectionRect = new Selection(
+            Math.Min(selectionBoxStartX, selectionBoxEndX) / zoomLevel,
+            Math.Min(selectionBoxStartY, selectionBoxEndY) / zoomLevel,
+            Math.Abs(selectionBoxEndX - selectionBoxStartX) / zoomLevel,
+            Math.Abs(selectionBoxEndY - selectionBoxStartY) / zoomLevel
+        );
+
+        selectedPlates = plates.Where(plate => IsPlateInSelection(plate, selectionRect)).ToList();
+    }
+
+    private bool IsPlateInSelection(Plate plate, Selection selectionRect)
+    {
+        var plateRect = new Selection(plate.X, plate.Y, plate.Width, plate.Height);
+        return selectionRect.IntersectsWith(plateRect);
+    }
+
+    private async Task LoadPlates()
+    {
+        var limitedEdition = new List<PlateData>();
+        var lumino = new List<PlateData>();
+
+        try
+        {
+            var response = await HttpClient.GetFromJsonAsync<LimitedResponse>("https://sapi.displate.com/artworks/limited?miso=US");
+            limitedEdition = response.Data.Select(x => new PlateData(DateTime.Parse(x.Edition.StartDate), x.Title, x.Images.Main.Url, x.Edition.Type, x.Images.Main.Width > x.Images.Main.Height)).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to load limited editions: {ex.Message}");
+        }
+
+        try
+        {
+            var response = await HttpClient.GetFromJsonAsync<LuminoResponse>("/lumino.json");
+            lumino = response.LuminoListings.Data
+           .Select(x => new PlateData(x.StartDate, x.Title, x.Image.X2.Replace("460x640", "560x784"), "standard", false))
+           .ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to load limited editions: {ex.Message}");
+        }
+
+        var combinedLimited = limitedEdition.Concat(lumino).OrderByDescending(x => x.StartDate).ToList();
+
+        platesData = combinedLimited;
+        filteredPlates = combinedLimited;
+    }
+
+    private async Task LoadStateFromLocalStorage()
+    {
+        var savedPlates = await LocalStorage.GetItemAsync<List<Plate>>("savedPlates");
+        if (savedPlates != null)
+        {
+            plates = savedPlates;
+        }
+    }
+
+    private async Task<ScrollData?> GetGridScrollData()
+    {
+        try
+        {
+            return await JsRuntime.InvokeAsync<ScrollData>("getScrollPosition", "grid");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+        return null;
+    }
+
+    private async Task SaveStateToLocalStorage()
+    {
+        if (hasLoaded)
+        {
+            await LocalStorage.SetItemAsync("savedPlates", plates);
+        }
+    }
+
+    private void OnZoom(WheelEventArgs e)
+    {
+        if (!e.CtrlKey || CurrentState != State.None) return;
+
+        zoomLevel = e.DeltaY > 0 ? Math.Max(zoomLevel - 1, 3) : Math.Min(zoomLevel + 1, 15.0);
+    }
+
+    private void AddPlate(PlateData selectedPlate)
+    {
+        if (plates.Count >= plateLimit)
+        {
+            return;
+        }
+
+        SaveState();
+        plates.Add(new Plate(selectedPlate.ImageUrl, selectedPlate.Type, selectedPlate.IsHorizontal));
+    }
+
+    private void SelectAPlate(MouseEventArgs e, Plate rect)
+    {
+        if (wasDragged)
+        {
+            wasDragged = false;
+            return;
+        }
+
+        if (e.ShiftKey || e.CtrlKey)
+        {
+            if (selectedPlates.Contains(rect))
+            {
+                selectedPlates.Remove(rect);
+            }
+            else
+            {
+                selectedPlates.Add(rect);
+            }
+        }
+        else
+        {
+            selectedPlates.Clear();
+            selectedPlates.Add(rect);
+        }
+    }
+
+    private ScrollData scrollStartDrag = new(0, 0);
+    private async void StartDrag(MouseEventArgs e, Plate rect)
+    {
+        if (e.Button != 0) return;
+
+        CurrentState = State.Dragging;
+        draggingPlates.Clear();
+        SaveState();
+        if (!selectedPlates.Contains(rect))
+        {
+            if (!e.ShiftKey && !e.CtrlKey)
+            {
+                selectedPlates.Clear();
+                selectedPlates.Add(rect);
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        if (selectedPlates.Contains(rect))
+        {
+            draggingPlates.AddRange(selectedPlates);
+        }
+        else
+        {
+            draggingPlates.Add(rect);
+        }
+
+        offsetX = e.ClientX;
+        offsetY = e.ClientY;
+
+        var scroll = await GetGridScrollData();
+
+        scrollStartDrag = scroll == null ? new(0, 0) : scroll;
+        CalculateAlignmentLines();
+    }
+
+    private async void DragSelectedPlates(MouseEventArgs e)
+    {
+        if (draggingPlates.Count == 0) return;
+
+        var scroll = await GetGridScrollData() ?? new ScrollData(0, 0);
+        var scrollX = scroll.ScrollLeft - scrollStartDrag.ScrollLeft;
+        var scrollY = scroll.ScrollTop - scrollStartDrag.ScrollTop;
+        scrollStartDrag = scroll;
+
+        var dx = e.ClientX - offsetX + scrollX;
+        var dy = e.ClientY - offsetY + scrollY;
+
+        if (Math.Abs(dx) > 3 || Math.Abs(dy) > 3)
+        {
+            var zoomAdjustedX = GetSnappedValue(dx / zoomLevel, snapValue);
+            var zoomAdjustedY = GetSnappedValue(dy / zoomLevel, snapValue);
+
+            foreach (var plate in draggingPlates)
+            {
+                plate.X += zoomAdjustedX;
+                plate.Y += zoomAdjustedY;
+            }
+
+            offsetX = e.ClientX;
+            offsetY = e.ClientY;
+            wasDragged = true;
+
+            CalculateAlignmentLines();
+        }
+    }
+
+
+    private void RemoveSelectedPlates()
+    {
+        SaveState();
+        foreach (var plate in selectedPlates)
+        {
+            plates.Remove(plate);
+        }
+
+        selectedPlates.Clear();
+    }
+
+    private void OnKeyDown(KeyboardEventArgs e)
+    {
+        if (CurrentState != State.None) return;
+
+        switch (e.Key)
+        {
+            case "1":
+                ArrangePlatesInOneLine();
+                break;
+            case "Delete":
+                RemoveSelectedPlates();
+                break;
+            case "Escape":
+                selectedPlates.Clear();
+                draggingPlates.Clear();
+                break;
+            case "ArrowUp":
+                MoveSelectedPlates(0, -snapValue);
+                break;
+            case "ArrowDown":
+                MoveSelectedPlates(0, snapValue);
+                break;
+            case "ArrowLeft":
+                MoveSelectedPlates(-snapValue, 0);
+                break;
+            case "ArrowRight":
+                MoveSelectedPlates(snapValue, 0);
+                break;
+
+            case "a" when e.CtrlKey:
+                selectedPlates.Clear();
+                foreach (var plate in plates)
+                {
+                    selectedPlates.Add(plate);
+                }
+                break;
+            case "z" when e.CtrlKey:
+                Undo();
+                break;
+            case "y" when e.CtrlKey:
+                Redo();
+                break;
+            case "c" when e.CtrlKey:
+                Copy();
+                break;
+            case "v" when e.CtrlKey:
+                Paste();
+                break;
+            case "r" when e.CtrlKey:
+                RotateSelectedPlates();
+                break;
+        }
+    }
+
+    private void MoveSelectedPlates(double dx, double dy)
+    {
+        SaveState();
+        foreach (var plate in selectedPlates)
+        {
+            plate.X += dx;
+            plate.Y += dy;
+        }
+    }
+
+    private void RotateSelectedPlates()
+    {
+        SaveState();
+        foreach (var plate in selectedPlates)
+        {
+            plate.Rotate();
+        }
+    }
+
+    private void ArrangePlatesInOneLine()
+    {
+        SaveState();
+        double currentX = 0; // Starting X position for the first plate
+        double fixedY = 0;   // Fixed Y position (you can change this if needed)
+
+        foreach (var plate in selectedPlates)
+        {
+            plate.X = currentX;
+            plate.Y = fixedY;
+            currentX += plate.Width; // Add some space between plates
+        }
+    }
+
+    private void Copy()
+    {
+        if (selectedPlates.Count == 0) return;
+
+        clipboard = selectedPlates.Select(p => new Plate(p.ImageUrl, p.Type, p.IsHorizontal)
+            {
+                X = p.X,
+                Y = p.Y,
+                Rotation = p.Rotation
+            }).ToList();
+    }
+
+    private void Paste()
+    {
+        if (clipboard.Count == 0) return;
+        if (plates.Count + clipboard.Count > plateLimit) return;
+
+        SaveState();
+        selectedPlates.Clear();
+
+        var pastedPlates = new List<Plate>();
+        foreach (var p in clipboard)
+        {
+            double newX = p.X + 2;
+            double newY = p.Y + 2;
+
+            while (plates.Any(existing => existing.X == newX && existing.Y == newY))
+            {
+                newX += 2;
+                newY += 2;
+            }
+
+            var newPlate = new Plate(p.ImageUrl, p.Type, p.IsHorizontal)
+                {
+                    X = newX,
+                    Y = newY,
+                    Rotation = p.Rotation
+                };
+
+            plates.Add(newPlate);
+            pastedPlates.Add(newPlate);
+        }
+
+        selectedPlates.AddRange(pastedPlates);
+    }
+
+    private void SaveState()
+    {
+        // Save the current state
+        var lastHistory = platesHistory.Last?.Value;
+
+        if (lastHistory != null && plates.SequenceEqual(lastHistory))
+        {
+            return;
+        }
+
+        var clonedPlates = ClonePlates(plates);
+        platesHistory.AddLast(clonedPlates);
+
+        // Trim history if it exceeds the limit
+        if (platesHistory.Count > historyLimit)
+        {
+            platesHistory.RemoveFirst();
+        }
+
+        // Clear redo history when a new state is saved (breaking the redo chain)
+        redoHistory.Clear();
+
+        SaveStateToLocalStorage();
+    }
+
+    private void Undo()
+    {
+        if (platesHistory.Count > 0)
+        {
+            // Move the current state to redo history
+            redoHistory.AddLast(ClonePlates(plates));
+
+            // Restore the previous state
+            plates = platesHistory.Last.Value;
+            platesHistory.RemoveLast();
+
+            SaveStateToLocalStorage();
+        }
+    }
+
+    private void Redo()
+    {
+        if (redoHistory.Count > 0)
+        {
+            // Move the current state to undo history
+            platesHistory.AddLast(ClonePlates(plates));
+
+            // Restore the most recent redo state
+            plates = redoHistory.Last.Value;
+            redoHistory.RemoveLast();
+
+            SaveStateToLocalStorage();
+        }
+    }
+
+    private List<Plate> ClonePlates(List<Plate> plates)
+    {
+        return plates.Select(p => new Plate(p.ImageUrl, p.Type, p.IsHorizontal) { X = p.X, Y = p.Y, Rotation = p.Rotation, Height = p.Height, Width = p.Width }).ToList();
+    }
+
+    private void FilterPlates(ChangeEventArgs e)
+    {
+        searchTerm = e.Value?.ToString() ?? "";
+        filteredPlates = platesData
+            .Where(p => p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    private double GetSnappedValue(double value, double snapValue)
+    {
+        return Math.Round(value / snapValue) * snapValue;
+    }
+
+    private string GetRotationStyle(Plate plate, double zoomLevel)
+    {
+        var isSideways = plate.Rotation == 90 || plate.Rotation == 270;
+
+        var styleWidth = isSideways ? plate.Height : plate.Width;
+        var styleHeight = isSideways ? plate.Width : plate.Height;
+
+        return $"""height:{styleHeight * zoomLevel}px; width:{styleWidth * zoomLevel}px;""";
+    }
+
+    private class Plate
+    {
+        public Plate(string imageUrl, string type, bool isHorizontal)
+        {
+            ImageUrl = imageUrl;
+            Type = type;
+            IsHorizontal = isHorizontal;
+            switch (type)
+            {
+                case "standard":
+                    if (isHorizontal)
+                    {
+                        Width = 45;
+                        Height = 32;
+                    }
+                    else
+                    {
+                        Width = 32;
+                        Height = 45;
+                    }
+                    break;
+
+                case "ultra":
+                    if (isHorizontal)
+                    {
+                        Width = 67.5;
+                        Height = 48;
+                    }
+                    else
+                    {
+                        Width = 48;
+                        Height = 67.5;
+                    }
+                    break;
+            }
+        }
+
+        public void Rotate()
+        {
+            var width = Width;
+            var height = Height;
+
+            Height = width;
+            Width = height;
+            Rotation = (Rotation + 90) % 360;
+        }
+
+        public double Width { get; set; } = 32;
+        public double Height { get; set; } = 45;
+        public double X { get; set; } = 0;
+        public double Y { get; set; } = 0;
+        public string ImageUrl { get; set; }
+        public string Type { get; set; }
+        public bool IsHorizontal { get; set; }
+        public int Rotation { get; set; } = 0; // Rotation angle in degrees
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is not Plate other) return false;
+
+            return ImageUrl == other.ImageUrl &&
+                   Type == other.Type &&
+                   IsHorizontal == other.IsHorizontal &&
+                   Width == other.Width &&
+                   Height == other.Height &&
+                   X == other.X &&
+                   Y == other.Y &&
+                   Rotation == other.Rotation;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(ImageUrl, Type, IsHorizontal, Width, Height, X, Y, Rotation);
+        }
+    }
+
+    private record PlateData(DateTime StartDate, string Name, string ImageUrl, string Type, bool IsHorizontal);
+    private record ScrollData(double ScrollTop, double ScrollLeft);
+
+    private record Selection(double X, double Y, double Width, double Height)
+    {
+        public bool IntersectsWith(Selection other)
+        {
+            return !(X > other.X + other.Width || X + Width < other.X || Y > other.Y + other.Height || Y + Height < other.Y);
+        }
+    }
+
+    public enum State
+    {
+        None,
+        Selecting,
+        Dragging,
+    }
+}
+
+<style>
+    .Plate.selected .PlateContainer {
+        outline: 2px solid red;
+        outline-offset: -2px;
+        z-index: 9999; /* Set to a higher value to ensure it's above other plates */
+    }
+
+    .img-test {
+        width: 100%;
+        height: 100%;
+    }
+
+    .main-container {
+        display: flex;
+        height: 90vh;
+        overflow: hidden;
+    }
+
+    *:focus {
+        outline: none;
+    }
+
+    .grid {
+        border: 1px solid #ccc;
+        overflow: scroll;
+        position: relative;
+        /* change to bigger to enable scroll, have to think how to do it smartly */
+        width: 100%;
+        height: 100%;
+    }
+
+        .grid::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .grid::-webkit-scrollbar-thumb {
+            background-color: #aaa;
+            border-radius: 4px;
+        }
+
+        .grid::-webkit-scrollbar-track {
+            background-color: #f0f0f0;
+        }
+
+    .selection-box {
+        position: absolute;
+        border: 1px dashed #000;
+        background-color: rgba(0, 0, 255, 0.2);
+        pointer-events: none;
+    }
+
+    .Plate {
+        position: absolute;
+        background: blue;
+        cursor: move;
+        z-index: 0;
+        /* centering stuff */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .Plate.selected {
+            z-index: 9999; /* Set to a higher value to ensure it's above other plates */
+        }
+
+        .Plate:hover {
+            opacity: 0.9;
+        }
+
+    .grid, .Plate {
+        user-select: none; /* Prevent selection */
+    }
+
+    .selection-container {
+        width: 20vh;
+        border: 1px solid #ccc;
+        border-left: 0px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .selection-items-container {
+        overflow-y: scroll;
+        scrollbar-gutter: stable;
+    }
+
+        .selection-items-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .selection-items-container::-webkit-scrollbar-thumb {
+            background-color: #aaa;
+            border-radius: 4px;
+        }
+
+        .selection-items-container::-webkit-scrollbar-track {
+            background-color: #f0f0f0;
+        }
+
+    .search-box {
+        padding: 8px;
+        border: 0px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .selection-item {
+        height: 65px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+        .selection-item span {
+            display: block;
+            overflow: hidden;
+        }
+
+        .selection-item img {
+            margin-right: 10px;
+            width: 32px;
+            height: 45px;
+            border-radius: 3px;
+        }
+
+        .selection-item:hover {
+            background-color: #ddd;
+        }
+
+    .alignment-line {
+        position: absolute;
+        background-color: blue;
+        z-index: 10000; /* Ensure it's above plates but below selected plates */
+    }
+</style>
+
+<script>
+    function getScrollPosition(elementId) {
+        const element = document.getElementById(elementId);
+
+        return {
+            scrollTop: element.scrollTop,
+            scrollLeft: element.scrollLeft
+        };
+    }
+
+    window.myUtils = {
+        addZoomPreventingHandler: function (elementId, eventName) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.addEventListener(eventName, e => {
+                    if (e.ctrlKey) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+            }
+        }
+    };
+</script>
