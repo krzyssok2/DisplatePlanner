@@ -2,11 +2,13 @@
 
 namespace DisplatePlanner.Interfaces;
 
-public interface IHistoryService
+public interface IPlateStateService
 {
-    public void SaveState(List<Plate> plates);
+    public void SaveState(ICollection<Plate> plates);
 
     public void Undo(List<Plate> plates);
 
     public void Redo(List<Plate> plates);
+
+    public Task<List<Plate>> RetrievePreviousSessionPlates();
 }

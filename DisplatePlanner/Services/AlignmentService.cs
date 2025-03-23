@@ -5,7 +5,7 @@ namespace DisplatePlanner.Services;
 
 public class AlignmentService : IAlignmentService
 {
-    private List<AlignmentLine> AlignmentLines = [];
+    private readonly List<AlignmentLine> AlignmentLines = [];
 
     public IReadOnlyList<AlignmentLine> GetAlignmentLines() => AlignmentLines;
 

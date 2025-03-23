@@ -4,14 +4,14 @@ using DisplatePlanner.Models;
 
 namespace DisplatePlanner.Services;
 
-public class HistoryService(ILocalStorageService localStorageService) : IHistoryService
+public class PlateStateService(ILocalStorageService localStorageService) : IPlateStateService
 {
     private const int historyLimit = 50;
 
     private readonly LinkedList<List<Plate>> PlatesHistory = new();
-    private readonly LinkedList<List<Plate>> RedoHistory = new();
+    private readonly LinkedList<List<Plate>> RedoHistory = new();   
 
-    public void SaveState(List<Plate> plates)
+    public void SaveState(ICollection<Plate> plates)
     {
         // Save the current state
         var lastHistory = PlatesHistory.Last?.Value;
@@ -68,12 +68,19 @@ public class HistoryService(ILocalStorageService localStorageService) : IHistory
         }
     }
 
-    private async Task SaveStateToLocalStorage(List<Plate> plates)
+    public async Task<List<Plate>> RetrievePreviousSessionPlates()
+    {
+        var savedPlates = await localStorageService.GetItemAsync<List<Plate>>("savedPlates");
+
+        return savedPlates ?? new();
+    }
+
+    private async Task SaveStateToLocalStorage(ICollection<Plate> plates)
     {
         await localStorageService.SetItemAsync("savedPlates", plates);
     }
 
-    private static List<Plate> ClonePlates(List<Plate> plates)
+    private static List<Plate> ClonePlates(IEnumerable<Plate> plates)
     {
         return plates.Select(p => new Plate(p.ImageUrl, p.Type, p.IsHorizontal) { X = p.X, Y = p.Y, Rotation = p.Rotation, Height = p.Height, Width = p.Width }).ToList();
     }

@@ -17,7 +17,7 @@
     @onmousedown="OnMouseDown" autofocus="true">
         @foreach (var rect in plates)
         {
-            <div class="Plate @((selectedPlates.Contains(rect)) ? "selected" : "")"
+            <div class="Plate @((SelectedPlates.Contains(rect)) ? "selected" : "")"
                  style="width: @(rect.Width * zoomLevel)px;
                         height: @(rect.Height * zoomLevel)px;
                         top: @(rect.Y * zoomLevel)px;
@@ -30,9 +30,9 @@
             </div>
         }
 
-        @if (CurrentState == State.Dragging && alignmentService.GetAlignmentLines().Any())
+        @if (CurrentState == State.Dragging && AlignmentLines.Any())
         {
-            @foreach (var line in alignmentService.GetAlignmentLines())
+            @foreach (var line in AlignmentLines)
             {
                 <div class="alignment-line"
                      style="left: @(line.X * zoomLevel)px;
