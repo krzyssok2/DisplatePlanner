@@ -320,14 +320,6 @@
         return null;
     }
 
-    private async Task SaveStateToLocalStorage()
-    {
-        if (hasLoaded)
-        {
-            await LocalStorage.SetItemAsync("savedPlates", plates);
-        }
-    }
-
     private void OnZoom(WheelEventArgs e)
     {
         if (!e.CtrlKey || CurrentState != State.None) return;

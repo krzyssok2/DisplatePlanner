@@ -1,4 +1,4 @@
-using Blazored.LocalStorage;
+ using Blazored.LocalStorage;
 using DisplatePlanner;
 using DisplatePlanner.Interfaces;
 using DisplatePlanner.Services;
@@ -10,7 +10,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddBlazoredLocalStorageAsSingleton();
 
 builder.Services.AddSingleton<IHistoryService, HistoryService>();
 await builder.Build().RunAsync();

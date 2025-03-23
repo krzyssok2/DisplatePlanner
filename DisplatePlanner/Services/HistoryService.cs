@@ -1,9 +1,10 @@
-﻿using DisplatePlanner.Interfaces;
+﻿using Blazored.LocalStorage;
+using DisplatePlanner.Interfaces;
 using DisplatePlanner.Models;
 
 namespace DisplatePlanner.Services;
 
-public class HistoryService : IHistoryService
+public class HistoryService(ILocalStorageService localStorageService) : IHistoryService
 {
     private const int historyLimit = 50;
 
@@ -32,7 +33,7 @@ public class HistoryService : IHistoryService
         // Clear redo history when a new state is saved (breaking the redo chain)
         RedoHistory.Clear();
 
-        //SaveStateToLocalStorage();
+        SaveStateToLocalStorage(plates);
     }
 
     public void Undo(List<Plate> plates)
@@ -43,10 +44,11 @@ public class HistoryService : IHistoryService
             RedoHistory.AddLast(ClonePlates(plates));
 
             // Restore the previous state
-            plates = PlatesHistory.Last.Value;
+            plates.Clear();
+            plates.AddRange(PlatesHistory.Last.Value); // Modify the original list contents
             PlatesHistory.RemoveLast();
 
-            //SaveStateToLocalStorage();
+            SaveStateToLocalStorage(plates);
         }
     }
 
@@ -58,11 +60,17 @@ public class HistoryService : IHistoryService
             PlatesHistory.AddLast(ClonePlates(plates));
 
             // Restore the most recent redo state
-            plates = RedoHistory.Last.Value;
+            plates.Clear();
+            plates.AddRange(RedoHistory.Last.Value); // Modify the original list contents
             RedoHistory.RemoveLast();
 
-            //SaveStateToLocalStorage();
+            SaveStateToLocalStorage(plates);
         }
+    }
+
+    private async Task SaveStateToLocalStorage(List<Plate> plates)
+    {
+        await localStorageService.SetItemAsync("savedPlates", plates);
     }
 
     private static List<Plate> ClonePlates(List<Plate> plates)
