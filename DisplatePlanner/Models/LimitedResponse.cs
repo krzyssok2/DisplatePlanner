@@ -1,9 +1,9 @@
 ﻿namespace DisplatePlanner.Models;
 
 public record LimitedResponse(
-    List<PlateData> Data);
+    List<PlateDetails> Data);
 
-public record PlateData(
+public record PlateDetails(
     int Id,
     string Sku,
     int ItemCollectionId,

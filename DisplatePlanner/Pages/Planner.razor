@@ -3,40 +3,44 @@
 @inject HttpClient HttpClient
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject IJSRuntime JsRuntime
+@inject IHistoryService HistoryService
 
 @using Blazored.LocalStorage
+@using DisplatePlanner.Enums
+@using DisplatePlanner.Interfaces
 @using DisplatePlanner.Models
+@using DisplatePlanner.Services
 @using Microsoft.AspNetCore.Components.Web
 @using System.Linq
 
 <div class="main-container">
     <div oncontextmenu="return false;" class="grid" id="grid" tabindex="0"
-         @onkeydown="OnKeyDown" @onkeydown:preventDefault
-         @onwheel="OnZoom"
-         @onmousemove="OnMouseMove"
-         @onmouseup="OnMouseUp"
-         @onmousedown="OnMouseDown" autofocus="true">
+    @onkeydown="OnKeyDown" @onkeydown:preventDefault
+    @onwheel="OnZoom"
+    @onmousemove="OnMouseMove"
+    @onmouseup="OnMouseUp"
+    @onmousedown="OnMouseDown" autofocus="true">
         @foreach (var rect in plates)
         {
-                <div class="Plate @((selectedPlates.Contains(rect)) ? "selected" : "")"
-                     style="width: @($"{rect.Width * zoomLevel}px");
+            <div class="Plate @((selectedPlates.Contains(rect)) ? "selected" : "")"
+            style="width: @($"{rect.Width * zoomLevel}px");
                         height: @($"{rect.Height * zoomLevel}px");
                         top: @($"{rect.Y * zoomLevel}px");
                         left: @($"{rect.X * zoomLevel}px");"
-                     @onclick="(e) => SelectAPlate(e,rect)"
-                     @onmousedown="(e) => StartDrag(e, rect)" @onmousedown:stopPropagation>
-                    <div class="PlateContainer" style="@(GetRotationStyle(rect, zoomLevel)) transform: rotate(@($"{rect.Rotation}deg"))">
-                        <img loading="lazy" class="img-test" tabindex="-1" src="@rect.ImageUrl" draggable="false" />
-                    </div>
+            @onclick="(e) => SelectAPlate(e,rect)"
+            @onmousedown="(e) => StartDrag(e, rect)" @onmousedown:stopPropagation>
+                <div class="PlateContainer" style="@(GetRotationStyle(rect, zoomLevel)) transform: rotate(@($"{rect.Rotation}deg"))">
+                    <img loading="lazy" class="img-test" tabindex="-1" src="@rect.ImageUrl" draggable="false" />
                 </div>
+            </div>
         }
 
         @if (alignmentLines.Any())
         {
             @foreach (var line in alignmentLines)
             {
-                        <div class="alignment-line"
-                             style="left: @($"{line.X * zoomLevel}px");
+                <div class="alignment-line"
+                style="left: @($"{line.X * zoomLevel}px");
                             top: @($"{line.Y * zoomLevel}px");
                             width: @($"{(!line.isVertical ? line.Lenght * zoomLevel : 2)}px");
                             height: @($"{(line.isVertical ? line.Lenght * zoomLevel : 2)}px");" />
@@ -45,8 +49,8 @@
 
         @if (CurrentState == State.Selecting)
         {
-                <div class="selection-box"
-                     style="left: @($"{Math.Min(selectionBoxStartX, selectionBoxEndX)}px");
+            <div class="selection-box"
+            style="left: @($"{Math.Min(selectionBoxStartX, selectionBoxEndX)}px");
                         top: @($"{Math.Min(selectionBoxStartY, selectionBoxEndY)}px");
                         width: @($"{Math.Abs(selectionBoxEndX - selectionBoxStartX)}px");
                         height: @($"{Math.Abs(selectionBoxEndY - selectionBoxStartY)}px");" />
@@ -68,11 +72,8 @@
 
 @code {
     private State CurrentState = State.None;
-    private const int plateLimit = 100;
-    private const int historyLimit = 50;
+    private const int plateLimit = 100;    
     private const double snapValue = 0.25;
-    private LinkedList<List<Plate>> platesHistory = new LinkedList<List<Plate>>();
-    private LinkedList<List<Plate>> redoHistory = new LinkedList<List<Plate>>();
     private double selectionBoxStartX = 0;
     private double selectionBoxStartY = 0;
     private double selectionBoxEndX = 0;
@@ -155,6 +156,7 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadPlates();
+        Console.WriteLine("Loaded");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -167,6 +169,7 @@
         if (firstRender && !hasLoaded)
         {
             await LoadStateFromLocalStorage();
+            Console.WriteLine("Loaded");
             hasLoaded = true;
         }
     }
@@ -584,65 +587,11 @@
         selectedPlates.AddRange(pastedPlates);
     }
 
-    private void SaveState()
-    {
-        // Save the current state
-        var lastHistory = platesHistory.Last?.Value;
+    private void SaveState() => HistoryService.SaveState(plates);
 
-        if (lastHistory != null && plates.SequenceEqual(lastHistory))
-        {
-            return;
-        }
+    private void Undo() => HistoryService.Undo(plates);
 
-        var clonedPlates = ClonePlates(plates);
-        platesHistory.AddLast(clonedPlates);
-
-        // Trim history if it exceeds the limit
-        if (platesHistory.Count > historyLimit)
-        {
-            platesHistory.RemoveFirst();
-        }
-
-        // Clear redo history when a new state is saved (breaking the redo chain)
-        redoHistory.Clear();
-
-        SaveStateToLocalStorage();
-    }
-
-    private void Undo()
-    {
-        if (platesHistory.Count > 0)
-        {
-            // Move the current state to redo history
-            redoHistory.AddLast(ClonePlates(plates));
-
-            // Restore the previous state
-            plates = platesHistory.Last.Value;
-            platesHistory.RemoveLast();
-
-            SaveStateToLocalStorage();
-        }
-    }
-
-    private void Redo()
-    {
-        if (redoHistory.Count > 0)
-        {
-            // Move the current state to undo history
-            platesHistory.AddLast(ClonePlates(plates));
-
-            // Restore the most recent redo state
-            plates = redoHistory.Last.Value;
-            redoHistory.RemoveLast();
-
-            SaveStateToLocalStorage();
-        }
-    }
-
-    private List<Plate> ClonePlates(List<Plate> plates)
-    {
-        return plates.Select(p => new Plate(p.ImageUrl, p.Type, p.IsHorizontal) { X = p.X, Y = p.Y, Rotation = p.Rotation, Height = p.Height, Width = p.Width }).ToList();
-    }
+    private void Redo() => HistoryService.Redo(plates); 
 
     private void FilterPlates(ChangeEventArgs e)
     {
@@ -666,240 +615,7 @@
 
         return $"""height:{styleHeight * zoomLevel}px; width:{styleWidth * zoomLevel}px;""";
     }
-
-    private class Plate
-    {
-        public Plate(string imageUrl, string type, bool isHorizontal)
-        {
-            ImageUrl = imageUrl;
-            Type = type;
-            IsHorizontal = isHorizontal;
-            switch (type)
-            {
-                case "standard":
-                    if (isHorizontal)
-                    {
-                        Width = 45;
-                        Height = 32;
-                    }
-                    else
-                    {
-                        Width = 32;
-                        Height = 45;
-                    }
-                    break;
-
-                case "ultra":
-                    if (isHorizontal)
-                    {
-                        Width = 67.5;
-                        Height = 48;
-                    }
-                    else
-                    {
-                        Width = 48;
-                        Height = 67.5;
-                    }
-                    break;
-            }
-        }
-
-        public void Rotate()
-        {
-            var width = Width;
-            var height = Height;
-
-            Height = width;
-            Width = height;
-            Rotation = (Rotation + 90) % 360;
-        }
-
-        public double Width { get; set; } = 32;
-        public double Height { get; set; } = 45;
-        public double X { get; set; } = 0;
-        public double Y { get; set; } = 0;
-        public string ImageUrl { get; set; }
-        public string Type { get; set; }
-        public bool IsHorizontal { get; set; }
-        public int Rotation { get; set; } = 0; // Rotation angle in degrees
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is not Plate other) return false;
-
-            return ImageUrl == other.ImageUrl &&
-                   Type == other.Type &&
-                   IsHorizontal == other.IsHorizontal &&
-                   Width == other.Width &&
-                   Height == other.Height &&
-                   X == other.X &&
-                   Y == other.Y &&
-                   Rotation == other.Rotation;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(ImageUrl, Type, IsHorizontal, Width, Height, X, Y, Rotation);
-        }
-    }
-
-    private record PlateData(DateTime StartDate, string Name, string ImageUrl, string Type, bool IsHorizontal);
-    private record ScrollData(double ScrollTop, double ScrollLeft);
-
-    private record Selection(double X, double Y, double Width, double Height)
-    {
-        public bool IntersectsWith(Selection other)
-        {
-            return !(X > other.X + other.Width || X + Width < other.X || Y > other.Y + other.Height || Y + Height < other.Y);
-        }
-    }
-
-    public enum State
-    {
-        None,
-        Selecting,
-        Dragging,
-    }
 }
-
-<style>
-    .Plate.selected .PlateContainer {
-        outline: 2px solid red;
-        outline-offset: -2px;
-        z-index: 9999; /* Set to a higher value to ensure it's above other plates */
-    }
-
-    .img-test {
-        width: 100%;
-        height: 100%;
-    }
-
-    .main-container {
-        display: flex;
-        height: 90vh;
-        overflow: hidden;
-    }
-
-    *:focus {
-        outline: none;
-    }
-
-    .grid {
-        border: 1px solid #ccc;
-        overflow: scroll;
-        position: relative;
-        /* change to bigger to enable scroll, have to think how to do it smartly */
-        width: 100%;
-        height: 100%;
-    }
-
-        .grid::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        .grid::-webkit-scrollbar-thumb {
-            background-color: #aaa;
-            border-radius: 4px;
-        }
-
-        .grid::-webkit-scrollbar-track {
-            background-color: #f0f0f0;
-        }
-
-    .selection-box {
-        position: absolute;
-        border: 1px dashed #000;
-        background-color: rgba(0, 0, 255, 0.2);
-        pointer-events: none;
-    }
-
-    .Plate {
-        position: absolute;
-        background: blue;
-        cursor: move;
-        z-index: 0;
-        /* centering stuff */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-        .Plate.selected {
-            z-index: 9999; /* Set to a higher value to ensure it's above other plates */
-        }
-
-        .Plate:hover {
-            opacity: 0.9;
-        }
-
-    .grid, .Plate {
-        user-select: none; /* Prevent selection */
-    }
-
-    .selection-container {
-        width: 20vh;
-        border: 1px solid #ccc;
-        border-left: 0px;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .selection-items-container {
-        overflow-y: scroll;
-        scrollbar-gutter: stable;
-    }
-
-        .selection-items-container::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .selection-items-container::-webkit-scrollbar-thumb {
-            background-color: #aaa;
-            border-radius: 4px;
-        }
-
-        .selection-items-container::-webkit-scrollbar-track {
-            background-color: #f0f0f0;
-        }
-
-    .search-box {
-        padding: 8px;
-        border: 0px;
-        border-bottom: 1px solid #ccc;
-    }
-
-    .selection-item {
-        height: 65px;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        padding: 10px;
-        cursor: pointer;
-    }
-
-        .selection-item span {
-            display: block;
-            overflow: hidden;
-        }
-
-        .selection-item img {
-            margin-right: 10px;
-            width: 32px;
-            height: 45px;
-            border-radius: 3px;
-        }
-
-        .selection-item:hover {
-            background-color: #ddd;
-        }
-
-    .alignment-line {
-        position: absolute;
-        background-color: blue;
-        z-index: 10000; /* Ensure it's above plates but below selected plates */
-    }
-</style>
 
 <script>
     function getScrollPosition(elementId) {
