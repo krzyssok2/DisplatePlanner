@@ -1,0 +1,306 @@
+{
+  "luminoListings": {
+    "data": [
+      {
+        "internalId": 6536086,
+        "externalId": 7481498,
+        "title": "The Last City",
+        "startDate": "2024-12-06T11:00:00Z",
+        "finishDate": "2025-12-31T11:00:00Z",
+        "availableQuantity": 500,
+        "status": "active",
+        "image": {
+          "x1": "https://static.displate.com/230x320/lumino/2024-11-29/9f7c61d2482bc16c7f1e0748374da726_1f8d75da5f8af97dec93d3c1ff068de8.jpg",
+          "x2": "https://static.displate.com/460x640/lumino/2024-11-29/9f7c61d2482bc16c7f1e0748374da726_1f8d75da5f8af97dec93d3c1ff068de8.jpg"
+        },
+        "author": {
+          "id": 4419059,
+          "fullName": "Destiny Game",
+          "nick": "destiny",
+          "avatar": "https://static.displate.com/brand/layout/016d5367-5716-4ac0-af4e-ac5243e2d478/avatarStandard.jpg",
+          "url": "https://displate.com/licensed/destiny"
+        }
+      },
+      {
+        "internalId": 6535948,
+        "externalId": 7481360,
+        "title": "Order 66",
+        "startDate": "2024-10-25T10:00:00Z",
+        "finishDate": "2025-12-31T11:00:00Z",
+        "availableQuantity": 1111,
+        "status": "active",
+        "image": {
+          "x1": "https://static.displate.com/230x320/lumino/2024-10-18/a0d5277b349d8ee96e914275b85e366f_c917d30caf83aedbc222c9b870727773.jpg",
+          "x2": "https://static.displate.com/460x640/lumino/2024-10-18/a0d5277b349d8ee96e914275b85e366f_c917d30caf83aedbc222c9b870727773.jpg"
+        },
+        "author": {
+          "id": 131852,
+          "fullName": "Star Wars",
+          "nick": "Star_Wars",
+          "avatar": "https://static.displate.com/brand/layout/7d8f9e17-a42a-4785-be8e-86be56cce4d2/avatarStandard.jpg",
+          "url": "https://displate.com/licensed/star-wars"
+        }
+      },
+      {
+        "internalId": 6536043,
+        "externalId": 7481455,
+        "title": "Janna's Temple",
+        "startDate": "2024-11-09T11:00:00Z",
+        "finishDate": "2025-06-30T10:00:00Z",
+        "availableQuantity": 500,
+        "status": "sold-out",
+        "image": {
+          "x1": "https://static.displate.com/230x320/lumino/2024-10-29/55ad5d58ad4ba39e5dbf41e84d8fa4cd_a1c3edb5f30edbead9dfcd9a621fe62c.jpg",
+          "x2": "https://static.displate.com/460x640/lumino/2024-10-29/55ad5d58ad4ba39e5dbf41e84d8fa4cd_a1c3edb5f30edbead9dfcd9a621fe62c.jpg"
+        },
+        "author": {
+          "id": 5474016,
+          "fullName": "Arcane",
+          "nick": "arcane",
+          "avatar": "https://static.displate.com/brand/layout/799c0af2-b45a-4a77-9c1b-11ce50dcfd93/avatarStandard1730726236.jpg",
+          "url": "https://displate.com/licensed/arcane"
+        }
+      },
+      {
+        "internalId": 6409783,
+        "externalId": 7354461,
+        "title": "Alduin�s Wrath",
+        "startDate": "2024-08-02T10:00:00Z",
+        "finishDate": "2025-08-02T10:00:00Z",
+        "availableQuantity": 204,
+        "status": "sold-out",
+        "image": {
+          "x1": "https://static.displate.com/230x320/lumino/2024-07-25/a77e36e6d0bcad4a7c8c014b0b508441_59ba66606c359d14e59b116c42b3d51c.jpg",
+          "x2": "https://static.displate.com/460x640/lumino/2024-07-25/a77e36e6d0bcad4a7c8c014b0b508441_59ba66606c359d14e59b116c42b3d51c.jpg"
+        },
+        "author": {
+          "id": 1129199,
+          "fullName": "The Elder Scrolls",
+          "nick": "theelderscrolls",
+          "avatar": "https://static.displate.com/brand/layout/3f141dbd-9d16-4f41-85c6-e4129b658ee5/avatarStandard.jpg",
+          "url": "https://displate.com/licensed/the-elder-scrolls"
+        }
+      },
+      {
+        "internalId": 6370914,
+        "externalId": 7315341,
+        "title": "Presence of the Baron",
+        "startDate": "2024-05-17T10:00:00Z",
+        "finishDate": "2024-12-01T11:00:00Z",
+        "availableQuantity": 202,
+        "status": "sold-out",
+        "image": {
+          "x1": "https://static.displate.com/230x320/lumino/2024-05-10/010b74433795da48dd699f8a4b4ce02c_e46a1222f0f383963b3b45bf38200939.jpg",
+          "x2": "https://static.displate.com/460x640/lumino/2024-05-10/010b74433795da48dd699f8a4b4ce02c_e46a1222f0f383963b3b45bf38200939.jpg"
+        },
+        "author": {
+          "id": 4377736,
+          "fullName": "League of Legends",
+          "nick": "league-of-legends",
+          "avatar": "https://static.displate.com/brand/layout/4dea8179-fcc1-46e8-9830-897454bc4aa8/avatarStandard.jpg",
+          "url": "https://displate.com/licensed/league-of-legends"
+        }
+      },
+      {
+        "internalId": 6309690,
+        "externalId": 7253513,
+        "title": "In Leshen�s Domain",
+        "startDate": "2024-04-19T10:00:00Z",
+        "finishDate": "2025-01-08T11:00:00Z",
+        "availableQuantity": 599,
+        "status": "sold-out",
+        "image": {
+          "x1": "https://static.displate.com/230x320/lumino/2024-04-12/3eb437768e5488a22b16a6174558ce4f_856498ce6250cbca02131e262505c11c.jpg",
+          "x2": "https://static.displate.com/460x640/lumino/2024-04-12/3eb437768e5488a22b16a6174558ce4f_856498ce6250cbca02131e262505c11c.jpg"
+        },
+        "author": {
+          "id": 512631,
+          "fullName": "Witcher 3",
+          "nick": "Witcher3",
+          "avatar": "https://static.displate.com/brand/layout/04b5a42a-f8c6-4fbc-8cfc-24d761182207/avatarStandard.jpg",
+          "url": "https://displate.com/licensed/witcher-3"
+        }
+      },
+      {
+        "internalId": 5949207,
+        "externalId": 6881264,
+        "title": "Crystal Catacombs",
+        "startDate": "2023-08-13T10:00:00Z",
+        "finishDate": "2025-12-31T11:00:00Z",
+        "availableQuantity": 745,
+        "status": "sold-out",
+        "image": {
+          "x1": "https://static.displate.com/230x320/lumino/2023-11-08/356f6998f0731ff82dd30e61ef4b51aa_6d149a460652f01bf0837bb41630ecbf.jpg",
+          "x2": "https://static.displate.com/460x640/lumino/2023-11-08/356f6998f0731ff82dd30e61ef4b51aa_6d149a460652f01bf0837bb41630ecbf.jpg"
+        },
+        "author": {
+          "id": 2700770,
+          "fullName": "Avatar: The Last Airbender",
+          "nick": "avatar-the-last-airbender",
+          "avatar": "https://static.displate.com/brand/layout/78b3e22e-b77e-40ae-a34e-940a18f1a86f/avatarStandard.jpg",
+          "url": "https://displate.com/licensed/avatar-the-last-airbender"
+        }
+      },
+      {
+        "internalId": 5750684,
+        "externalId": 6678090,
+        "title": "The Dragon God Bahamut",
+        "startDate": "2023-10-06T10:00:00Z",
+        "finishDate": "2024-11-25T11:00:00Z",
+        "availableQuantity": 625,
+        "status": "sold-out",
+        "image": {
+          "x1": "https://static.displate.com/230x320/lumino/2023-09-29/368b3bec3be89f6c2d7db86e43690e73_58d2c32fada5896de4399fad7c2bf6ff.jpg",
+          "x2": "https://static.displate.com/460x640/lumino/2023-09-29/368b3bec3be89f6c2d7db86e43690e73_58d2c32fada5896de4399fad7c2bf6ff.jpg"
+        },
+        "author": {
+          "id": 1254137,
+          "fullName": "Dungeons and Dragons",
+          "nick": "dungeonsanddragons",
+          "avatar": "https://static.displate.com/brand/layout/bbbdf95b-0f9f-4733-b668-b95922961fd5/avatarStandard.jpg",
+          "url": "https://displate.com/licensed/dungeons-and-dragons"
+        }
+      },
+      {
+        "internalId": 5631170,
+        "externalId": 6555450,
+        "title": "The Ancient One",
+        "startDate": "2023-08-18T10:00:00Z",
+        "finishDate": "2023-11-10T11:00:00Z",
+        "availableQuantity": 0,
+        "status": "sold-out",
+        "image": {
+          "x1": "https://static.displate.com/230x320/lumino/2023-08-11/32477fdc15817321e3e2a474f6de6029_5be8a329122e9a58879ddc52f8473adf.jpg",
+          "x2": "https://static.displate.com/460x640/lumino/2023-08-11/32477fdc15817321e3e2a474f6de6029_5be8a329122e9a58879ddc52f8473adf.jpg"
+        },
+        "author": {
+          "id": 3731300,
+          "fullName": "Norbert Rybb",
+          "nick": "norbertrybb",
+          "avatar": "https://static.displate.com/avatars/2024-10-16/24407e742944d2477d84f949ac619060_ebf0c31e5321e0a430d066cc3b78efcd.jpg",
+          "url": "https://displate.com/norbertrybb"
+        }
+      },
+      {
+        "internalId": 5434347,
+        "externalId": 6355812,
+        "title": "Guardians vs Thanos",
+        "startDate": "2023-06-16T10:00:00Z",
+        "finishDate": "2023-09-08T10:00:00Z",
+        "availableQuantity": 0,
+        "status": "sold-out",
+        "image": {
+          "x1": "https://static.displate.com/230x320/lumino/2023-06-16/69558b3a76b0702783df6707949d5629_38274a748d46878f48343e0cee0dfdfd.jpg",
+          "x2": "https://static.displate.com/460x640/lumino/2023-06-16/69558b3a76b0702783df6707949d5629_38274a748d46878f48343e0cee0dfdfd.jpg"
+        },
+        "author": {
+          "id": 131851,
+          "fullName": "Marvel",
+          "nick": "Marvel",
+          "avatar": "https://static.displate.com/brand/layout/86c27f4c-0b27-4d83-aacb-cfbc1bee0fdf/avatarStandard.jpg",
+          "url": "https://displate.com/licensed/marvel"
+        }
+      },
+      {
+        "internalId": 5434344,
+        "externalId": 6355809,
+        "title": "Defying the Gods",
+        "startDate": "2023-07-14T10:00:00Z",
+        "finishDate": "2023-10-06T10:00:00Z",
+        "availableQuantity": 0,
+        "status": "sold-out",
+        "image": {
+          "x1": "https://static.displate.com/230x320/lumino/2023-07-17/24054d4f711e85001f43626e271fde30_0989134ab47b34ac75d25b5e40baf31d.jpg",
+          "x2": "https://static.displate.com/460x640/lumino/2023-07-17/24054d4f711e85001f43626e271fde30_0989134ab47b34ac75d25b5e40baf31d.jpg"
+        },
+        "author": {
+          "id": 2633425,
+          "fullName": "Assassin's Creed",
+          "nick": "assassin-s-creed",
+          "avatar": "https://static.displate.com/brand/layout/09e9ce1d-99f1-4241-adb8-f8cc597ddf67/avatarStandard.jpg",
+          "url": "https://displate.com/licensed/assassins-creed"
+        }
+      },
+      {
+        "internalId": 5434340,
+        "externalId": 6355805,
+        "title": "Cosmic Deer",
+        "startDate": "2023-05-19T10:00:00Z",
+        "finishDate": "2023-08-11T10:00:00Z",
+        "availableQuantity": 0,
+        "status": "sold-out",
+        "image": {
+          "x1": "https://static.displate.com/230x320/lumino/2023-05-18/490dd8608860233ee41ffc45af8e6353_f0a84566bbce5ca105401479641df82f.jpg",
+          "x2": "https://static.displate.com/460x640/lumino/2023-05-18/490dd8608860233ee41ffc45af8e6353_f0a84566bbce5ca105401479641df82f.jpg"
+        },
+        "author": {
+          "id": 382847,
+          "fullName": "Jonas J�dicke",
+          "nick": "JoJoesArt",
+          "avatar": "https://static.displate.com/avatars/2020-06-10/63d579b03e72f46ff95083d989bdd8e0.png",
+          "url": "https://displate.com/jojoesart"
+        }
+      },
+      {
+        "internalId": 5434331,
+        "externalId": 6355796,
+        "title": "The Ambush",
+        "startDate": "2023-05-05T10:00:00Z",
+        "finishDate": "2023-07-28T10:00:00Z",
+        "availableQuantity": 0,
+        "status": "sold-out",
+        "image": {
+          "x1": "https://static.displate.com/230x320/lumino/2023-05-04/c4d6bb96aebd81564b6c7560cddd8fa1_ed0a9d9e696a2c66831456d8b4fc5bd6.jpg",
+          "x2": "https://static.displate.com/460x640/lumino/2023-05-04/c4d6bb96aebd81564b6c7560cddd8fa1_ed0a9d9e696a2c66831456d8b4fc5bd6.jpg"
+        },
+        "author": {
+          "id": 1994200,
+          "fullName": "Design Studio",
+          "nick": "design_studio",
+          "avatar": "https://static.displate.com/avatars/2023-05-02/f72d334f1dc22ff82ab03a7d1e7af2aa_e2b47efcf71889e204235de19257f661.jpg",
+          "url": "https://displate.com/design_studio"
+        }
+      },
+      {
+        "internalId": 5434324,
+        "externalId": 6355789,
+        "title": "Leaving Earth",
+        "startDate": "2023-04-21T10:00:00Z",
+        "finishDate": "2023-07-14T10:00:00Z",
+        "availableQuantity": 0,
+        "status": "sold-out",
+        "image": {
+          "x1": "https://static.displate.com/230x320/lumino/2023-04-20/0bdb9a65d592a4b4a0e05a64f187e4ff_567bd45dbf332183a486f439d6f06a26.jpg",
+          "x2": "https://static.displate.com/460x640/lumino/2023-04-20/0bdb9a65d592a4b4a0e05a64f187e4ff_567bd45dbf332183a486f439d6f06a26.jpg"
+        },
+        "author": {
+          "id": 983517,
+          "fullName": "NASA",
+          "nick": "nasa",
+          "avatar": "https://static.displate.com/brand/layout/280f574c-4140-4d0e-8057-82f97847254e/avatarStandard1692172079.jpg",
+          "url": "https://displate.com/licensed/inspired-by-nasa"
+        }
+      },
+      {
+        "internalId": 5434314,
+        "externalId": 6355779,
+        "title": "Seduced by Night City",
+        "startDate": "2023-04-07T10:00:00Z",
+        "finishDate": "2023-06-30T10:00:00Z",
+        "availableQuantity": 0,
+        "status": "sold-out",
+        "image": {
+          "x1": "https://static.displate.com/230x320/lumino/2023-04-04/a8bd8763f567a461dd9a8ce008037eef_7eff10571e51d1d4299e9482196e6c78.jpg",
+          "x2": "https://static.displate.com/460x640/lumino/2023-04-04/a8bd8763f567a461dd9a8ce008037eef_7eff10571e51d1d4299e9482196e6c78.jpg"
+        },
+        "author": {
+          "id": 635685,
+          "fullName": "Cyberpunk 2077",
+          "nick": "cyberpunk",
+          "avatar": "https://static.displate.com/brand/layout/951e5b07-d48a-4c77-b11c-0618350afa3e/avatarStandard.jpg",
+          "url": "https://displate.com/licensed/cyberpunk-2077"
+        }
+      }
+    ]
+  }
+}
