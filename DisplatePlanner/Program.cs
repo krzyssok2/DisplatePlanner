@@ -13,4 +13,5 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddBlazoredLocalStorageAsSingleton();
 
 builder.Services.AddSingleton<IHistoryService, HistoryService>();
+builder.Services.AddSingleton<IAlignmentService, AlignmentService>();
 await builder.Build().RunAsync();
