@@ -6,18 +6,17 @@
 }
 
 .plate-search-container {
+    width:30vh;
     display: flex;
     flex-direction: column;
     height: 100%;
 }
 
-/*.selection-container {
-    width: 20vh;
-    border: 1px solid #ccc;
-    border-left: 0px;
+.selection-container {
     display: flex;
+    overflow:hidden;
     flex-direction: column;
-}*/
+}
 
 .grid {
     overflow: scroll;

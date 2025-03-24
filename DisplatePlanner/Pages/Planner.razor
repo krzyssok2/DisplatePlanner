@@ -59,11 +59,11 @@
             <button @onclick="() => ShowLimited = false" class="@(!ShowLimited ? "active" : string.Empty)">Regular</button>
         </div>
 
-        <div style="@(ShowLimited ? string.Empty : "display:none")">
+        <div style="@(ShowLimited ? "" : "display:none")" class="selection-container">
             <LimitedPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)"/>
         </div>
-        <div style="@(!ShowLimited ? string.Empty : "display:none")">
-            <NormalPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)"/>
+        <div style="@(!ShowLimited ? "" : "display:none")" class="selection-container">
+            <NormalPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)" />
         </div>
     </div>
 </div>
