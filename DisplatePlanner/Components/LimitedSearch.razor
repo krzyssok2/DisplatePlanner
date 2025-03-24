@@ -1,0 +1,20 @@
+﻿@using DisplatePlanner.Models
+@inject HttpClient httpClient
+
+<input type="text" @bind="searchTerm" @oninput="FilterPlates" placeholder="Search" class="search-box" />
+<div class="selection-items-container">
+    @if(filteredPlates == null)
+    {
+        <a>Loading</a>
+    }
+    else
+    {
+        <Virtualize Items="@filteredPlates" Context="plate">
+            <div class="selection-item" @onclick="() => PlateClicked(plate)">
+                <img loading="lazy" src="@plate.ImageUrl" />
+                <span>@plate.Name</span>
+            </div>
+        </Virtualize>
+    }
+    
+</div>

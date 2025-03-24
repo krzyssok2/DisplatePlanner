@@ -1,6 +1,7 @@
 ﻿@page "/planner"
 
 @using Blazored.LocalStorage
+@using DisplatePlanner.Components
 @using DisplatePlanner.Enums
 @using DisplatePlanner.Interfaces
 @using DisplatePlanner.Models
@@ -22,8 +23,8 @@
                         height: @(rect.Height * zoomLevel)px;
                         top: @(rect.Y * zoomLevel)px;
                         left: @(rect.X * zoomLevel)px;"
-            @onclick="(e) => SelectAPlate(e,rect)"
-            @onmousedown="(e) => StartDrag(e, rect)" @onmousedown:stopPropagation>
+                 @onclick="(e) => SelectAPlate(e,rect)"
+                 @onmousedown="(e) => StartDrag(e, rect)" @onmousedown:stopPropagation>
                 <div class="PlateContainer" style="@(GetRotationStyle(rect, zoomLevel)) transform: rotate(@($"{rect.Rotation}deg"))">
                     <img loading="lazy" class="img-test" tabindex="-1" src="@rect.ImageUrl" draggable="false" />
                 </div>
@@ -48,20 +49,12 @@
                  style="left: @(Math.Min(selectionBoxStartX, selectionBoxEndX))px;
                         top: @(Math.Min(selectionBoxStartY, selectionBoxEndY))px;
                         width: @(Math.Abs(selectionBoxEndX - selectionBoxStartX))px;
-                        height: @(Math.Abs(selectionBoxEndY - selectionBoxStartY))px;"/>
+                        height: @(Math.Abs(selectionBoxEndY - selectionBoxStartY))px;" />
         }
     </div>
 
     <div class="selection-container">
-        <input type="text" @bind="searchTerm" @oninput="FilterPlates" placeholder="Search" class="search-box" />
-        <div class="selection-items-container">
-            <Virtualize Items="@filteredPlates" Context="plate">
-                <div class="selection-item" @onclick="() => AddPlate(plate)">
-                    <img loading="lazy" src="@plate.ImageUrl" />
-                    <span>@plate.Name</span>
-                </div>
-            </Virtualize>
-        </div>
+        <LimitedSearch PlateClickedEvent="(plate) => AddPlate(plate)" />
     </div>
 </div>
 

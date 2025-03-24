@@ -2,14 +2,12 @@ using DisplatePlanner.Enums;
 using DisplatePlanner.Interfaces;
 using DisplatePlanner.Models;
 using DisplatePlanner.Services;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using System.Net.Http.Json;
 
 namespace DisplatePlanner.Pages;
 
-public partial class Planner(HttpClient httpClient,
+public partial class Planner(
     PlateManagmentService plateManagmentService,
     ISelectionService selectionService,
     IAlignmentService alignmentService,
@@ -26,26 +24,17 @@ public partial class Planner(HttpClient httpClient,
     private List<Plate> plates = [];
     private List<Plate> draggingPlates = [];
 
-    private double selectionBoxStartX = 0;
-    private double selectionBoxStartY = 0;
-    private double selectionBoxEndX = 0;
-    private double selectionBoxEndY = 0;
-    private double gridContainerStartX, gridContainerStartY;
-
-    private List<PlateData> platesData = [];
-
-    private List<PlateData> filteredPlates = new();
-    private string searchTerm = "";
     private double zoomLevel = 5.0; // Zoom level
     private double offsetX = 0;
     private double offsetY = 0;
     private bool wasDragged = false;
     private bool hasLoaded = false;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadPlates();
-    }
+    private double selectionBoxStartX = 0;
+    private double selectionBoxStartY = 0;
+    private double selectionBoxEndX = 0;
+    private double selectionBoxEndY = 0;
+    private double gridContainerStartX, gridContainerStartY;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -56,46 +45,10 @@ public partial class Planner(HttpClient httpClient,
             if (!hasLoaded)
             {
                 plates = await plateStateService.RetrievePreviousSessionPlates();
+                StateHasChanged();
                 hasLoaded = true;
             }
         }
-    }
-
-    private async Task LoadPlates()
-    {
-        var limitedEdition = new List<PlateData>();
-        var lumino = new List<PlateData>();
-
-        try
-        {
-            var response = await httpClient.GetFromJsonAsync<LimitedResponse>("https://sapi.displate.com/artworks/limited?miso=US");
-            if (response != null)
-            {
-                limitedEdition = [.. response.Data.Select(x => new PlateData(DateTime.Parse(x.Edition.StartDate), x.Title, x.Images.Main.Url, x.Edition.Type, x.Images.Main.Width > x.Images.Main.Height))];
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Failed to load limited editions: {ex.Message}");
-        }
-
-        try
-        {
-            var response = await httpClient.GetFromJsonAsync<LuminoResponse>("/lumino.json");
-            if (response != null)
-            {
-                lumino = [.. response.LuminoListings.Data.Select(x => new PlateData(x.StartDate, x.Title, x.Image.X2, "standard", false))];
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Failed to load limited editions: {ex.Message}");
-        }
-
-        var combinedLimited = limitedEdition.Concat(lumino).OrderByDescending(x => x.StartDate).ToList();
-
-        platesData = combinedLimited;
-        filteredPlates = combinedLimited;
     }
 
     private async void OnMouseDown(MouseEventArgs e)
@@ -159,6 +112,7 @@ public partial class Planner(HttpClient httpClient,
             case State.Dragging:
                 draggingPlates.Clear();
                 alignmentService.ClearAlignmentLines();
+                plateStateService.SaveState(plates);
                 break;
 
             case State.Selecting:
@@ -306,6 +260,76 @@ public partial class Planner(HttpClient httpClient,
         selectionService.ClearSelection();
     }
 
+    private void MoveSelectedPlates(double dx, double dy)
+    {
+        plateStateService.SaveState(plates);
+        foreach (var plate in SelectedPlates)
+        {
+            plate.X += dx;
+            plate.Y += dy;
+        }
+    }
+
+    private void RotateSelectedPlates()
+    {
+        plateStateService.SaveState(plates);
+        foreach (var plate in SelectedPlates)
+        {
+            plate.Rotate();
+        }
+    }
+
+    private void ArrangePlatesInOneLine()
+    {
+        plateStateService.SaveState(plates);
+        double currentX = 0; // Starting X position for the first plate
+        double fixedY = 0;   // Fixed Y position (you can change this if needed)
+
+        foreach (var plate in SelectedPlates)
+        {
+            plate.X = currentX;
+            plate.Y = fixedY;
+            currentX += plate.Width; // Add some space between plates
+        }
+    }
+
+    private void Copy() => plateManagmentService.CopyPlatesToClipboard(SelectedPlates);
+
+    private void Paste()
+    {
+        var pastedPlates = plateManagmentService.PastePlatesFromClipboard(plates);
+
+        if (pastedPlates != null)
+        {
+            selectionService.SelectNewPlates(pastedPlates);
+        }
+    }
+
+    private void UpdateSelectedPlatesWithinTheBox()
+    {
+        var selectionRect = new Selection(
+            Math.Min(selectionBoxStartX, selectionBoxEndX) / zoomLevel,
+            Math.Min(selectionBoxStartY, selectionBoxEndY) / zoomLevel,
+            Math.Abs(selectionBoxEndX - selectionBoxStartX) / zoomLevel,
+            Math.Abs(selectionBoxEndY - selectionBoxStartY) / zoomLevel
+        );
+
+        var selectedPlates = plates.Where(plate => IsPlateInSelection(plate, selectionRect)).ToList();
+        selectionService.SelectNewPlates(selectedPlates);
+    }
+
+    private static double GetSnappedValue(double value, double snapValue) => Math.Round(value / snapValue) * snapValue;
+
+    private static string GetRotationStyle(Plate plate, double zoomLevel)
+    {
+        var isSideways = plate.Rotation == 90 || plate.Rotation == 270;
+
+        var styleWidth = isSideways ? plate.Height : plate.Width;
+        var styleHeight = isSideways ? plate.Width : plate.Height;
+
+        return $"""height:{styleHeight * zoomLevel}px; width:{styleWidth * zoomLevel}px;""";
+    }
+
     private void OnKeyDown(KeyboardEventArgs e)
     {
         if (CurrentState != State.None) return;
@@ -369,84 +393,5 @@ public partial class Planner(HttpClient httpClient,
                 RotateSelectedPlates();
                 break;
         }
-    }
-
-    private void MoveSelectedPlates(double dx, double dy)
-    {
-        plateStateService.SaveState(plates);
-        foreach (var plate in SelectedPlates)
-        {
-            plate.X += dx;
-            plate.Y += dy;
-        }
-    }
-
-    private void RotateSelectedPlates()
-    {
-        plateStateService.SaveState(plates);
-        foreach (var plate in SelectedPlates)
-        {
-            plate.Rotate();
-        }
-    }
-
-    private void ArrangePlatesInOneLine()
-    {
-        plateStateService.SaveState(plates);
-        double currentX = 0; // Starting X position for the first plate
-        double fixedY = 0;   // Fixed Y position (you can change this if needed)
-
-        foreach (var plate in SelectedPlates)
-        {
-            plate.X = currentX;
-            plate.Y = fixedY;
-            currentX += plate.Width; // Add some space between plates
-        }
-    }
-
-    private void Copy() => plateManagmentService.CopyPlatesToClipboard(SelectedPlates);
-
-    private void Paste()
-    {
-        var pastedPlates = plateManagmentService.PastePlatesFromClipboard(plates);
-
-        if(pastedPlates != null)
-        {
-            selectionService.SelectNewPlates(pastedPlates);
-        }        
-    }
-
-    private void UpdateSelectedPlatesWithinTheBox()
-    {
-        var selectionRect = new Selection(
-            Math.Min(selectionBoxStartX, selectionBoxEndX) / zoomLevel,
-            Math.Min(selectionBoxStartY, selectionBoxEndY) / zoomLevel,
-            Math.Abs(selectionBoxEndX - selectionBoxStartX) / zoomLevel,
-            Math.Abs(selectionBoxEndY - selectionBoxStartY) / zoomLevel
-        );
-
-        var selectedPlates = plates.Where(plate => IsPlateInSelection(plate, selectionRect)).ToList();
-        selectionService.SelectNewPlates(selectedPlates);
-    }
-
-    private void FilterPlates(ChangeEventArgs e)
-    {
-        searchTerm = e.Value?.ToString() ?? "";
-        filteredPlates = [.. platesData.Where(p => p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))];
-    }
-
-    private static double GetSnappedValue(double value, double snapValue)
-    {
-        return Math.Round(value / snapValue) * snapValue;
-    }
-
-    private static string GetRotationStyle(Plate plate, double zoomLevel)
-    {
-        var isSideways = plate.Rotation == 90 || plate.Rotation == 270;
-
-        var styleWidth = isSideways ? plate.Height : plate.Width;
-        var styleHeight = isSideways ? plate.Width : plate.Height;
-
-        return $"""height:{styleHeight * zoomLevel}px; width:{styleWidth * zoomLevel}px;""";
     }
 }

@@ -1,0 +1,52 @@
+﻿.selection-items-container {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+}
+
+    .selection-items-container::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .selection-items-container::-webkit-scrollbar-thumb {
+        background-color: #aaa;
+        border-radius: 4px;
+    }
+
+    .selection-items-container::-webkit-scrollbar-track {
+        background-color: #f0f0f0;
+    }
+
+.search-box {
+    padding: 8px;
+    border: 0px;
+    border-bottom: 1px solid #ccc;
+}
+
+.search-box:focus {
+    outline: none;
+}
+
+.selection-item {
+    height: 65px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+}
+
+    .selection-item span {
+        display: block;
+        overflow: hidden;
+    }
+
+    .selection-item img {
+        margin-right: 10px;
+        width: 32px;
+        height: 45px;
+        border-radius: 3px;
+    }
+
+    .selection-item:hover {
+        background-color: #ddd;
+    }
