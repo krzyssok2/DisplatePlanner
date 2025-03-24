@@ -29,6 +29,7 @@ public partial class Planner(
     private double offsetY = 0;
     private bool wasDragged = false;
     private bool hasLoaded = false;
+    private bool ShowLimited = true;
 
     private double gridContainerStartX, gridContainerStartY;
 

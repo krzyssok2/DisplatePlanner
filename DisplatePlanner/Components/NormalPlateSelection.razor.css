@@ -1,0 +1,80 @@
+﻿.selection-items-container {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;    
+}
+
+    .selection-items-container::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .selection-items-container::-webkit-scrollbar-thumb {
+        background-color: #aaa;
+        border-radius: 4px;
+    }
+
+    .selection-items-container::-webkit-scrollbar-track {
+        background-color: #f0f0f0;
+    }
+
+.search-box {
+    padding: 8px;
+    border-bottom: 1px solid #ccc;
+    border: 0px;
+}
+
+    .search-box:focus {
+        outline: none;
+    }
+
+.selection-item {
+    height: 65px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+}
+
+    .selection-item span {
+        display: block;
+        overflow: hidden;
+    }
+
+    .selection-item img {
+        margin-right: 10px;
+        width: 32px;
+        height: 45px;
+        border-radius: 3px;
+    }
+
+    .selection-item:hover {
+        background-color: #ddd;
+    }
+
+/*Spinner*/
+.loading-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid #ddd;
+    border-top: 3px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

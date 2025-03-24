@@ -53,8 +53,18 @@
         }
     </div>
 
-    <div class="selection-container">
-        <LimitedSearch PlateClickedEvent="(plate) => AddPlate(plate)" />
+    <div class="plate-search-container">
+        <div class="tab">
+            <button @onclick="() => ShowLimited = true" class="@(ShowLimited ? "active" : string.Empty)">Limited</button>
+            <button @onclick="() => ShowLimited = false" class="@(!ShowLimited ? "active" : string.Empty)">Regular</button>
+        </div>
+
+        <div style="@(ShowLimited ? string.Empty : "display:none")">
+            <LimitedPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)"/>
+        </div>
+        <div style="@(!ShowLimited ? string.Empty : "display:none")">
+            <NormalPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)"/>
+        </div>
     </div>
 </div>
 

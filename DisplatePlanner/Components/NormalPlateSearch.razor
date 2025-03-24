@@ -1,0 +1,121 @@
+﻿@using System.Net.Http.Json
+@using DisplatePlanner.Models
+@inject HttpClient httpClient
+
+<div class="search-container">
+    <input class="search-box" type="text" @bind="searchTerm" @oninput="OnSearchTermChanged" placeholder="plate ID or URL" />
+    <button class="add-button" @onclick="Search" disabled="@(!IsValidInput)">Add</button>
+</div>
+
+<p style="color: red;" hidden="@string.IsNullOrEmpty(errorMessage)">@errorMessage</p>
+
+@code {
+    [Parameter]
+    public EventCallback<PlateData> PlateAddedEvent { get; set; }
+
+    private string searchTerm = string.Empty;
+    private string errorMessage = string.Empty;
+
+    private bool IsValidInput => TryExtractId(out _);
+
+    private bool TryExtractId(out string id)
+    {
+        id = string.Empty;
+        if (string.IsNullOrWhiteSpace(searchTerm)) return false;
+
+        if (System.Text.RegularExpressions.Regex.IsMatch(searchTerm, @"^\d+$"))
+        {
+            id = searchTerm;
+            return true;
+        }
+
+        var match = System.Text.RegularExpressions.Regex.Match(searchTerm, @"^(?:https?:\/\/)?(?:www\.)?displate\.com/displate/(\d+)$");
+        if (match.Success)
+        {
+            id = match.Groups[1].Value;
+            return true;
+        }
+
+        return false;
+    }
+
+    private void OnSearchTermChanged(ChangeEventArgs e)
+    {
+        searchTerm = e.Value?.ToString() ?? string.Empty;
+        errorMessage = string.Empty;
+        StateHasChanged();
+    }
+
+    private async void Search()
+    {
+        if (!TryExtractId(out var id)) return;
+
+        errorMessage = string.Empty;
+
+        try
+        {
+            var response = await httpClient.GetAsync($"https://sapi.displate.com/artworks/{id}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                errorMessage = response.StatusCode == System.Net.HttpStatusCode.NotFound
+                    ? "Displate doesn't exist."
+                    : "Failed to fetch data.";
+                StateHasChanged();
+                return;
+            }
+
+            var plateResponse = await response.Content.ReadFromJsonAsync<RegularResponse>();
+
+            if (plateResponse?.Data != null)
+            {
+                await PlateAddedEvent.InvokeAsync(new PlateData(
+                    DateTime.Now,
+                    plateResponse.Data.Title,
+                    plateResponse.Data.ImageUrl,
+                    "M",
+                    plateResponse.Data.Orientation != "vertical"
+                ));
+                return;
+            }
+
+            errorMessage = "No data found.";
+        }
+        catch
+        {
+            errorMessage = "Failed to fetch data. Please try again.";
+        }
+
+        StateHasChanged();
+    }
+}
+
+<style>
+    .search-container {
+        width:100%;
+        display: flex;
+        border-top: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .search-box {
+        padding:8px;
+        width:100%;
+        border: 0px;        
+    }
+
+        .search-box:focus {
+            outline: none;
+        }
+
+    .add-button {
+        border: 0px;
+        cursor: pointer;
+    }
+
+        .add-button:disabled {
+            border: 0px;
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+</style>

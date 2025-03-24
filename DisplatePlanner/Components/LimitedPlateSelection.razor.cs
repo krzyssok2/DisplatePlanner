@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 
 namespace DisplatePlanner.Components;
 
-public partial class LimitedSearch
+public partial class LimitedPlateSelection
 {
     [Parameter]
     public EventCallback<PlateData> PlateClickedEvent { get; set; }

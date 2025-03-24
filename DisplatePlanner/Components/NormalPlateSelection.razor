@@ -1,0 +1,29 @@
+﻿@using DisplatePlanner.Models
+@inject HttpClient httpClient
+
+
+<input type="text" @bind="searchTerm" @oninput="FilterPlates" placeholder="Search" class="search-box" />
+<NormalPlateSearch PlateAddedEvent="AddPlate" />
+<div style="padding:8px; border-bottom: 1px solid #ccc">
+    <input @bind-value="isL" id="myCheckbox" type="checkbox" />
+    <label for="myCheckbox">L sized plates</label>
+</div>
+
+<div class="selection-items-container">
+    @if (filteredPlates == null)
+    {
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <span>Loading...</span>
+        </div>
+    }
+    else
+    {
+        <Virtualize Items="@filteredPlates" Context="plate">
+            <div class="selection-item" @onclick="() => PlateClicked(plate)">
+                <img loading="lazy" src="@plate.ImageUrl" />
+                <span>@plate.Name</span>
+            </div>
+        </Virtualize>
+    }
+</div>

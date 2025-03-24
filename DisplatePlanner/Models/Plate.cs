@@ -10,6 +10,7 @@ public class Plate
         switch (type)
         {
             case "standard":
+            case "M":
                 if (isHorizontal)
                 {
                     Width = 45;
@@ -23,6 +24,7 @@ public class Plate
                 break;
 
             case "ultra":
+            case "L":
                 if (isHorizontal)
                 {
                     Width = 67.5;
