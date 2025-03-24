@@ -4,7 +4,7 @@
     z-index: 9999; /* Set to a higher value to ensure it's above other plates */
 }
 
-.img-test {
+.plate-image {
     width: 100%;
     height: 100%;
 }

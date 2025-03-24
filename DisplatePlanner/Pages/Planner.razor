@@ -26,7 +26,7 @@
                  @onclick="(e) => SelectAPlate(e,rect)"
                  @onmousedown="(e) => StartDrag(e, rect)" @onmousedown:stopPropagation>
                 <div class="PlateContainer" style="@(GetRotationStyle(rect, zoomLevel)) transform: rotate(@($"{rect.Rotation}deg"))">
-                    <img loading="lazy" class="img-test" tabindex="-1" src="@rect.ImageUrl" draggable="false" />
+                    <img loading="lazy" class="plate-image" tabindex="-1" src="@rect.ImageUrl" draggable="false" />
                 </div>
             </div>
         }
