@@ -1,14 +1,13 @@
 using DisplatePlanner.Enums;
 using DisplatePlanner.Interfaces;
 using DisplatePlanner.Models;
-using DisplatePlanner.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
 namespace DisplatePlanner.Pages;
 
 public partial class Planner(
-    PlateManagmentService plateManagmentService,
+    IClipboardService clipboardService,
     ISelectionService selectionService,
     IAlignmentService alignmentService,
     IPlateStateService plateStateService,
@@ -293,11 +292,11 @@ public partial class Planner(
         }
     }
 
-    private void Copy() => plateManagmentService.CopyPlatesToClipboard(SelectedPlates);
+    private void Copy() => clipboardService.CopyPlatesToClipboard(SelectedPlates);
 
     private void Paste()
     {
-        var pastedPlates = plateManagmentService.PastePlatesFromClipboard(plates);
+        var pastedPlates = clipboardService.PastePlatesFromClipboard(plates);
 
         if (pastedPlates != null)
         {

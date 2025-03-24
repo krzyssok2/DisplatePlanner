@@ -3,7 +3,7 @@ using DisplatePlanner.Models;
 
 namespace DisplatePlanner.Services;
 
-public class PlateManagmentService(IPlateStateService plateStateService)
+public class ClipboardService(IPlateStateService plateStateService) : IClipboardService
 {
     private readonly List<Plate> Clipboard = [];
 

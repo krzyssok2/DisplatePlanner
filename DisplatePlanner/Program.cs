@@ -15,6 +15,6 @@ builder.Services.AddBlazoredLocalStorageAsSingleton();
 builder.Services.AddSingleton<IPlateStateService, PlateStateService>();
 builder.Services.AddSingleton<IAlignmentService, AlignmentService>();
 builder.Services.AddSingleton<ISelectionService, SelectionService>();
-builder.Services.AddSingleton<PlateManagmentService>();
+builder.Services.AddSingleton<IClipboardService, ClipboardService>();
 
 await builder.Build().RunAsync();
