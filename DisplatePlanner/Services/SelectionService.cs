@@ -6,11 +6,20 @@ namespace DisplatePlanner.Services;
 public class SelectionService : ISelectionService
 {
     private readonly List<Plate> SelectedPlates = [];
-    private Selection Selection = new(0, 0, 0, 0);
+    private double selectionBoxStartX, selectionBoxStartY, selectionBoxEndX, selectionBoxEndY;
+
+    private Selection SelectionBox => new(
+        Math.Min(selectionBoxStartX, selectionBoxEndX),
+        Math.Min(selectionBoxStartY, selectionBoxEndY),
+        Math.Abs(selectionBoxEndX - selectionBoxStartX),
+        Math.Abs(selectionBoxEndY - selectionBoxStartY)
+    );
 
     public IReadOnlyList<Plate> GetSelectedPlates() => SelectedPlates;
 
     public bool ContainsPlate(Plate plate) => SelectedPlates.Contains(plate);
+
+    public Selection GetSelectionBox() => SelectionBox;
 
     public void SelectNewSingle(Plate plate)
     {
@@ -48,5 +57,30 @@ public class SelectionService : ISelectionService
         {
             SelectedPlates.Add(plate);
         }
+    }
+
+    public void StartSelectionBox(double startX, double startY)
+    {
+        selectionBoxStartX = startX;
+        selectionBoxStartY = startY;
+        selectionBoxEndX = startX;
+        selectionBoxEndY = startY;
+    }
+
+    public void UpdateSelectionBox(double endX, double endY)
+    {
+        selectionBoxEndX = endX;
+        selectionBoxEndY = endY;
+    }
+
+    public void SelectPlatesWithinBox(IEnumerable<Plate> plates)
+    {
+        SelectNewPlates(plates.Where(plate => IsPlateInSelection(plate, SelectionBox)).ToList());
+    }
+
+    private static bool IsPlateInSelection(Plate plate, Selection selection)
+    {
+        var plateRect = new Selection(plate.X, plate.Y, plate.Width, plate.Height);
+        return selection.IntersectsWith(plateRect);
     }
 }

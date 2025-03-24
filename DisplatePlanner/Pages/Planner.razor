@@ -46,10 +46,10 @@
         @if (CurrentState == State.Selecting)
         {
             <div class="selection-box"
-                 style="left: @(Math.Min(selectionBoxStartX, selectionBoxEndX))px;
-                        top: @(Math.Min(selectionBoxStartY, selectionBoxEndY))px;
-                        width: @(Math.Abs(selectionBoxEndX - selectionBoxStartX))px;
-                        height: @(Math.Abs(selectionBoxEndY - selectionBoxStartY))px;" />
+                 style="left: @(SelectionBox.X * zoomLevel)px;
+                        top: @(SelectionBox.Y * zoomLevel)px;
+                        width: @(SelectionBox.Width * zoomLevel)px;
+                        height: @(SelectionBox.Height * zoomLevel)px;" />
         }
     </div>
 

@@ -19,6 +19,7 @@ public partial class Planner(
 
     private IReadOnlyList<AlignmentLine> AlignmentLines => alignmentService.GetAlignmentLines();
     private IReadOnlyList<Plate> SelectedPlates => selectionService.GetSelectedPlates();
+    private Selection SelectionBox => selectionService.GetSelectionBox();
 
     private List<Plate> plates = [];
     private List<Plate> draggingPlates = [];
@@ -29,10 +30,6 @@ public partial class Planner(
     private bool wasDragged = false;
     private bool hasLoaded = false;
 
-    private double selectionBoxStartX = 0;
-    private double selectionBoxStartY = 0;
-    private double selectionBoxEndX = 0;
-    private double selectionBoxEndY = 0;
     private double gridContainerStartX, gridContainerStartY;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -71,10 +68,9 @@ public partial class Planner(
         }
 
         // Calculate relative start position
-        selectionBoxStartX = e.ClientX - gridContainerStartX + scroll.ScrollLeft;
-        selectionBoxStartY = e.ClientY - gridContainerStartY + scroll.ScrollTop;
-        selectionBoxEndX = selectionBoxStartX;
-        selectionBoxEndY = selectionBoxStartY;
+        selectionService.StartSelectionBox(
+            (e.ClientX - gridContainerStartX + scroll.ScrollLeft) / zoomLevel,
+            (e.ClientY - gridContainerStartY + scroll.ScrollTop) / zoomLevel);
 
         CurrentState = State.Selecting;
     }
@@ -96,10 +92,11 @@ public partial class Planner(
                     return;
                 }
 
-                selectionBoxEndX = e.ClientX - gridContainerStartX + scroll.ScrollLeft;
-                selectionBoxEndY = e.ClientY - gridContainerStartY + scroll.ScrollTop;
+                selectionService.UpdateSelectionBox(
+                    (e.ClientX - gridContainerStartX + scroll.ScrollLeft) / zoomLevel,
+                    (e.ClientY - gridContainerStartY + scroll.ScrollTop) / zoomLevel);
 
-                //UpdateSelectedPlatesWithinTheBox();
+                //selectionService.SelectPlatesWithinBox(plates);
                 break;
         }
     }
@@ -115,17 +112,11 @@ public partial class Planner(
                 break;
 
             case State.Selecting:
-                UpdateSelectedPlatesWithinTheBox();
+                selectionService.SelectPlatesWithinBox(plates);
                 break;
         }
 
         CurrentState = State.None;
-    }
-
-    private bool IsPlateInSelection(Plate plate, Selection selectionRect)
-    {
-        var plateRect = new Selection(plate.X, plate.Y, plate.Width, plate.Height);
-        return selectionRect.IntersectsWith(plateRect);
     }
 
     private async Task<ScrollData?> GetGridScrollData()
@@ -302,19 +293,6 @@ public partial class Planner(
         {
             selectionService.SelectNewPlates(pastedPlates);
         }
-    }
-
-    private void UpdateSelectedPlatesWithinTheBox()
-    {
-        var selectionRect = new Selection(
-            Math.Min(selectionBoxStartX, selectionBoxEndX) / zoomLevel,
-            Math.Min(selectionBoxStartY, selectionBoxEndY) / zoomLevel,
-            Math.Abs(selectionBoxEndX - selectionBoxStartX) / zoomLevel,
-            Math.Abs(selectionBoxEndY - selectionBoxStartY) / zoomLevel
-        );
-
-        var selectedPlates = plates.Where(plate => IsPlateInSelection(plate, selectionRect)).ToList();
-        selectionService.SelectNewPlates(selectedPlates);
     }
 
     private static double GetSnappedValue(double value, double snapValue) => Math.Round(value / snapValue) * snapValue;

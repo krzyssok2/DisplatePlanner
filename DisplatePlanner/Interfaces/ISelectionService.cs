@@ -4,19 +4,27 @@ namespace DisplatePlanner.Interfaces;
 
 public interface ISelectionService
 {
-    public IReadOnlyList<Plate> GetSelectedPlates();
+    IReadOnlyList<Plate> GetSelectedPlates();
 
-    public bool ContainsPlate(Plate plate);
+    Selection GetSelectionBox();
 
-    public void SelectNewSingle(Plate plate);
+    bool ContainsPlate(Plate plate);
 
-    public void SelectNewPlates(ICollection<Plate> plates);
+    void SelectNewSingle(Plate plate);
 
-    public void ClearSelection();
+    void SelectNewPlates(ICollection<Plate> plates);
 
-    public void AddPlate(Plate plate);
+    void ClearSelection();
 
-    public void AddPlates(ICollection<Plate> plates);
+    void AddPlate(Plate plate);
 
-    public void InvertSelection(Plate plate);
+    void AddPlates(ICollection<Plate> plates);
+
+    void InvertSelection(Plate plate);
+
+    void SelectPlatesWithinBox(IEnumerable<Plate> plates);
+
+    void StartSelectionBox(double startX, double startY);
+
+    void UpdateSelectionBox(double endX, double endY);
 }

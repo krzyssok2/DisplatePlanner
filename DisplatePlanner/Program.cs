@@ -12,9 +12,9 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddBlazoredLocalStorageAsSingleton();
 
-builder.Services.AddSingleton<IPlateStateService, PlateStateService>();
-builder.Services.AddSingleton<IAlignmentService, AlignmentService>();
-builder.Services.AddSingleton<ISelectionService, SelectionService>();
-builder.Services.AddSingleton<IClipboardService, ClipboardService>();
+builder.Services.AddScoped<IPlateStateService, PlateStateService>();
+builder.Services.AddScoped<IAlignmentService, AlignmentService>();
+builder.Services.AddScoped<ISelectionService, SelectionService>();
+builder.Services.AddScoped<IClipboardService, ClipboardService>();
 
 await builder.Build().RunAsync();
