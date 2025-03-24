@@ -6,7 +6,7 @@
 }
 
 .plate-search-container {
-    width:30vh;
+    width:300px;
     display: flex;
     flex-direction: column;
     height: 100%;
