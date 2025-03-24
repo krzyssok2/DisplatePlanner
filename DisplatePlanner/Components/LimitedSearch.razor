@@ -5,7 +5,10 @@
 <div class="selection-items-container">
     @if(filteredPlates == null)
     {
-        <a>Loading</a>
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <span>Loading...</span>
+        </div>
     }
     else
     {
@@ -15,6 +18,5 @@
                 <span>@plate.Name</span>
             </div>
         </Virtualize>
-    }
-    
+    }    
 </div>

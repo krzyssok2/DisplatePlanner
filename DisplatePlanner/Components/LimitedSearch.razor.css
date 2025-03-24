@@ -22,9 +22,9 @@
     border-bottom: 1px solid #ccc;
 }
 
-.search-box:focus {
-    outline: none;
-}
+    .search-box:focus {
+        outline: none;
+    }
 
 .selection-item {
     height: 65px;
@@ -50,3 +50,31 @@
     .selection-item:hover {
         background-color: #ddd;
     }
+
+/*Spinner*/
+.loading-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid #ddd;
+    border-top: 3px solid #007bff; /* Change to match your theme */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
