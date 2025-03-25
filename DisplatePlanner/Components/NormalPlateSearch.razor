@@ -70,6 +70,7 @@
             if (plateResponse?.Data != null)
             {
                 await PlateAddedEvent.InvokeAsync(new PlateData(
+                    plateResponse.Data.ItemCollectionId,
                     DateTime.Now,
                     plateResponse.Data.Title,
                     plateResponse.Data.ImageUrl,

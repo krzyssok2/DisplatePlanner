@@ -7,6 +7,7 @@ public record RegularResponse
 
 public record Data
 (
+    ulong ItemCollectionId,
     string Title,
     string ImageUrl,
     string Orientation

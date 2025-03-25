@@ -6,7 +6,7 @@ public record LimitedResponse(
 public record PlateDetails(
     int Id,
     string Sku,
-    int ItemCollectionId,
+    ulong ItemCollectionId,
     string Title,
     string Url,
     Edition Edition,

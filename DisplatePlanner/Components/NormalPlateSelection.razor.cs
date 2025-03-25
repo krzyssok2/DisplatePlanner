@@ -1,9 +1,10 @@
 using DisplatePlanner.Models;
+using DisplatePlanner.Services;
 using Microsoft.AspNetCore.Components;
 
 namespace DisplatePlanner.Components;
 
-public partial class NormalPlateSelection
+public partial class NormalPlateSelection(IndexedDbService indexedDbService)
 {
     [Parameter]
     public EventCallback<PlateData> PlateClickedEvent { get; set; }
@@ -15,20 +16,41 @@ public partial class NormalPlateSelection
 
     protected override async Task OnInitializedAsync()
     {
-        platesData = [];
-        filteredPlates = [];
+        try
+        {
+            var plates = await indexedDbService.GetAllPlatesAsync();
+            platesData = plates;
+        }
+        catch
+        {
+            platesData = [];            
+        }
+
+        filteredPlates = platesData;
     }
 
     private void AddPlate(PlateData plate)
     {
         searchTerm = string.Empty;
 
-        if (!platesData.Any(i => i.ImageUrl.Equals(plate.ImageUrl)))
+        if (platesData.Any(i => i.Id == plate.Id))
         {
-            platesData.Add(plate);
-            platesData = platesData.OrderByDescending(i => i.StartDate).ToList();
-            Filter();
-        }
+            return;
+        }        
+        platesData.Add(plate);
+        platesData = platesData.OrderByDescending(i => i.StartDate).ToList();
+        Filter();
+
+        _ = indexedDbService.SavePlateAsync(plate);
+    }
+
+    private void RemovePlate(PlateData plate)
+    {
+
+        platesData.Remove(plate);
+        Filter();
+
+        _ = indexedDbService.DeletePlateAsync(plate.Id);
     }
 
     private void FilterPlates(ChangeEventArgs e)
@@ -41,7 +63,7 @@ public partial class NormalPlateSelection
 
     private void PlateClicked(PlateData plate)
     {
-        var adjustedPlate = new PlateData(plate.StartDate, plate.Name, plate.ImageUrl, isL ? "L" : "M", plate.IsHorizontal);
+        var adjustedPlate = new PlateData(plate.Id, plate.StartDate, plate.Name, plate.ImageUrl, isL ? "L" : "M", plate.IsHorizontal);
         PlateClickedEvent.InvokeAsync(adjustedPlate);
     }
 }

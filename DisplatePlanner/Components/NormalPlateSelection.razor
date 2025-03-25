@@ -23,6 +23,7 @@
             <div class="selection-item" @onclick="() => PlateClicked(plate)">
                 <img loading="lazy" src="@plate.ImageUrl" />
                 <span>@plate.Name</span>
+                <button class="delete-button" @onclick="() => RemovePlate(plate)" @onclick:stopPropagation>X</button>
             </div>
         </Virtualize>
     }

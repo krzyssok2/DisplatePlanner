@@ -8,6 +8,7 @@ public record LuminoListings
 
 public record PlateInfo
 (
+    ulong ExternalId,
     DateTime StartDate,
     string Title,
     Image Image

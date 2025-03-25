@@ -42,7 +42,7 @@ public partial class LimitedPlateSelection
         {
             var response = await httpClient.GetFromJsonAsync<LimitedResponse>("https://sapi.displate.com/artworks/limited?miso=US");
             return response?.Data
-                .Select(x => new PlateData(DateTime.Parse(x.Edition.StartDate), x.Title, x.Images.Main.Url, x.Edition.Type, x.Images.Main.Width > x.Images.Main.Height))
+                .Select(x => new PlateData(x.ItemCollectionId, DateTime.Parse(x.Edition.StartDate), x.Title, x.Images.Main.Url, x.Edition.Type, x.Images.Main.Width > x.Images.Main.Height))
                 .ToList() ?? [];
         }
         catch (Exception ex)
@@ -59,7 +59,7 @@ public partial class LimitedPlateSelection
             //Luminos are pulled from Json as they got discontinued, no future updates expected
             var response = await httpClient.GetFromJsonAsync<LuminoResponse>("/lumino.json");
             return response?.LuminoListings.Data
-                .Select(x => new PlateData(x.StartDate, x.Title, x.Image.X2, "standard", false))
+                .Select(x => new PlateData(x.ExternalId, x.StartDate, x.Title, x.Image.X2, "standard", false))
                 .ToList() ?? [];
         }
         catch (Exception ex)

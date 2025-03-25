@@ -26,6 +26,8 @@
         outline: none;
     }
 
+
+/*selectionItem*/
 .selection-item {
     height: 65px;
     display: flex;
@@ -33,12 +35,14 @@
     align-items: center;
     padding: 10px;
     cursor: pointer;
+    position: relative;
+    background: linear-gradient(to right, rgba(255, 0, 0, 0.1), rgba(255, 0, 0, 0.4));
+    background-size: 0% 100%; /* Start hidden */
+    background-position: right; /* Start from the right */
+    background-repeat: no-repeat;
+    transition: background-size 0.2s ease-in-out;
+    transition: 0.2s;
 }
-
-    .selection-item span {
-        display: block;
-        overflow: hidden;
-    }
 
     .selection-item img {
         margin-right: 10px;
@@ -47,9 +51,38 @@
         border-radius: 3px;
     }
 
+    .selection-item span {
+        display: block;
+        overflow: hidden;
+        flex-grow: 1;
+    }
+
+    /* Default hover effect */
     .selection-item:hover {
         background-color: #ddd;
     }
+
+    /* Add red gradient effect when hovering over the delete button */
+    .selection-item:has(.delete-button:hover) {
+        background-size: 100% 100%; /* Expands from right to left */
+    }
+
+/* Style delete button */
+.delete-button {
+    margin-left: 10px;
+    background: transparent;
+    border: none;
+    color: red;
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, opacity 0.2s;
+}
+
+    .delete-button:hover {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+
 
 /*Spinner*/
 .loading-container {
