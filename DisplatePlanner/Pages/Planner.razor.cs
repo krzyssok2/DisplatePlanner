@@ -312,38 +312,38 @@ public partial class Planner(
     {
         if (CurrentState != State.None) return;
 
-        switch (e.Key)
+        switch (e.Key.ToUpper())
         {
             case "1":
                 ArrangePlatesInOneLine();
                 break;
 
-            case "Delete":
+            case "DELETE":
                 RemoveSelectedPlates();
                 break;
 
-            case "Escape":
+            case "ESCAPE":
                 selectionService.ClearSelection();
                 draggingPlates.Clear();
                 break;
 
-            case "ArrowUp":
+            case "ARROWUP":
                 MoveSelectedPlates(0, -snapValue);
                 break;
 
-            case "ArrowDown":
+            case "ARROWDOWN":
                 MoveSelectedPlates(0, snapValue);
                 break;
 
-            case "ArrowLeft":
+            case "ARROWLEFT":
                 MoveSelectedPlates(-snapValue, 0);
                 break;
 
-            case "ArrowRight":
+            case "ARROWRIGHT":
                 MoveSelectedPlates(snapValue, 0);
                 break;
 
-            case "a" when e.CtrlKey:
+            case "A" when e.CtrlKey:
                 selectionService.ClearSelection();
                 foreach (var plate in plates)
                 {
@@ -351,23 +351,23 @@ public partial class Planner(
                 }
                 break;
 
-            case "z" when e.CtrlKey:
+            case "Z" when e.CtrlKey:
                 plateStateService.Undo(plates);
                 break;
 
-            case "y" when e.CtrlKey:
+            case "Y" when e.CtrlKey:
                 plateStateService.Redo(plates);
                 break;
 
-            case "c" when e.CtrlKey:
+            case "C" when e.CtrlKey:
                 Copy();
                 break;
 
-            case "v" when e.CtrlKey:
+            case "V" when e.CtrlKey:
                 Paste();
                 break;
 
-            case "r" when e.CtrlKey:
+            case "R" when e.CtrlKey:
                 RotateSelectedPlates();
                 break;
         }
