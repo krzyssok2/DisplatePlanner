@@ -45,8 +45,10 @@
 }
 
     .selection-item img {
+        flex-shrink: 0;
         margin-right: 10px;
-        width: 32px;
+        object-fit: contain;
+        width: 45px;
         height: 45px;
         border-radius: 3px;
     }

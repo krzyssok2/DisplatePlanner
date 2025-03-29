@@ -43,8 +43,10 @@
     }
 
     .selection-item img {
-        margin-right: 10px;
-        width: 32px;
+        flex-shrink: 0;
+        margin-right: 3px;
+        object-fit: contain;
+        width: 45px;
         height: 45px;
         border-radius: 3px;
     }
@@ -56,14 +58,24 @@
 .ribbon {
     position: absolute;
     top: 5px;
-    left: 2px;
-    background: linear-gradient(135deg, #FFD700, #FFA500);
+    left: 2px;    
     color: black;
     font-weight: bold;
     padding: 3px 6px;
     border-radius: 3px;
     font-size: 7px;
 }
+
+    .ribbon.ultra {
+        color: #000000;
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+    }
+
+
+    .ribbon.standard {
+        color: #333333;
+        background: linear-gradient(135deg, #E5E4E2, #C0C0C0, #A9A9A9);
+    }
 
 /*Spinner*/
 .loading-container {
