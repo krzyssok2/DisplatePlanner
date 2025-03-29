@@ -27,6 +27,7 @@
     }
 
 .selection-item {
+    position: relative;
     height: 65px;
     display: flex;
     flex-direction: row;
@@ -51,6 +52,18 @@
     .selection-item:hover {
         background-color: #ddd;
     }
+
+.ribbon {
+    position: absolute;
+    top: 5px;
+    left: 2px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: black;
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 3px;
+    font-size: 7px;
+}
 
 /*Spinner*/
 .loading-container {

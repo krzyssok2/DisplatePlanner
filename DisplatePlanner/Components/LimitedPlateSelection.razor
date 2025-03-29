@@ -13,7 +13,11 @@
     else
     {
         <Virtualize Items="@filteredPlates" Context="plate">
-            <div class="selection-item" @onclick="() => PlateClicked(plate)">
+            <div @key="plate.Id" class="selection-item" @onclick="() => PlateClicked(plate)">
+                @if(plate.Type == "ultra")
+                {
+                    <span class="ribbon">ULE</span>
+                }                
                 <img loading="lazy" src="@plate.ImageUrl" />
                 <span>@plate.Name</span>
             </div>

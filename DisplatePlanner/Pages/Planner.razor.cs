@@ -138,7 +138,7 @@ public partial class Planner(
     {
         if (!e.CtrlKey || CurrentState != State.None) return;
 
-        zoomLevel = e.DeltaY > 0 ? Math.Max(zoomLevel - 1, 3) : Math.Min(zoomLevel + 1, 15.0);
+        zoomLevel = e.DeltaY > 0 ? Math.Max(zoomLevel - 1, 2) : Math.Min(zoomLevel + 1, 15.0);
     }
 
     private void AddPlate(PlateData selectedPlate)
