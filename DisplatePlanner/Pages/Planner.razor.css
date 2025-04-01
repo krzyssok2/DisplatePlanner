@@ -6,10 +6,9 @@
 }
 
 .plate-search-container {
-    width:300px;
+    width: 300px;
     display: flex;
     flex-direction: column;
-    height: 100%;
 }
 
 .selection-container {
@@ -46,11 +45,6 @@
     z-index: 9999; /* Set to a higher value to ensure it's above other plates */
 }
 
-.plate-image {
-    width: 100%;
-    height: 100%;
-}
-
 *:focus {
     outline: none;
 }
@@ -60,11 +54,12 @@
     border: 1px dashed #000;
     background-color: rgba(0, 0, 255, 0.2);
     pointer-events: none;
+    z-index:10001
 }
 
 .Plate {
     position: absolute;
-    background: blue;
+    background: red;
     cursor: move;
     z-index: 0;
     /* centering stuff */

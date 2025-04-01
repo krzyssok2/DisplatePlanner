@@ -33,6 +33,28 @@ public partial class Planner(
 
     private double gridContainerStartX, gridContainerStartY;
 
+    private double GridLenght = 0;
+    private double GridWith = 0;
+
+    private void CalculateGridSize()
+    {
+        var maxPlateY = plates.MaxBy(i => i.Y);
+        var maxPlateX = plates.MaxBy(i => i.X);
+
+        var maxValueY = (maxPlateY?.Y + maxPlateY?.Height + 32) ?? 0;
+        var maxValueX = (maxPlateX?.X + maxPlateX?.Width + 32) ?? 0;
+
+        if (maxValueY > GridLenght)
+        {
+            GridLenght = maxValueY;
+        }
+
+        if (maxValueX > GridWith)
+        {
+            GridWith = maxValueX;
+        }
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -82,6 +104,7 @@ public partial class Planner(
         {
             case State.Dragging:
                 DragSelectedPlates(e);
+                CalculateGridSize();
                 break;
 
             case State.Selecting:
@@ -97,7 +120,7 @@ public partial class Planner(
                     (e.ClientX - gridContainerStartX + scroll.ScrollLeft) / zoomLevel,
                     (e.ClientY - gridContainerStartY + scroll.ScrollTop) / zoomLevel);
 
-                //selectionService.SelectPlatesWithinBox(plates);
+                selectionService.SelectPlatesWithinBox(plates);
                 break;
         }
     }
@@ -107,6 +130,8 @@ public partial class Planner(
         switch (CurrentState)
         {
             case State.Dragging:
+                GridLenght = 0;
+                GridWith = 0;
                 draggingPlates.Clear();
                 alignmentService.ClearAlignmentLines();
                 plateStateService.SaveState(plates);
