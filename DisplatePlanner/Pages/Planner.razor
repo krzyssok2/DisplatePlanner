@@ -59,18 +59,23 @@
     </div>
 
     <div class="plate-search-container">
-        <div class="tab">
-            <button @onclick="() => ShowLimited = true" class="@(ShowLimited ? "active" : string.Empty)">Limited</button>
-            <button @onclick="() => ShowLimited = false" class="@(!ShowLimited ? "active" : string.Empty)">Regular</button>
-        </div>
+        <button class="collapse-button" @onclick="() => isSelectionCollapsed = !isSelectionCollapsed">
+            @(isSelectionCollapsed ? ">" : "<")
+        </button>
+        <div class="collapsible-container @(isSelectionCollapsed ? "collapsed" : "expanded")">
+            <div class="tab">
+                <button @onclick="() => ShowLimited = true" class="@(ShowLimited ? "active" : string.Empty)">Limited</button>
+                <button @onclick="() => ShowLimited = false" class="@(!ShowLimited ? "active" : string.Empty)">Regular</button>
+            </div>
 
-        <div style="@(ShowLimited ? "" : "display:none")" class="selection-container">
-            <LimitedPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)"/>
+            <div style="@(ShowLimited ? "" : "display:none")" class="selection-container">
+                <LimitedPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)" />
+            </div>
+            <div style="@(!ShowLimited ? "" : "display:none")" class="selection-container">
+                <NormalPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)" />
+            </div>
         </div>
-        <div style="@(!ShowLimited ? "" : "display:none")" class="selection-container">
-            <NormalPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)" />
-        </div>
-    </div>
+    </div>        
 </div>
 
 <script>

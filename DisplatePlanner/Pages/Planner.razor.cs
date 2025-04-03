@@ -13,6 +13,8 @@ public partial class Planner(
     IPlateStateService plateStateService,
     IJSRuntime jsRuntime)
 {
+    private bool isSelectionCollapsed = false;
+
     private State CurrentState = State.None;
     private const int plateLimit = 100;
     private const double snapValue = 0.25;
