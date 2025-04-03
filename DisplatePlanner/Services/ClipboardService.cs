@@ -41,14 +41,7 @@ public class ClipboardService(IPlateStateService plateStateService) : IClipboard
                 newY += 2;
             }
 
-            var newPlate = new Plate(p.ImageUrl, p.Size, p.IsHorizontal)
-            {
-                X = newX,
-                Y = newY,
-                Width = p.Width,
-                Height = p.Height,
-                Rotation = p.Rotation
-            };
+            var newPlate = new Plate(p.ImageUrl, p.Size, p.IsHorizontal, p.X, p.Y, p.Rotation);
 
             plates.Add(newPlate);
             pastedPlates.Add(newPlate);
@@ -59,6 +52,6 @@ public class ClipboardService(IPlateStateService plateStateService) : IClipboard
 
     private static List<Plate> ClonePlates(IEnumerable<Plate> plates)
     {
-        return [.. plates.Select(p => new Plate(p.ImageUrl, p.Size, p.IsHorizontal) { X = p.X, Y = p.Y, Rotation = p.Rotation, Height = p.Height, Width = p.Width })];
+        return [.. plates.Select(p => new Plate(p.ImageUrl, p.Size, p.IsHorizontal, p.X, p.Y, p.Rotation))];
     }
 }

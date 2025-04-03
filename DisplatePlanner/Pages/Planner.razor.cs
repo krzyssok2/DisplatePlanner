@@ -188,7 +188,17 @@ public partial class Planner(
         }
 
         plateStateService.SaveState(plates);
-        plates.Add(new Plate(selectedPlate.ImageUrl, selectedPlate.Size, selectedPlate.IsHorizontal));
+
+        var newX = 0;
+        var newY = 0;
+
+        while (plates.Any(existing => existing.X == newX && existing.Y == newY))
+        {
+            newX += 2;
+            newY += 2;
+        }
+
+        plates.Add(new Plate(selectedPlate.ImageUrl, selectedPlate.Size, selectedPlate.IsHorizontal, newX, newY));
     }
 
     private void SelectAPlate(MouseEventArgs e, Plate plate)
@@ -267,8 +277,7 @@ public partial class Planner(
 
             foreach (var plate in draggingPlates)
             {
-                plate.X += zoomAdjustedX;
-                plate.Y += zoomAdjustedY;
+                plate.IncrementCoordinates(zoomAdjustedX, zoomAdjustedY);
             }
 
             offsetX = e.ClientX;
@@ -295,8 +304,7 @@ public partial class Planner(
         plateStateService.SaveState(plates);
         foreach (var plate in SelectedPlates)
         {
-            plate.X += dx;
-            plate.Y += dy;
+            plate.IncrementCoordinates(dx, dy);
         }
     }
 
@@ -317,8 +325,7 @@ public partial class Planner(
 
         foreach (var plate in SelectedPlates)
         {
-            plate.X = currentX;
-            plate.Y = fixedY;
+            plate.SetCoordinates(currentX, fixedY);
             currentX += plate.Width; // Add some space between plates
         }
     }

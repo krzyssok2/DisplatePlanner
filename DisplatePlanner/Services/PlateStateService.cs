@@ -33,7 +33,7 @@ public class PlateStateService(ILocalStorageService localStorageService) : IPlat
         // Clear redo history when a new state is saved (breaking the redo chain)
         RedoHistory.Clear();
 
-        SaveStateToLocalStorage(plates);
+        _ = SaveStateToLocalStorage(plates);
     }
 
     public void Undo(List<Plate> plates)
@@ -48,7 +48,7 @@ public class PlateStateService(ILocalStorageService localStorageService) : IPlat
             plates.AddRange(PlatesHistory.Last!.Value); // Modify the original list contents
             PlatesHistory.RemoveLast();
 
-            SaveStateToLocalStorage(plates);
+            _ = SaveStateToLocalStorage(plates);
         }
     }
 
@@ -64,7 +64,7 @@ public class PlateStateService(ILocalStorageService localStorageService) : IPlat
             plates.AddRange(RedoHistory.Last!.Value); // Modify the original list contents
             RedoHistory.RemoveLast();
 
-            SaveStateToLocalStorage(plates);
+            _ = SaveStateToLocalStorage(plates);
         }
     }
 
@@ -72,7 +72,7 @@ public class PlateStateService(ILocalStorageService localStorageService) : IPlat
     {
         var savedPlates = await localStorageService.GetItemAsync<List<Plate>>("savedPlates");
 
-        return savedPlates ?? new();
+        return savedPlates ?? [];
     }
 
     private async Task SaveStateToLocalStorage(ICollection<Plate> plates)
@@ -82,6 +82,6 @@ public class PlateStateService(ILocalStorageService localStorageService) : IPlat
 
     private static List<Plate> ClonePlates(IEnumerable<Plate> plates)
     {
-        return [.. plates.Select(p => new Plate(p.ImageUrl, p.Size, p.IsHorizontal) { X = p.X, Y = p.Y, Rotation = p.Rotation, Height = p.Height, Width = p.Width })];
+        return [.. plates.Select(p => new Plate(p.ImageUrl, p.Size, p.IsHorizontal, p.X, p.Y, p.Rotation))];
     }
 }

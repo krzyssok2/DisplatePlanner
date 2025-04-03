@@ -1,29 +1,72 @@
 ﻿using DisplatePlanner.Enums;
+using System.Text.Json.Serialization;
 
 namespace DisplatePlanner.Models;
 
 public class Plate
 {
-    public double X { get; set; } = 0;
-    public double Y { get; set; } = 0;
+    public double X { get; private set; }
+    public double Y { get; private set; }
 
-    public double Width { get; set; }
-    public double Height { get; set; }
+    [JsonIgnore]
+    public double Width { get; private set; }
 
-    public PlateSize Size { get; set; }
-    public bool IsHorizontal { get; set; }
-    public int Rotation { get; set; } = 0;
+    [JsonIgnore]
+    public double Height { get; private set; }
 
-    public string ImageUrl { get; set; }
+    public PlateSize Size { get; private set; }
+    public bool IsHorizontal { get; private set; }
+    public int Rotation { get; private set; }
 
-    public Plate(string imageUrl, PlateSize size, bool isHorizontal)
+    public string ImageUrl { get; private set; }
+
+    public Plate(string imageUrl, PlateSize size, bool isHorizontal, double x = 0, double y = 0, int rotation = 0)
     {
+        if (rotation % 90 != 0)
+        {
+            throw new ArgumentException("Rotation must be a multiple of 90 degrees.");
+        }
+
+        X = x;
+        Y = y;
+
         ImageUrl = imageUrl;
         Size = size;
         IsHorizontal = isHorizontal;
-
         SetDimensions();
+
+        if (rotation != 0)
+        {
+            int rotations = (rotation / 90) % 4;
+            for (int i = 0; i < rotations; i++)
+            {
+                Rotate();
+            }
+        }
     }
+
+    public void IncrementCoordinates(double x, double y)
+    {
+        X += x;
+        Y += y;
+    }
+
+    public void SetCoordinates(double? x, double? y)
+    {
+        if (x != null)
+        {
+            SetX(x.Value);
+        }
+
+        if (y != null)
+        {
+            SetY(y.Value);
+        }
+    }
+
+    public void SetX(double x) => X = x;
+
+    public void SetY(double y) => Y = y;
 
     public void Rotate()
     {
@@ -59,7 +102,7 @@ public class Plate
             { PlateSize.S, (15, 10) }
         };
 
-        var (w, h) = sizeMap.GetValueOrDefault(Size, (45, 32)); // Default to M size
+        var (w, h) = sizeMap.GetValueOrDefault(Size, (45, 32));
         (Width, Height) = IsHorizontal ? (w, h) : (h, w);
     }
 }
