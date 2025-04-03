@@ -41,8 +41,8 @@ public partial class Planner(
         var maxPlateY = plates.MaxBy(i => i.Y);
         var maxPlateX = plates.MaxBy(i => i.X);
 
-        var maxValueY = (maxPlateY?.Y + maxPlateY?.Height + 32) ?? 0;
-        var maxValueX = (maxPlateX?.X + maxPlateX?.Width + 32) ?? 0;
+        var maxValueY = (maxPlateY?.Y + maxPlateY?.Height + 64) ?? 0;
+        var maxValueX = (maxPlateX?.X + maxPlateX?.Width + 64) ?? 0;
 
         if (maxValueY > GridLenght)
         {
@@ -132,6 +132,7 @@ public partial class Planner(
             case State.Dragging:
                 GridLenght = 0;
                 GridWith = 0;
+                CalculateGridSize();
                 draggingPlates.Clear();
                 alignmentService.ClearAlignmentLines();
                 plateStateService.SaveState(plates);
@@ -163,8 +164,19 @@ public partial class Planner(
     {
         if (!e.CtrlKey || CurrentState != State.None) return;
 
-        zoomLevel = e.DeltaY > 0 ? Math.Max(zoomLevel - 1, 2) : Math.Min(zoomLevel + 1, 15.0);
+        if (e.DeltaY > 0)
+        {
+            ZoomIn();
+        }
+        else
+        {
+            ZoomOut();
+        }
     }
+
+    private void ZoomIn() => zoomLevel = Math.Max(zoomLevel - 1, 2);
+
+    private void ZoomOut() => zoomLevel = Math.Min(zoomLevel + 1, 15.0);
 
     private void AddPlate(PlateData selectedPlate)
     {
@@ -174,7 +186,7 @@ public partial class Planner(
         }
 
         plateStateService.SaveState(plates);
-        plates.Add(new Plate(selectedPlate.ImageUrl, selectedPlate.Type, selectedPlate.IsHorizontal));
+        plates.Add(new Plate(selectedPlate.ImageUrl, selectedPlate.Size, selectedPlate.IsHorizontal));
     }
 
     private void SelectAPlate(MouseEventArgs e, Plate plate)

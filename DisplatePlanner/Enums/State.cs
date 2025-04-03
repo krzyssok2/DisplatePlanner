@@ -2,7 +2,7 @@
 
 public enum State
 {
-    None,
-    Selecting,
-    Dragging,
+    None = 0,
+    Selecting = 1,
+    Dragging = 2,
 }

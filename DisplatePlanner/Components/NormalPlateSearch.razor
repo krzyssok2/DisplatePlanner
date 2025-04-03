@@ -1,13 +1,13 @@
 ﻿@using System.Net.Http.Json
+@using DisplatePlanner.Enums
 @using DisplatePlanner.Models
 @inject HttpClient httpClient
 
-<div class="search-container">
+<div class="search-input">
     <input class="search-box" type="text" @bind="searchTerm" @oninput="OnSearchTermChanged" placeholder="plate ID or URL" />
     <button class="add-button" @onclick="Search" disabled="@(!IsValidInput)">Add</button>
 </div>
-
-<p style="color: red;" hidden="@string.IsNullOrEmpty(errorMessage)">@errorMessage</p>
+<a class="error-message" hidden="@string.IsNullOrEmpty(errorMessage)" @key="errorMessage">@errorMessage</a>
 
 @code {
     [Parameter]
@@ -74,7 +74,7 @@
                     DateTime.Now,
                     plateResponse.Data.Title,
                     plateResponse.Data.ImageUrl,
-                    "M",
+                    PlateType.Regular,
                     plateResponse.Data.Orientation != "vertical"
                 ));
                 return;
@@ -92,7 +92,12 @@
 }
 
 <style>
-    .search-container {
+    .error-message {
+        color: red;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .search-input {
         width:100%;
         display: flex;
         border-top: 1px solid #ccc;
@@ -110,12 +115,21 @@
         }
 
     .add-button {
-        border: 0px;
+        border:0px;
+        border-left: 1px solid #ccc;
         cursor: pointer;
+        transition: 0.2s;
     }
+
+        .add-button:hover {
+            border: 0px;
+            border-left: 1px solid #ccc;
+            background-color: #ddd
+        }
 
         .add-button:disabled {
             border: 0px;
+            border-left: 1px solid #ccc;
             background-color: #ccc;
             cursor: not-allowed;
         }

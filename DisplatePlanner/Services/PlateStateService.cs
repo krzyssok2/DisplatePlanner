@@ -9,7 +9,7 @@ public class PlateStateService(ILocalStorageService localStorageService) : IPlat
     private const int historyLimit = 50;
 
     private readonly LinkedList<List<Plate>> PlatesHistory = new();
-    private readonly LinkedList<List<Plate>> RedoHistory = new();   
+    private readonly LinkedList<List<Plate>> RedoHistory = new();
 
     public void SaveState(ICollection<Plate> plates)
     {
@@ -45,7 +45,7 @@ public class PlateStateService(ILocalStorageService localStorageService) : IPlat
 
             // Restore the previous state
             plates.Clear();
-            plates.AddRange(PlatesHistory.Last.Value); // Modify the original list contents
+            plates.AddRange(PlatesHistory.Last!.Value); // Modify the original list contents
             PlatesHistory.RemoveLast();
 
             SaveStateToLocalStorage(plates);
@@ -61,7 +61,7 @@ public class PlateStateService(ILocalStorageService localStorageService) : IPlat
 
             // Restore the most recent redo state
             plates.Clear();
-            plates.AddRange(RedoHistory.Last.Value); // Modify the original list contents
+            plates.AddRange(RedoHistory.Last!.Value); // Modify the original list contents
             RedoHistory.RemoveLast();
 
             SaveStateToLocalStorage(plates);
@@ -82,6 +82,6 @@ public class PlateStateService(ILocalStorageService localStorageService) : IPlat
 
     private static List<Plate> ClonePlates(IEnumerable<Plate> plates)
     {
-        return plates.Select(p => new Plate(p.ImageUrl, p.Type, p.IsHorizontal) { X = p.X, Y = p.Y, Rotation = p.Rotation, Height = p.Height, Width = p.Width }).ToList();
+        return [.. plates.Select(p => new Plate(p.ImageUrl, p.Size, p.IsHorizontal) { X = p.X, Y = p.Y, Rotation = p.Rotation, Height = p.Height, Width = p.Width })];
     }
 }

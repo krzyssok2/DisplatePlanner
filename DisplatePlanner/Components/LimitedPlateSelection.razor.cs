@@ -1,3 +1,4 @@
+using DisplatePlanner.Enums;
 using DisplatePlanner.Models;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
@@ -12,6 +13,13 @@ public partial class LimitedPlateSelection
     private string searchTerm = "";
     private List<PlateData> platesData = [];
     private List<PlateData>? filteredPlates;
+
+    private readonly Dictionary<PlateType, string> typeDictionary = new()
+    {
+        { PlateType.LimitedEdition, "LE" },
+        { PlateType.UltraLimitedEdition, "ULE" },
+        { PlateType.Lumino, "LUM" }
+    };
 
     protected override async Task OnInitializedAsync()
     {
@@ -42,7 +50,13 @@ public partial class LimitedPlateSelection
         {
             var response = await httpClient.GetFromJsonAsync<LimitedResponse>("https://sapi.displate.com/artworks/limited?miso=US");
             return response?.Data
-                .Select(x => new PlateData(x.ItemCollectionId, DateTime.Parse(x.Edition.StartDate), x.Title, x.Images.Main.Url, x.Edition.Type, x.Images.Main.Width > x.Images.Main.Height))
+                .Select(x => new PlateData(x.ItemCollectionId,
+                                 DateTime.Parse(x.Edition.StartDate),
+                                 x.Title,
+                                 x.Images.Main.Url,
+                                 x.Edition.Type == "ultra" ? PlateType.UltraLimitedEdition : PlateType.LimitedEdition,
+                                 x.Images.Main.Width > x.Images.Main.Height,
+                                 x.Edition.Type == "ultra" ? PlateSize.L : PlateSize.M))
                 .ToList() ?? [];
         }
         catch (Exception ex)
@@ -59,7 +73,7 @@ public partial class LimitedPlateSelection
             //Luminos are pulled from Json as they got discontinued, no future updates expected
             var response = await httpClient.GetFromJsonAsync<LuminoResponse>("/lumino.json");
             return response?.LuminoListings.Data
-                .Select(x => new PlateData(x.ExternalId, x.StartDate, x.Title, x.Image.X2, "standard", false))
+                .Select(x => new PlateData(x.ExternalId, x.StartDate, x.Title, x.Image.X2, PlateType.Lumino, false))
                 .ToList() ?? [];
         }
         catch (Exception ex)

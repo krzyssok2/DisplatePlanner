@@ -1,3 +1,5 @@
-﻿namespace DisplatePlanner.Models;
+﻿using DisplatePlanner.Enums;
 
-public record PlateData(ulong Id, DateTime StartDate, string Name, string ImageUrl, string Type, bool IsHorizontal);
+namespace DisplatePlanner.Models;
+
+public record PlateData(ulong Id, DateTime StartDate, string Name, string ImageUrl, PlateType Type, bool IsHorizontal, PlateSize Size = PlateSize.M);

@@ -1,3 +1,4 @@
+using DisplatePlanner.Enums;
 using DisplatePlanner.Models;
 using DisplatePlanner.Services;
 using Microsoft.AspNetCore.Components;
@@ -12,7 +13,7 @@ public partial class NormalPlateSelection(IndexedDbService indexedDbService)
     private string searchTerm = "";
     private List<PlateData> platesData = [];
     private List<PlateData>? filteredPlates;
-    private bool isL = false;
+    private PlateSize selectedPlateSize = PlateSize.M;
 
     protected override async Task OnInitializedAsync()
     {
@@ -21,9 +22,10 @@ public partial class NormalPlateSelection(IndexedDbService indexedDbService)
             var plates = await indexedDbService.GetAllPlatesAsync();
             platesData = plates;
         }
-        catch
+        catch(Exception ex)
         {
-            platesData = [];            
+            Console.WriteLine(ex.Message);
+            platesData = [];
         }
 
         filteredPlates = platesData;
@@ -36,7 +38,7 @@ public partial class NormalPlateSelection(IndexedDbService indexedDbService)
         if (platesData.Any(i => i.Id == plate.Id))
         {
             return;
-        }        
+        }
         platesData.Add(plate);
         platesData = platesData.OrderByDescending(i => i.StartDate).ToList();
         Filter();
@@ -46,7 +48,6 @@ public partial class NormalPlateSelection(IndexedDbService indexedDbService)
 
     private void RemovePlate(PlateData plate)
     {
-
         platesData.Remove(plate);
         Filter();
 
@@ -63,7 +64,7 @@ public partial class NormalPlateSelection(IndexedDbService indexedDbService)
 
     private void PlateClicked(PlateData plate)
     {
-        var adjustedPlate = new PlateData(plate.Id, plate.StartDate, plate.Name, plate.ImageUrl, isL ? "L" : "M", plate.IsHorizontal);
+        var adjustedPlate = new PlateData(plate.Id, plate.StartDate, plate.Name, plate.ImageUrl, plate.Type, plate.IsHorizontal, selectedPlateSize);
         PlateClickedEvent.InvokeAsync(adjustedPlate);
     }
 }

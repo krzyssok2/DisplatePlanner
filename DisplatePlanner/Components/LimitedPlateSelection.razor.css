@@ -1,5 +1,5 @@
 ﻿.selection-items-container {
-    overflow-y: scroll;    
+    overflow-y: scroll;
     scrollbar-gutter: stable;
 }
 
@@ -46,8 +46,8 @@
         flex-shrink: 0;
         margin-right: 3px;
         object-fit: contain;
-        width: 45px;
-        height: 45px;
+        width: 55px;
+        height: 55px;
         border-radius: 3px;
     }
 
@@ -57,24 +57,28 @@
 
 .ribbon {
     position: absolute;
-    top: 5px;
-    left: 2px;    
+    top: 2px;
+    left: 2px;
     color: black;
     font-weight: bold;
     padding: 3px 6px;
     border-radius: 3px;
-    font-size: 7px;
+    font-size: 9px;
 }
 
-    .ribbon.ultra {
+    .ribbon.UltraLimitedEdition {
         color: #000000;
         background: linear-gradient(135deg, #FFD700, #FFA500);
     }
 
-
-    .ribbon.standard {
+    .ribbon.LimitedEdition {
         color: #333333;
         background: linear-gradient(135deg, #E5E4E2, #C0C0C0, #A9A9A9);
+    }
+
+    .ribbon.Lumino {
+        color: #ffffff;
+        background: linear-gradient(135deg, #4A90E2, #8A2BE2);
     }
 
 /*Spinner*/

@@ -14,7 +14,9 @@
     {
         <Virtualize Items="@filteredPlates" Context="plate">
             <div @key="plate.Id" class="selection-item" @onclick="() => PlateClicked(plate)">
-                <span class="ribbon @plate.Type">@(plate.Type == "ultra" ? "ULE": "LE ")</span>               
+                <span class="ribbon @plate.Type">
+                    @(typeDictionary.TryGetValue(plate.Type, out var name) ? name : "?")
+                </span>
                 <img loading="lazy" src="@plate.ImageUrl" />
                 <span>@plate.Name</span>
             </div>

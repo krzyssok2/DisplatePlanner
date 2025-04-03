@@ -1,12 +1,21 @@
-﻿@using DisplatePlanner.Models
-@inject HttpClient httpClient
-
+﻿@using DisplatePlanner.Enums
+@using DisplatePlanner.Models
 
 <input type="text" @bind="searchTerm" @oninput="FilterPlates" placeholder="Search" class="search-box" />
 <NormalPlateSearch PlateAddedEvent="AddPlate" />
-<div style="padding:8px; border-bottom: 1px solid #ccc">
-    <input @bind-value="isL" id="myCheckbox" type="checkbox" />
-    <label for="myCheckbox">L sized plates</label>
+<div style="padding: 8px; border-bottom: 1px solid #ccc; display: flex; align-items: center; gap: 10px;">
+    <span>Size:</span>
+    <InputRadioGroup @bind-Value="selectedPlateSize">
+        <label>
+            <InputRadio Value="@PlateSize.S" /> S
+        </label>
+        <label >
+            <InputRadio Value="@PlateSize.M" /> M
+        </label >
+        <label>
+            <InputRadio Value="@PlateSize.L" /> L
+        </label>
+    </InputRadioGroup>
 </div>
 
 <div class="selection-items-container">
@@ -23,7 +32,7 @@
             <div class="selection-item" @onclick="() => PlateClicked(plate)">
                 <img loading="lazy" src="@plate.ImageUrl" />
                 <span>@plate.Name</span>
-                <button class="delete-button" @onclick="() => RemovePlate(plate)" @onclick:stopPropagation>X</button>
+                <button class="delete-button" @onclick="() => RemovePlate(plate)" @onclick:stopPropagation>❌</button>
             </div>
         </Virtualize>
     }
