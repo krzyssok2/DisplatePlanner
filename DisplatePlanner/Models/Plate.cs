@@ -5,20 +5,19 @@ namespace DisplatePlanner.Models;
 
 public class Plate
 {
-    public double X { get; private set; }
-    public double Y { get; private set; }
-
     [JsonIgnore]
     public double Width { get; private set; }
 
     [JsonIgnore]
     public double Height { get; private set; }
 
-    public PlateSize Size { get; private set; }
-    public bool IsHorizontal { get; private set; }
+    public double X { get; private set; }
+    public double Y { get; private set; }  
     public int Rotation { get; private set; }
 
-    public string ImageUrl { get; private set; }
+    public PlateSize Size { get; }
+    public bool IsHorizontal { get; }
+    public string ImageUrl { get; }
 
     public Plate(string imageUrl, PlateSize size, bool isHorizontal, double x = 0, double y = 0, int rotation = 0)
     {
