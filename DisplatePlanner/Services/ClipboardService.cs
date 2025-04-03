@@ -41,7 +41,7 @@ public class ClipboardService(IPlateStateService plateStateService) : IClipboard
                 newY += 2;
             }
 
-            var newPlate = new Plate(p.ImageUrl, p.Size, p.IsHorizontal, p.X, p.Y, p.Rotation);
+            var newPlate = new Plate(p.ImageUrl, p.Size, p.IsHorizontal, newX, newY, p.Rotation);
 
             plates.Add(newPlate);
             pastedPlates.Add(newPlate);
