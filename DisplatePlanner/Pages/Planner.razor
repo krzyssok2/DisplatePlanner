@@ -9,8 +9,10 @@
 @using Microsoft.AspNetCore.Components.Web
 @using System.Linq
 
+@* <input @bind="selectedColor" type="color"/> *@
+
 <div class="main-container">
-    <div oncontextmenu="return false;" class="grid" id="grid" tabindex="0"
+    <div oncontextmenu="return false;" class="grid" id="grid" tabindex="0" style="background-color: @selectedColor;"
     @onkeydown="OnKeyDown" @onkeydown:preventDefault
     @onwheel="OnZoom"
     @onmousemove="OnMouseMove"
@@ -54,8 +56,7 @@
                         width: @(SelectionBox.Width * zoomLevel)px;
                         height: @(SelectionBox.Height * zoomLevel)px;" />
             }
-    </div>
-
+        </div>
     </div>
 
     <div class="plate-search-container">
