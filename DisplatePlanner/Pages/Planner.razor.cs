@@ -14,7 +14,7 @@ public partial class Planner(
     IJSRuntime jsRuntime)
 {
     private bool isSelectionCollapsed = false;
-    private string selectedColor = "#ffffff";
+    private string? selectedColor;
 
     private State CurrentState = State.None;
     private const int plateLimit = 100;
