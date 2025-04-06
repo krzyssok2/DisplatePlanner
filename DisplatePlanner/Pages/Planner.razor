@@ -9,25 +9,23 @@
 @using Microsoft.AspNetCore.Components.Web
 @using System.Linq
 
-@* <input @bind="selectedColor" type="color"/> *@
-
-<div class="main-container">
+<div class="test-container">
     <div oncontextmenu="return false;" class="grid" id="grid" tabindex="0" style="background-color: @selectedColor;"
-    @onkeydown="OnKeyDown" @onkeydown:preventDefault
-    @onwheel="OnZoom"
-    @onmousemove="OnMouseMove"
-    @onmouseup="OnMouseUp"
-    @onmousedown="OnMouseDown" autofocus="true">
+         @onkeydown="OnKeyDown" @onkeydown:preventDefault
+         @onwheel="OnZoom"
+         @onmousemove="OnMouseMove"
+         @onmouseup="OnMouseUp"
+         @onmousedown="OnMouseDown" autofocus="true">
         <div style="position:absolute;
-                    width: @(GridWith * zoomLevel)px;
-                    height:@(GridLenght * zoomLevel)px;">
+                        width: @(GridWith * zoomLevel)px;
+                        height:@(GridLenght * zoomLevel)px;">
             @foreach (var rect in plates)
             {
                 <div class="Plate @((SelectedPlates.Contains(rect)) ? "selected" : "")"
                      style="width: @(rect.Width * zoomLevel)px;
-                        height: @(rect.Height * zoomLevel)px;
-                        top: @(rect.Y * zoomLevel)px;
-                        left: @(rect.X * zoomLevel)px;"
+                            height: @(rect.Height * zoomLevel)px;
+                            top: @(rect.Y * zoomLevel)px;
+                            left: @(rect.X * zoomLevel)px;"
                      @onclick="(e) => SelectAPlate(e,rect)"
                      @onmousedown="(e) => StartDrag(e, rect)" @onmousedown:stopPropagation>
                     <div class="PlateContainer" style="transform: rotate(@($"{rect.Rotation}deg"))">
@@ -42,9 +40,9 @@
                 {
                     <div class="alignment-line"
                          style="left: @(line.X * zoomLevel)px;
-                            top: @(line.Y * zoomLevel)px;
-                            width: @((!line.IsVertical ? line.Lenght * zoomLevel : 2))px;
-                            height: @((line.IsVertical ? line.Lenght * zoomLevel : 2))px;" />
+                                top: @(line.Y * zoomLevel)px;
+                                width: @((!line.IsVertical ? line.Lenght * zoomLevel : 2))px;
+                                height: @((line.IsVertical ? line.Lenght * zoomLevel : 2))px;" />
                 }
             }
 
@@ -52,9 +50,9 @@
             {
                 <div class="selection-box"
                      style="left: @(SelectionBox.X * zoomLevel)px;
-                        top: @(SelectionBox.Y * zoomLevel)px;
-                        width: @(SelectionBox.Width * zoomLevel)px;
-                        height: @(SelectionBox.Height * zoomLevel)px;" />
+                            top: @(SelectionBox.Y * zoomLevel)px;
+                            width: @(SelectionBox.Width * zoomLevel)px;
+                            height: @(SelectionBox.Height * zoomLevel)px;" />
             }
         </div>
     </div>
@@ -63,21 +61,72 @@
         <button class="collapse-button" @onclick="() => isSelectionCollapsed = !isSelectionCollapsed">
             @(isSelectionCollapsed ? ">" : "<")
         </button>
+
         <div class="collapsible-container @(isSelectionCollapsed ? "collapsed" : "expanded")">
             <div class="tab">
                 <button @onclick="() => ShowLimited = true" class="@(ShowLimited ? "active" : string.Empty)">Limited</button>
                 <button @onclick="() => ShowLimited = false" class="@(!ShowLimited ? "active" : string.Empty)">Regular</button>
             </div>
 
-            <div style="@(ShowLimited ? "" : "display:none")" class="selection-container">
-                <LimitedPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)" />
-            </div>
-            <div style="@(!ShowLimited ? "" : "display:none")" class="selection-container">
-                <NormalPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)" />
-            </div>
+            <div class="selection-container">
+                <div style="@(ShowLimited ? "" : "display:none")" class="selection-container">
+                    <LimitedPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)" />
+                </div>
+               @*  <div style="@(!ShowLimited ? "" : "display:none")" class="selection-container">
+                    <NormalPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)" />
+                </div>*@
+            </div> 
         </div>
-    </div>        
+    </div>
 </div>
+
+
+
+<style>
+    .test-container {
+        display: flex;
+        flex-direction: row;
+        border: 2px solid #666;
+        overflow: hidden;
+        height:80vh;
+    }
+
+    .grid {
+        overflow: scroll;
+        position: relative;
+        width: 100%;
+    }
+
+    .plate-search-container {
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+    }
+
+    .collapsible-container {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        overflow: hidden;
+        transition: max-width 0.3s ease-out, opacity 0.1s;
+        opacity: 1;
+        width: 280px;
+        max-width: 280px;
+        min-height: 0;
+    }
+
+    .collapsible-container.collapsed {
+        max-width: 0;
+        opacity: 0;
+        pointer-events: none; /* Prevent interaction when collapsed */
+    }
+
+    .selection-container {
+        display:flex;
+        flex-direction:column;
+        overflow:hidden;
+    }
+</style>
 
 <script>
     function getScrollPosition(elementId) {

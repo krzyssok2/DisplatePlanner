@@ -1,31 +1,4 @@
-﻿.main-container {
-    display: flex;
-    height: 90vh;
-    overflow: hidden;
-    border: 1px solid #ccc;
-}
-
-.plate-search-container {
-    display: flex;
-    flex-direction: row;
-}
-
-.selection-container {
-    width: 230px;
-    display: flex;
-    overflow: hidden;
-    flex-direction: column;
-}
-
-.grid {
-    overflow: scroll;
-    position: relative;
-    /* change to bigger to enable scroll, have to think how to do it smartly */
-    width: 100%;
-    height: 100%;
-}
-
-    .grid::-webkit-scrollbar {
+﻿    .grid::-webkit-scrollbar {
         width: 8px;
         height: 8px;
     }
@@ -39,52 +12,6 @@
         background-color: #f0f0f0;
     }
 
-.Plate.selected .PlateContainer {
-    outline: 2px solid red;
-    outline-offset: -2px;
-    z-index: 9999; /* Set to a higher value to ensure it's above other plates */
-}
-
-*:focus {
-    outline: none;
-}
-
-.selection-box {
-    position: absolute;
-    border: 1px dashed #000;
-    background-color: rgba(0, 0, 255, 0.2);
-    pointer-events: none;
-    z-index:10001
-}
-
-.Plate {
-    position: absolute;
-    background: red;
-    cursor: move;
-    z-index: 0;
-    /* centering stuff */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-    .Plate.selected {
-        z-index: 9999; /* Set to a higher value to ensure it's above other plates */
-    }
-
-    .Plate:hover {
-        opacity: 0.9;
-    }
-
-.grid, .Plate {
-    user-select: none; /* Prevent selection */
-}
-
-.alignment-line {
-    position: absolute;
-    background-color: blue;
-    z-index: 10000; /* Ensure it's above plates but below selected plates */
-}
 
 .tab {
     display: flex; /* Enables flexbox layout */
@@ -124,17 +51,50 @@
         background-color: #ddd
     }
 
-.collapsible-container {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    transition: max-width 0.3s ease-out, opacity 0.1s;
-    max-width: 230px; /* Fully expanded */
-    opacity: 1;
+
+.Plate.selected .PlateContainer {
+    outline: 2px solid red;
+    outline-offset: -2px;
+    z-index: 9999; /* Set to a higher value to ensure it's above other plates */
 }
 
-    .collapsible-container.collapsed {
-        max-width: 0;
-        opacity: 0;
-        pointer-events: none; /* Prevent interaction when collapsed */
+*:focus {
+    outline: none;
+}
+
+.selection-box {
+    position: absolute;
+    border: 1px dashed #000;
+    background-color: rgba(0, 0, 255, 0.2);
+    pointer-events: none;
+    z-index: 10001
+}
+
+.Plate {
+    position: absolute;
+    background: red;
+    cursor: move;
+    z-index: 0;
+    /* centering stuff */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .Plate.selected {
+        z-index: 9999; /* Set to a higher value to ensure it's above other plates */
     }
+
+    .Plate:hover {
+        opacity: 0.9;
+    }
+
+.grid, .Plate {
+    user-select: none; /* Prevent selection */
+}
+
+.alignment-line {
+    position: absolute;
+    background-color: blue;
+    z-index: 10000; /* Ensure it's above plates but below selected plates */
+}
