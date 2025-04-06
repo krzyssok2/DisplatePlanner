@@ -19,7 +19,7 @@
 .search-box {
     padding: 8px;
     border: 0px;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid;
 }
 
     .search-box:focus {
@@ -49,10 +49,6 @@
         width: 55px;
         height: 55px;
         border-radius: 3px;
-    }
-
-    .selection-item:hover {
-        background-color: #ddd;
     }
 
 .ribbon {
@@ -87,14 +83,13 @@
     align-items: center;
     gap: 8px;
     font-size: 1.2em;
-    color: #333;
 }
 
 .spinner {
     width: 20px;
     height: 20px;
-    border: 3px solid #ddd;
-    border-top: 3px solid #007bff;
+    border: 3px solid;
+    border-top: 3px solid;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }

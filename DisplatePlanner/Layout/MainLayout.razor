@@ -1,8 +1,18 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="layout-wrapper">
+<div class="layout-wrapper @SelectedTheme-mode">
     <div class="topbar">
         <NavMenu />
+        <button @onclick="ToggleTheme" class="theme-toggle">
+            @if (isDarkMode)
+            {
+                <i class="fas fa-moon"></i>  <!-- Moon icon for dark mode -->
+            }
+            else
+            {
+                <i class="fas fa-sun"></i>  <!-- Sun icon for light mode -->
+            }
+        </button>
     </div>
 
     <div class="main-content">
@@ -14,24 +24,82 @@
     </div>
 </div>
 
-<style>
-    :root {
-    --footer-height: 50px;
-    --topbar-height: 50px;
-    --page-padding: 1rem;
-    --full-page-height: calc(100vh - var(--footer-height) - var(--topbar-height) - 2 * var(--page-padding));
+
+
+<style>  
+    .dark-mode{
+        --main-color-text: #eceeed;
+        --main-color-background: #040605;
+        --main-color-primary: #57a273;
+        --main-color-secondary: #2c6842;
+        --main-color-accent: #2f9854;
+    }
+
+    .white-mode {
+        --main-color-text: #111312;
+        --main-color-background: #f9fbfa;
+        --main-color-primary: #5da878;
+        --main-color-secondary: #97d3ad;
+        --main-color-accent: #67d08c;
     }
 
     .layout-wrapper {
+        --footer-height: 50px;
+        --topbar-height: 50px;
+        --page-padding: 1rem;
+        --full-page-height: calc(100vh - var(--footer-height) - var(--topbar-height) - 3 * var(--page-padding));
+
         display: flex;
         flex-direction: column;
         min-height: 100vh;
+        background: var(--main-color-background);
+        color: var(--main-color-text);
     }
 
+        .layout-wrapper div, a, button, input {
+            border-color: var(--main-color-primary) !important;
+            color: var(--main-color-text) !important
+        }
+
+        .layout-wrapper input {
+            background-color: var(--main-color-background);
+        }
+
+        .layout-wrapper button{
+            background-color: var(--main-color-secondary);
+        }
+
+        .layout-wrapper button:hover {
+            background-color: var(--main-color-accent);
+        }
+
+            .layout-wrapper button.active {
+                background-color: var(--main-color-accent);
+            }
+
+        .layout-wrapper .nav-links a.active {
+            color: var(--main-color-accent) !important;
+        }
+
+        .layout-wrapper .selection-item:hover{
+            background: var(--main-color-secondary)
+        }
+
+        .layout-wrapper .brand a{
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: linear-gradient(to right, var(--main-color-primary) 0%, var(--main-color-accent) 100%); /* Left to right gradient */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        
+
     .topbar {
-        border-bottom: 1px solid #ccc;
+        position: relative; /* Make the topbar the reference for absolute positioning */
+        border-bottom: 1px solid;
         padding: 1rem;
-        height: var(--topbar-height);
     }
 
     .main-content {
@@ -42,10 +110,28 @@
     }
 
     .bottombar {
-        height: var(--footer-height);
-        border-top: 1px solid #ccc;
+        border-top: 1px solid;
+        height: var(--footer-height);        
         padding: 1rem;
         text-align: center;
         font-size: 0.9rem;
     }
+
+    .theme-toggle {
+        position: absolute;
+        top: 50%; /* Vertically center the button */
+        right: 1rem; /* Space from the right edge */
+        transform: translateY(-50%); /* Adjust for exact vertical centering */
+        background: none !important;
+        border: none;
+        cursor: pointer;
+        font-size: 24px;
+        padding: 10px;
+        color: var(--main-color-primary);
+        transition: background-color 0.3s ease;
+    }
+
+        .theme-toggle:hover {
+            color: orange;
+        }
 </style>

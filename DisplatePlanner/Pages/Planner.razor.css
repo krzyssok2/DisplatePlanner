@@ -1,7 +1,7 @@
 ﻿.planner-page {
     display: flex;
     flex-direction: row;
-    border: 1px solid #ccc;
+    border: 1px solid;
     overflow: hidden;
     height: var(--full-page-height);
     max-height: var(--full-page-height);
@@ -60,12 +60,10 @@
 .tab {
     display: flex; /* Enables flexbox layout */
     width: 100%; /* Makes sure the container takes up full width */
-    background-color: #f1f1f1;
 }
 
     .tab button {
         flex: 1;
-        background-color: inherit;
         border: none;
         outline: none;
         cursor: pointer;
@@ -75,24 +73,24 @@
     }
 
         .tab button:hover {
-            background-color: #ddd;
+         /*   background-color: #ddd;*/
         }
 
         .tab button.active {
-            background-color: #ccc;
+            /*background-color: #ccc;*/
         }
 
 
 .collapse-button {
     border: 0px;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
+    border-left: 1px solid;
+    border-right: 1px solid;
     cursor: pointer;
     transition: 0.2s;
 }
 
     .collapse-button:hover {
-        background-color: #ddd
+    /*    background-color: #ddd*/
     }
 
 
@@ -108,7 +106,7 @@
 
 .selection-box {
     position: absolute;
-    border: 1px dashed #000;
+    border: 1px dashed;
     background-color: rgba(0, 0, 255, 0.2);
     pointer-events: none;
     z-index: 10001

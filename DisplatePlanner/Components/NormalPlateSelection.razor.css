@@ -18,7 +18,7 @@
 
 .search-box {
     padding: 8px;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid;
     border: 0px;
 }
 
@@ -58,11 +58,6 @@
         flex-grow: 1;
     }
 
-    /* Default hover effect */
-    .selection-item:hover {
-        background-color: #ddd;
-    }
-
     /* Add red gradient effect when hovering over the delete button */
     .selection-item:has(.delete-button:hover) {
         background-size: 100% 100%; /* Expands from right to left */
@@ -71,7 +66,7 @@
 /* Style delete button */
 .delete-button {
     background: transparent;
-    border: none;
+    border: none;    
     color: red;
     font-size: 16px;
     cursor: pointer;
@@ -79,6 +74,7 @@
 }
 
     .delete-button:hover {
+        background-color: transparent;
         transform: scale(1.1);
         opacity: 0.8;
     }
@@ -90,14 +86,13 @@
     align-items: center;
     gap: 8px;
     font-size: 1.2em;
-    color: #333;
 }
 
 .spinner {
     width: 20px;
     height: 20px;
-    border: 3px solid #ddd;
-    border-top: 3px solid #007bff;
+    border: 3px solid;
+    border-top: 3px solid;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
