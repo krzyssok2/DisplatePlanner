@@ -9,7 +9,7 @@
 @using Microsoft.AspNetCore.Components.Web
 @using System.Linq
 
-<div class="test-container">
+<div class="planner-page">
     <div oncontextmenu="return false;" class="grid" id="grid" tabindex="0" style="background-color: @selectedColor;"
          @onkeydown="OnKeyDown" @onkeydown:preventDefault
          @onwheel="OnZoom"
@@ -68,14 +68,12 @@
                 <button @onclick="() => ShowLimited = false" class="@(!ShowLimited ? "active" : string.Empty)">Regular</button>
             </div>
 
-            <div class="selection-container">
-                <div style="@(ShowLimited ? "" : "display:none")" class="selection-container">
-                    <LimitedPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)" />
-                </div>
-                <div style="@(!ShowLimited ? "" : "display:none")" class="selection-container">
-                    <NormalPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)" />
-                </div>
-            </div> 
+            <div style="@(ShowLimited ? "" : "display:none")" class="selection-container">
+                <LimitedPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)" />
+            </div>
+            <div style="@(!ShowLimited ? "" : "display:none")" class="selection-container">
+                <NormalPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)" />
+            </div>
         </div>
     </div>
 </div>
@@ -83,49 +81,7 @@
 
 
 <style>
-    .test-container {
-        display: flex;
-        flex-direction: row;
-        border: 2px solid #666;
-        overflow: hidden;
-        height:80vh;
-    }
 
-    .grid {
-        overflow: scroll;
-        position: relative;
-        width: 100%;
-    }
-
-    .plate-search-container {
-        display: flex;
-        flex-direction: row;
-        overflow: hidden;
-    }
-
-    .collapsible-container {
-        display: flex;
-        flex: 1;
-        flex-direction: column;
-        overflow: hidden;
-        transition: max-width 0.3s ease-out, opacity 0.1s;
-        opacity: 1;
-        width: 280px;
-        max-width: 280px;
-        min-height: 0;
-    }
-
-    .collapsible-container.collapsed {
-        max-width: 0;
-        opacity: 0;
-        pointer-events: none; /* Prevent interaction when collapsed */
-    }
-
-    .selection-container {
-        display:flex;
-        flex-direction:column;
-        overflow:hidden;
-    }
 </style>
 
 <script>

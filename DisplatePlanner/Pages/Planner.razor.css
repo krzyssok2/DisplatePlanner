@@ -1,4 +1,19 @@
-﻿    .grid::-webkit-scrollbar {
+﻿.planner-page {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #ccc;
+    overflow: hidden;
+    height: calc(100vh - 100px - 2rem);
+    max-height: calc(100vh - 100px - 2rem);
+}
+
+.grid {
+    overflow: scroll;
+    position: relative;
+    width: 100%;
+}
+
+    .grid::-webkit-scrollbar {
         width: 8px;
         height: 8px;
     }
@@ -12,6 +27,35 @@
         background-color: #f0f0f0;
     }
 
+.plate-search-container {
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+}
+
+.collapsible-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    overflow: hidden;
+    transition: max-width 0.3s ease-out, opacity 0.1s;
+    opacity: 1;
+    width: 280px;
+    max-width: 280px;
+    min-height: 0;
+}
+
+    .collapsible-container.collapsed {
+        max-width: 0;
+        opacity: 0;
+        pointer-events: none; /* Prevent interaction when collapsed */
+    }
+
+.selection-container {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
 
 .tab {
     display: flex; /* Enables flexbox layout */
