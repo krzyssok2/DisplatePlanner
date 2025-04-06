@@ -28,19 +28,19 @@
 
 <style>  
     .dark-mode{
-        --main-color-text: #eceeed;
-        --main-color-background: #040605;
-        --main-color-primary: #57a273;
-        --main-color-secondary: #2c6842;
-        --main-color-accent: #2f9854;
+        --text: #f3e2ed;
+        --background: #13060e;
+        --primary: #e892c7;
+        --secondary: #921161;
+        --accent: #f61ea3;
     }
 
     .white-mode {
-        --main-color-text: #111312;
-        --main-color-background: #f9fbfa;
-        --main-color-primary: #5da878;
-        --main-color-secondary: #97d3ad;
-        --main-color-accent: #67d08c;
+        --text: #1d0c17;
+        --background: #f9ecf4;
+        --primary: #6d174c;
+        --secondary: #ee6dbc;
+        --accent: #e1098e;
     }
 
     .layout-wrapper {
@@ -52,43 +52,43 @@
         display: flex;
         flex-direction: column;
         min-height: 100vh;
-        background: var(--main-color-background);
-        color: var(--main-color-text);
+        background: var(--background);
+        color: var(--text);
     }
 
         .layout-wrapper div, a, button, input {
-            border-color: var(--main-color-primary) !important;
-            color: var(--main-color-text) !important
+            border-color: var(--primary) !important;
+            color: var(--text) !important
         }
 
         .layout-wrapper input {
-            background-color: var(--main-color-background);
+            background-color: var(--background);
         }
 
         .layout-wrapper button{
-            background-color: var(--main-color-secondary);
+            background-color: var(--secondary);
         }
 
         .layout-wrapper button:hover {
-            background-color: var(--main-color-accent);
+            background-color: var(--accent);
         }
 
             .layout-wrapper button.active {
-                background-color: var(--main-color-accent);
+                background-color: var(--accent);
             }
 
         .layout-wrapper .nav-links a.active {
-            color: var(--main-color-accent) !important;
+            color: var(--accent) !important;
         }
 
         .layout-wrapper .selection-item:hover{
-            background: var(--main-color-secondary)
+            background: var(--secondary)
         }
 
         .layout-wrapper .brand a{
             font-size: 1.2rem;
             font-weight: bold;
-            background: linear-gradient(to right, var(--main-color-primary) 0%, var(--main-color-accent) 100%); /* Left to right gradient */
+            background: linear-gradient(to right, var(--primary) 0%, var(--accent) 100%); /* Left to right gradient */
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: inline-block;
@@ -127,7 +127,7 @@
         cursor: pointer;
         font-size: 24px;
         padding: 10px;
-        color: var(--main-color-primary);
+        color: var(--primary);
         transition: background-color 0.3s ease;
     }
 
