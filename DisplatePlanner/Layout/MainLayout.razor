@@ -24,8 +24,6 @@
     </div>
 </div>
 
-
-
 <style>  
     .dark-mode{
         --text: #f3eef6;
@@ -85,10 +83,24 @@
             background: var(--secondary)
         }
 
+        .layout-wrapper *::-webkit-scrollbar {
+            width: 8px;
+            height:8px;
+        }
+
+        .layout-wrapper *::-webkit-scrollbar-thumb {
+            background-color: var(--primary);
+            border-radius: 4px;
+        }
+
+        .layout-wrapper *::-webkit-scrollbar-track {
+            background-color: var(--secondary);
+        }
+
         .layout-wrapper .brand a{
             font-size: 1.2rem;
             font-weight: bold;
-            background: linear-gradient(to right, var(--primary) 0%, var(--accent) 100%); /* Left to right gradient */
+            background: linear-gradient(to right, var(--text) 0%, var(--accent) 100%); /* Left to right gradient */
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: inline-block;

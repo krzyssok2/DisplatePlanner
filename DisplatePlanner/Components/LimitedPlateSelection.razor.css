@@ -3,18 +3,6 @@
     scrollbar-gutter: stable;
 }
 
-    .selection-items-container::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    .selection-items-container::-webkit-scrollbar-thumb {
-        background-color: #aaa;
-        border-radius: 4px;
-    }
-
-    .selection-items-container::-webkit-scrollbar-track {
-        background-color: #f0f0f0;
-    }
 
 .search-box {
     padding: 8px;
