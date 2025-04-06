@@ -13,3 +13,39 @@
         <Footer />
     </div>
 </div>
+
+<style>
+    :root {
+    --footer-height: 50px;
+    --topbar-height: 50px;
+    --page-padding: 1rem;
+    --full-page-height: calc(100vh - var(--footer-height) - var(--topbar-height) - 2 * var(--page-padding));
+    }
+
+    .layout-wrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .topbar {
+        border-bottom: 1px solid #ccc;
+        padding: 1rem;
+        height: var(--topbar-height);
+    }
+
+    .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: var(--page-padding);
+    }
+
+    .bottombar {
+        height: var(--footer-height);
+        border-top: 1px solid #ccc;
+        padding: 1rem;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+</style>
