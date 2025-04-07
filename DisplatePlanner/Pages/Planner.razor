@@ -10,6 +10,16 @@
 @using System.Linq
 
 <div class="planner-page">
+    <div style="display:flex; flex-direction:column; border-right:1px solid;">
+        <ZoomInIcon />
+        <ZoomOutIcon />
+
+        <CopyIcon />
+        <PasteIcon />
+
+        <DeleteIcon/>
+    </div>
+
     <div oncontextmenu="return false;" class="grid" id="grid" tabindex="0" style="background-color: @selectedColor;"
          @onkeydown="OnKeyDown" @onkeydown:preventDefault
          @onwheel="OnZoom"
