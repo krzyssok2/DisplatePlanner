@@ -1,5 +1,6 @@
 ﻿@inject ThemeService ThemeService
 @inject ILocalStorageService LocalStorageService
+@inject IJSRuntime JS
 
 <button @onclick="ToggleTheme" class="theme-toggle">
     @if (isDarkMode)
@@ -21,8 +22,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var theme = await LocalStorageService.GetItemAsync<string>(storageThemeKey) ?? "white";
-        isDarkMode = theme == "dark";
+        var theme = await LocalStorageService.GetItemAsync<string>(storageThemeKey);
+
+        if (theme == null)
+        {
+            var userPreffersDarkModel = await JS.InvokeAsync<bool>("isDarkMode");
+            
+
+            theme = userPreffersDarkModel ? darkTheme : whiteTheme;
+        }
+
+        isDarkMode = theme.Equals(darkTheme);
         ThemeService.IsDarkMode = isDarkMode;
     }
 
@@ -48,3 +58,9 @@
             color: orange !important
         }
 </style>
+
+<script>
+        window.isDarkMode = () => {
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    };
+</script>

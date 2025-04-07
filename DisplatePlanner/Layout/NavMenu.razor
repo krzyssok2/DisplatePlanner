@@ -1,19 +1,19 @@
 ﻿<nav class="nav-menu" 
 @onmouseleave="() => isMenuOpen = false">
-    <div class="brand px-3">
-        <NavLink href="" Match="NavLinkMatch.All">DisplatePlanner</NavLink>
+    <div class="brand">
+        <NavLink href="" Match="NavLinkMatch.All" @onclick="()=> isMenuOpen = false">DisplatePlanner</NavLink>
     </div>
 
     <!-- Hamburger Icon for small screens -->
     
 
     <!-- Nav Links -->
-    <ul class="nav-links px-3 @((isMenuOpen ? "show" : ""))">
+    <ul class="nav-links @((isMenuOpen ? "show" : ""))">
         <li>
-            <NavLink Match="NavLinkMatch.All" href="">Home</NavLink>
+            <NavLink Match="NavLinkMatch.All" href="" @onclick="()=> isMenuOpen = false">Home</NavLink>
         </li>
         <li>
-            <NavLink href="planner">Planner</NavLink>
+            <NavLink href="planner" @onclick="()=> isMenuOpen = false">Planner</NavLink>
         </li>
     </ul>
 

@@ -29,19 +29,19 @@
 
 <style>  
     .dark-mode{
-        --text: #f9f1f2;
-        --background: #070303;
-        --primary: #aa4656;
-        --secondary: #486529;
-        --accent: #378639;
+        --text: #E0E0E0;
+        --background: #1A1A1A;
+        --primary: #444444;
+        --secondary: #888888;
+        --accent: #FF4C4C; 
     }
 
     .white-mode {
-        --text: #0e0607;
-        --background: #fcf8f8;
-        --primary: #ba5666;
-        --secondary: #b9d69a;
-        --accent: #7ac97c;
+        --text: #333333;
+        --background: #FFFFFF;
+        --primary: #E0E0E0;
+        --secondary: #CCCCCC;
+        --accent: #FF5C5C;
     }
 
     .layout-wrapper {
@@ -58,7 +58,7 @@
     }
 
         .layout-wrapper div, a, button, input {
-            border-color: var(--primary) !important;
+            border-color: var(--text) !important;
             color: var(--text) !important
         }
 
@@ -67,19 +67,19 @@
         }
 
         .layout-wrapper button{
-            background-color: var(--secondary);
+            background-color: var(--primary);
         }
 
         .layout-wrapper button:hover {
-            background-color: var(--accent);
+            background-color: var(--secondary);
         }
 
             .layout-wrapper button.active {
-                background-color: var(--accent);
+                background-color: var(--secondary);
             }
 
         .layout-wrapper .nav-links a.active {
-            text-shadow: 0 0 5px var(--primary), 0 0 10px var(--primary), 0 0 15px var(--primary); /* Slightly less intense glow */
+            text-decoration: underline var(--accent);
         }
 
         .layout-wrapper .selection-item:hover{
@@ -92,18 +92,22 @@
         }
 
         .layout-wrapper *::-webkit-scrollbar-thumb {
-            background-color: var(--primary);
+            background-color: var(--secondary);
             border-radius: 4px;
         }
 
         .layout-wrapper *::-webkit-scrollbar-track {
-            background-color: var(--secondary);
+            background-color: var(--primary);
+        }
+
+        .layout-wrapper *::-webkit-scrollbar-corner {
+            background-color: transparent;
         }
 
         .layout-wrapper .brand a{
             font-size: 1.2rem;
             font-weight: bold;
-            background: linear-gradient(to right, var(--text) 0%, var(--accent) 100%); /* Left to right gradient */
+            background: linear-gradient(to right, var(--text) 0%, var(--accent) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: inline-block;
@@ -112,7 +116,7 @@
         
 
     .topbar {
-        position: relative; /* Make the topbar the reference for absolute positioning */
+        position: relative;
         border-bottom: 1px solid;
     }
 
