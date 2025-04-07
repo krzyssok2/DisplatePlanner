@@ -1,0 +1,50 @@
+﻿@inject ThemeService ThemeService
+@inject ILocalStorageService LocalStorageService
+
+<button @onclick="ToggleTheme" class="theme-toggle">
+    @if (isDarkMode)
+    {
+        <SunIcon />
+    }
+    else
+    {
+        <MoonIcon />
+    }
+</button>
+
+@code {
+    private const string storageThemeKey = "theme";
+    private const string darkTheme = "dark";
+    private const string whiteTheme = "white";
+
+    private bool isDarkMode;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var theme = await LocalStorageService.GetItemAsync<string>(storageThemeKey) ?? "white";
+        isDarkMode = theme == "dark";
+        ThemeService.IsDarkMode = isDarkMode;
+    }
+
+    private async Task ToggleTheme()
+    {
+        isDarkMode = !isDarkMode;
+        ThemeService.IsDarkMode = isDarkMode;
+        await LocalStorageService.SetItemAsync(storageThemeKey, ThemeService.CurrentTheme);
+    }
+}
+
+<style>
+    .theme-toggle {
+        background: none !important;
+        align-content:center;
+        border: none;
+        cursor: pointer;
+        color: var(--primary);
+        transition: background-color 0.3s ease;
+    }
+
+        .theme-toggle:hover {
+            color: orange !important
+        }
+</style>

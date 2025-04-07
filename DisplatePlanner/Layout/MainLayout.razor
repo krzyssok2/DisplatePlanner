@@ -1,18 +1,9 @@
 ﻿@inherits LayoutComponentBase
+@inject ThemeService ThemeService;
 
-<div class="layout-wrapper @SelectedTheme-mode">
+<div class="layout-wrapper @ThemeService.CurrentTheme-mode">
     <div class="topbar">
         <NavMenu />
-        <button @onclick="ToggleTheme" class="theme-toggle">
-            @if (isDarkMode)
-            {
-                <i class="fas fa-moon"></i>  <!-- Moon icon for dark mode -->
-            }
-            else
-            {
-                <i class="fas fa-sun"></i>  <!-- Sun icon for light mode -->
-            }
-        </button>
     </div>
 
     <div class="main-content">
@@ -24,21 +15,33 @@
     </div>
 </div>
 
+@code {
+    protected override void OnInitialized()
+    {
+        ThemeService.OnThemeChanged += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        ThemeService.OnThemeChanged -= StateHasChanged;
+    }
+}
+
 <style>  
     .dark-mode{
-        --text: #f3eef6;
-        --background: #0c050f;
-        --primary: #8f29c2;
-        --secondary: #5c0f80;
-        --accent: #7905b3;
+        --text: #f9f1f2;
+        --background: #070303;
+        --primary: #aa4656;
+        --secondary: #486529;
+        --accent: #378639;
     }
 
     .white-mode {
-        --text: #0e0911;
-        --background: #f7f0fa;
-        --primary: #a33dd6;
-        --secondary: #cc7ff0;
-        --accent: #c04cfa;
+        --text: #0e0607;
+        --background: #fcf8f8;
+        --primary: #ba5666;
+        --secondary: #b9d69a;
+        --accent: #7ac97c;
     }
 
     .layout-wrapper {
@@ -76,7 +79,7 @@
             }
 
         .layout-wrapper .nav-links a.active {
-            color: var(--accent) !important;
+            text-shadow: 0 0 5px var(--primary), 0 0 10px var(--primary), 0 0 15px var(--primary); /* Slightly less intense glow */
         }
 
         .layout-wrapper .selection-item:hover{
@@ -111,7 +114,6 @@
     .topbar {
         position: relative; /* Make the topbar the reference for absolute positioning */
         border-bottom: 1px solid;
-        padding: 1rem;
     }
 
     .main-content {
@@ -128,22 +130,4 @@
         text-align: center;
         font-size: 0.9rem;
     }
-
-    .theme-toggle {
-        position: absolute;
-        top: 50%; /* Vertically center the button */
-        right: 1rem; /* Space from the right edge */
-        transform: translateY(-50%); /* Adjust for exact vertical centering */
-        background: none !important;
-        border: none;
-        cursor: pointer;
-        font-size: 24px;
-        padding: 10px;
-        color: var(--primary);
-        transition: background-color 0.3s ease;
-    }
-
-        .theme-toggle:hover {
-            color: orange !important
-        }
 </style>
