@@ -1,5 +1,5 @@
 ﻿<svg class="sun-icon" xmlns="http://www.w3.org/2000/svg"
-     width="24" height="24"
+     width="@Size" height="@Size"
      fill="currentColor" viewBox="0 0 24 24">
     <circle cx="12" cy="12" r="5" />
     <g stroke="currentColor" stroke-width="2">
@@ -13,3 +13,7 @@
         <line x1="17.66" y1="6.34" x2="19.78" y2="4.22" />
     </g>
 </svg>
+
+@code {
+    [Parameter] public int Size { get; set; } = 24;
+}

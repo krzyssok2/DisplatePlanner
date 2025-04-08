@@ -10,17 +10,84 @@
 @using System.Linq
 
 <div class="planner-page">
-    <div style="display:flex; flex-direction:column; border-right:1px solid;">
-        <ZoomInIcon />
-        <ZoomOutIcon />
+    <div class="icon-container">
+        <div class="icon-pair">
+            <button @onclick="ZoomOut">
+                <ZoomOutIcon />
+            </button>
+            
+            <button @onclick="ZoomIn">
+                <ZoomInIcon />
+            </button>
+            
+        </div>
+        
+        <div class="icon-pair">
+            <button @onclick="Undo">
+                <UndoIcon />
+            </button>
+           
+            <button @onclick="Redo">
+                <RedoIcon />
+            </button>
+           
+        </div>
+       
+        <div class="icon-pair">
+            <button @onclick="Copy">
+                <CopyIcon />
+            </button>
+            
+            <button @onclick="Paste">
+                <PasteIcon/>
+            </button>
+           
+        </div>
 
-        <CopyIcon />
-        <PasteIcon />
+        <div class="icon-pair">
+            <button @onclick="CollapseAll">
+                <DeselectAllIcon />
+            </button>
 
-        <DeleteIcon/>
+            <button @onclick="SelectAll">
+                <SelectAllIcon />
+            </button>            
+        </div>
+              
+        <div class="icon-pair">
+            <button @onclick="RotateSelectedPlates">
+                <RotateIcon/>
+            </button>
+           
+            <button @onclick="ArrangePlatesInOneLine">
+                <AlignPlatesIcon />
+            </button>
+            
+        </div>
 
-        <UndoIcon/>
-        <RedoIcon/>
+        <div class="icon-pair">
+            <button @onclick="MoveLeft">
+                <MoveArrowIcon Direction="left" />
+            </button>
+            
+            <button @onclick="MoveRight">
+                <MoveArrowIcon Direction="right" />
+            </button>            
+        </div>
+       
+        <div class="icon-pair">
+            <button @onclick="MoveUp">
+                <MoveArrowIcon Direction="up" />
+            </button>
+           
+            <button @onclick="MoveDown">
+                <MoveArrowIcon Direction="down" />
+            </button>            
+        </div>
+
+        <button @onclick="RemoveSelectedPlates">
+            <DeleteIcon />
+        </button>                    
     </div>
 
     <div oncontextmenu="return false;" class="grid" id="grid" tabindex="0" style="background-color: @selectedColor;"

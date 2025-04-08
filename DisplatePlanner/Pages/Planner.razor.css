@@ -46,6 +46,7 @@
 .tab {
     display: flex;
     width: 100%;
+    border-bottom:1px solid;
 }
 
     .tab button {
@@ -110,4 +111,15 @@
     position: absolute;
     background-color: blue;
     z-index: 10000;
+}
+
+.icon-container {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid;
+}
+
+.icon-pair{
+    display:flex;
+    flex-direction:row;
 }

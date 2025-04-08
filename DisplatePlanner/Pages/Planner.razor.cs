@@ -370,40 +370,35 @@ public partial class Planner(
                 break;
 
             case "ESCAPE":
-                selectionService.ClearSelection();
-                draggingPlates.Clear();
+                CollapseAll();
                 break;
 
             case "ARROWUP":
-                MoveSelectedPlates(0, -snapValue);
+                MoveUp();
                 break;
 
             case "ARROWDOWN":
-                MoveSelectedPlates(0, snapValue);
+                MoveDown();
                 break;
 
             case "ARROWLEFT":
-                MoveSelectedPlates(-snapValue, 0);
+                MoveLeft();
                 break;
 
             case "ARROWRIGHT":
-                MoveSelectedPlates(snapValue, 0);
+                MoveRight();
                 break;
 
             case "A" when e.CtrlKey:
-                selectionService.ClearSelection();
-                foreach (var plate in plates)
-                {
-                    selectionService.AddPlate(plate);
-                }
+                SelectAll();
                 break;
 
             case "Z" when e.CtrlKey:
-                plateStateService.Undo(plates);
+                Undo();
                 break;
 
             case "Y" when e.CtrlKey:
-                plateStateService.Redo(plates);
+                Redo();
                 break;
 
             case "C" when e.CtrlKey:
@@ -418,5 +413,32 @@ public partial class Planner(
                 RotateSelectedPlates();
                 break;
         }
+    }
+
+    private void MoveLeft() => MoveSelectedPlates(-snapValue, 0);
+
+    private void MoveRight() => MoveSelectedPlates(snapValue, 0);
+
+    private void MoveDown() => MoveSelectedPlates(0, snapValue);
+
+    private void MoveUp() => MoveSelectedPlates(0, -snapValue);
+
+    private void Undo() => plateStateService.Undo(plates);
+
+    private void Redo() => plateStateService.Redo(plates);
+
+    private void SelectAll()
+    {
+        selectionService.ClearSelection();
+        foreach (var plate in plates)
+        {
+            selectionService.AddPlate(plate);
+        }
+    }
+
+    private void CollapseAll()
+    {
+        selectionService.ClearSelection();
+        draggingPlates.Clear();
     }
 }

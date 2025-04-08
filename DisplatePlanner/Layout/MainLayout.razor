@@ -30,6 +30,7 @@
 <style>  
     .dark-mode{
         --text: #E0E0E0;
+        --placeholder: #AAAAAA;
         --background: #1A1A1A;
         --primary: #444444;
         --secondary: #888888;
@@ -38,6 +39,7 @@
 
     .white-mode {
         --text: #333333;
+        --placeholder: #888888;
         --background: #FFFFFF;
         --primary: #E0E0E0;
         --secondary: #CCCCCC;
@@ -63,7 +65,11 @@
         }
 
         .layout-wrapper input {
-            background-color: var(--background);
+            background-color: var(--primary);
+        }
+
+        .layout-wrapper input::placeholder{
+                color: var(--placeholder);
         }
 
         .layout-wrapper button{
@@ -113,7 +119,13 @@
             display: inline-block;
         }
 
-        
+        .layout-wrapper .icon-container{
+            background: var(--primary);
+        }
+
+        .layout-wrapper .plate-search-container{
+            background: var(--primary);
+        }
 
     .topbar {
         position: relative;
