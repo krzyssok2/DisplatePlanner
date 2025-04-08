@@ -3,7 +3,7 @@
 
 <div class="layout-wrapper @ThemeService.CurrentTheme-mode">
     <div class="topbar">
-        <NavMenu />
+        <TopBar />
     </div>
 
     <div class="main-content">
@@ -48,7 +48,7 @@
 
     .layout-wrapper {
         --footer-height: 50px;
-        --topbar-height: 50px;
+        --topbar-height: 75px;
         --page-padding: 1rem;
         --full-page-height: calc(100vh - var(--footer-height) - var(--topbar-height) - 3 * var(--page-padding));
 
@@ -130,13 +130,15 @@
     .topbar {
         position: relative;
         border-bottom: 1px solid;
+        height: var(--topbar-height);
+        max-height: var(--topbar-height);
     }
 
     .main-content {
         flex: 1;
         display: flex;
         flex-direction: column;
-        padding: var(--page-padding);
+        padding: var(--page-padding);       
     }
 
     .bottombar {

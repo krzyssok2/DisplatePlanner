@@ -144,8 +144,15 @@
 
         <div class="collapsible-container @(isSelectionCollapsed ? "collapsed" : "expanded")">
             <div class="tab">
-                <button @onclick="() => ShowLimited = true" class="@(ShowLimited ? "active" : string.Empty)">Limited</button>
-                <button @onclick="() => ShowLimited = false" class="@(!ShowLimited ? "active" : string.Empty)">Regular</button>
+                <button @onclick="() => ShowLimited = true" class="@(ShowLimited ? "active" : string.Empty)">
+                    <span class="button-label full-label">Limited</span>
+                    <span class="button-label short-label" title="Limited">LE</span>
+                </button>
+
+                <button @onclick="() => ShowLimited = false" class="@(!ShowLimited ? "active" : string.Empty)">
+                    <span class="button-label full-label">Regular</span>
+                    <span class="button-label short-label" title="Regular">RA</span>
+                </button>
             </div>
 
             <div style="@(ShowLimited ? "" : "display:none")" class="selection-container">

@@ -50,6 +50,7 @@
 
 .delete-button {
     background: transparent;
+    margin-left:auto;
     border: none;
     color: red;
     font-size: 16px;
@@ -78,6 +79,12 @@
     border-top: 3px solid;
     border-radius: 50%;
     animation: spin 1s linear infinite;
+}
+
+.normal-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 @keyframes spin {

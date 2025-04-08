@@ -123,3 +123,17 @@
     display:flex;
     flex-direction:row;
 }
+
+.short-label {
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+    .full-label {
+        display: none;
+    }
+
+    .short-label {
+        display: inline;
+    }
+}

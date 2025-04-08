@@ -10,7 +10,7 @@
 
 .brand ::deep a {
     text-decoration: none;
-    padding-right:2rem;
+    padding-right: 2rem;
 }
 
 .nav-links {
@@ -64,5 +64,11 @@
 
     .nav-links.show {
         display: flex;
+    }
+}
+
+@media screen and (max-width: 580px) {
+    .donate-text {
+        display: none;
     }
 }

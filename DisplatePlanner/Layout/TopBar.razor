@@ -1,0 +1,74 @@
+﻿<nav class="nav-menu" 
+@onmouseleave="() => isMenuOpen = false">
+    <div class="brand">
+        <NavLink href="" Match="NavLinkMatch.All" @onclick="()=> isMenuOpen = false">DisplatePlanner</NavLink>
+    </div>
+
+    <ul class="nav-links @((isMenuOpen ? "show" : ""))">
+        <li>
+            <NavLink Match="NavLinkMatch.All" href="" @onclick="()=> isMenuOpen = false">Home</NavLink>
+        </li>
+        <li>
+            <NavLink href="planner" @onclick="()=> isMenuOpen = false">Planner</NavLink>
+        </li>
+    </ul>
+
+    <div style="margin-left: auto; display:flex; flex-direction:row;align-items: center;">
+        <div class="donation-button">
+            <a href="https://ko-fi.com/krzys2" target="_blank" rel="noopener noreferrer" class="donate-link" title="Support me on Ko-Fi!">
+                <img src="https://storage.ko-fi.com/cdn/brandasset/v2/kofi_symbol.png" alt="Ko-fi" class="kofi-logo" />
+                <span class="donate-text">Support me on Ko-Fi</span>
+            </a>
+        </div>
+
+        <DisplatePlanner.Components.ThemeSelector />
+        <button class="hamburger" @onclick="ToggleMenu">
+            <HamburgerIcon/>
+        </button>
+    </div>  
+
+    
+</nav>
+
+
+@code {
+    private bool isMenuOpen = false;
+
+    private void ToggleMenu()
+    {
+        isMenuOpen = !isMenuOpen;
+    }
+}
+
+<style>
+    .donation-button {
+        margin-right:1rem;
+    }
+
+    .kofi-logo {
+        height: 24px;
+    }
+
+    .donate-link {
+        display: flex;
+        align-items: center;
+        border:1px solid;
+        gap: 8px;
+        background-color: var(--donate-bg);
+        text-decoration: none;
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+        .donate-link:hover {
+            transform: scale(1.05);
+        }
+
+        /* Emoji style */
+        .donate-link .emoji {
+            font-size: 1.2rem;
+        }
+</style>
