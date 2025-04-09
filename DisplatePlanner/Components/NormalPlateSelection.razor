@@ -32,7 +32,9 @@
             <div class="selection-item" @onclick="() => PlateClicked(plate)">
                 <img loading="lazy" src="@plate.ImageUrl" />
                 <span class="normal-name">@plate.Name</span>
-                <button class="delete-button" @onclick="() => RemovePlate(plate)" @onclick:stopPropagation>❌</button>
+                <button class="delete-button" @onclick="() => RemovePlate(plate)" @onclick:stopPropagation>
+                    <XIcon StrokeThickness="4"/>
+                </button>
             </div>
         </Virtualize>
     }

@@ -1,6 +1,8 @@
+using Blazored.LocalStorage;
 using DisplatePlanner.Enums;
 using DisplatePlanner.Interfaces;
 using DisplatePlanner.Models;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
@@ -11,6 +13,7 @@ public partial class Planner(
     ISelectionService selectionService,
     IAlignmentService alignmentService,
     IPlateStateService plateStateService,
+    ILocalStorageService localStorageService,
     IJSRuntime jsRuntime)
 {
     private bool isSelectionCollapsed = false;
@@ -67,6 +70,7 @@ public partial class Planner(
             if (!hasLoaded)
             {
                 plates = await plateStateService.RetrievePreviousSessionPlates();
+                selectedColor = await localStorageService.GetItemAsync<string>("canvasColor");
                 StateHasChanged();
                 hasLoaded = true;
             }
@@ -440,5 +444,21 @@ public partial class Planner(
     {
         selectionService.ClearSelection();
         draggingPlates.Clear();
+    }
+
+    private async void OnColorChanged(ChangeEventArgs e)
+    {
+        selectedColor = e.Value?.ToString();
+        await localStorageService.SetItemAsync("canvasColor", selectedColor);
+    }
+
+    private async void ClearColor()
+    {
+        if (selectedColor != null)
+        {
+            selectedColor = null;
+
+            await localStorageService.RemoveItemAsync("canvasColor");
+        }
     }
 }

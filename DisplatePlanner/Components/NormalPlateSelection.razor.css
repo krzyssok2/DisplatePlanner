@@ -19,14 +19,11 @@
     flex-direction: row;
     align-items: center;
     padding: 10px;
+    padding-right:2px;
     cursor: pointer;
-    position: relative;
-    background: linear-gradient(to right, rgba(255, 0, 0, 0.1), rgba(255, 0, 0, 0.4));
-    background-size: 0% 100%;
-    background-position: right;
-    background-repeat: no-repeat;
-    transition: background-size 0.2s ease-in-out;
-    transition: 0.2s;
+    position: relative;    
+    transition: 0.2s ease-in-out;
+    overflow:hidden;
 }
 
     .selection-item img {
@@ -45,23 +42,21 @@
     }
 
     .selection-item:has(.delete-button:hover) {
-        background-size: 100% 100%;
+        background: linear-gradient(to right, rgba(255, 0, 0, 0.1), rgba(255, 0, 0, 0.4));
     }
 
 .delete-button {
     background: transparent;
     margin-left:auto;
     border: none;
-    color: red;
-    font-size: 16px;
+    color: red !important;
     cursor: pointer;
-    transition: transform 0.2s ease-in-out, opacity 0.2s;
+    transition: 0.2s ease-in-out;
 }
 
     .delete-button:hover {
         background-color: transparent;
-        color: red;
-        transform: scale(1.1);
+        transform: scale(1.3);
         opacity: 0.8;
     }
 

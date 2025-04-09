@@ -12,6 +12,13 @@
 <div class="planner-page">
     <div class="icon-container">
         <div class="icon-pair">
+            <input type="color" style="height: 100%; width:100%;" @onchange="OnColorChanged"/>
+            <button @onclick="ClearColor">
+                <XIcon/>
+            </button>
+        </div>
+
+        <div class="icon-pair">
             <button @onclick="ZoomOut">
                 <ZoomOutIcon />
             </button>
