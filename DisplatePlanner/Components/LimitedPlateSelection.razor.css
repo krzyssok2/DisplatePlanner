@@ -3,23 +3,10 @@
     scrollbar-gutter: stable;
 }
 
-    .selection-items-container::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    .selection-items-container::-webkit-scrollbar-thumb {
-        background-color: #aaa;
-        border-radius: 4px;
-    }
-
-    .selection-items-container::-webkit-scrollbar-track {
-        background-color: #f0f0f0;
-    }
-
 .search-box {
     padding: 8px;
     border: 0px;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid;
 }
 
     .search-box:focus {
@@ -51,10 +38,6 @@
         border-radius: 3px;
     }
 
-    .selection-item:hover {
-        background-color: #ddd;
-    }
-
 .ribbon {
     position: absolute;
     top: 2px;
@@ -81,22 +64,27 @@
         background: linear-gradient(135deg, #4A90E2, #8A2BE2);
     }
 
-/*Spinner*/
 .loading-container {
     display: flex;
     align-items: center;
     gap: 8px;
     font-size: 1.2em;
-    color: #333;
 }
 
 .spinner {
     width: 20px;
     height: 20px;
-    border: 3px solid #ddd;
-    border-top: 3px solid #007bff;
+    border: 3px solid;
+    border-top: 3px solid;
     border-radius: 50%;
     animation: spin 1s linear infinite;
+}
+
+
+.limited-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 @keyframes spin {

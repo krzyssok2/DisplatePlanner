@@ -16,6 +16,7 @@ builder.Services.AddScoped<IPlateStateService, PlateStateService>();
 builder.Services.AddScoped<IAlignmentService, AlignmentService>();
 builder.Services.AddScoped<ISelectionService, SelectionService>();
 builder.Services.AddScoped<IClipboardService, ClipboardService>();
+builder.Services.AddSingleton<ThemeService>();
 builder.Services.AddScoped<IndexedDbService>();
 
 await builder.Build().RunAsync();
