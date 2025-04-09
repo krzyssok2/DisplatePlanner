@@ -325,13 +325,13 @@ public partial class Planner(
     private void ArrangePlatesInOneLine()
     {
         plateStateService.SaveState(plates);
-        double currentX = 0; // Starting X position for the first plate
-        double fixedY = 0;   // Fixed Y position (you can change this if needed)
+        double currentX = 0;
+        double fixedY = 0;
 
         foreach (var plate in SelectedPlates)
         {
             plate.SetCoordinates(currentX, fixedY);
-            currentX += plate.Width; // Add some space between plates
+            currentX += plate.Width;
         }
     }
 

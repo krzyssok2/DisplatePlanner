@@ -9,6 +9,9 @@
 }
 
 .brand ::deep a {
+    font-size: 1.5rem;   
+    font-weight: bold;
+    display: inline-block;
     text-decoration: none;
     padding-right: 2rem;
 }

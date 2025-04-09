@@ -40,7 +40,7 @@ public partial class NormalPlateSelection(IndexedDbService indexedDbService)
             return;
         }
         platesData.Add(plate);
-        platesData = platesData.OrderByDescending(i => i.StartDate).ToList();
+        platesData = platesData.OrderByDescending(i => i.Date).ToList();
         Filter();
 
         _ = indexedDbService.SavePlateAsync(plate);
@@ -64,7 +64,7 @@ public partial class NormalPlateSelection(IndexedDbService indexedDbService)
 
     private void PlateClicked(PlateData plate)
     {
-        var adjustedPlate = new PlateData(plate.Id, plate.StartDate, plate.Name, plate.ImageUrl, plate.Type, plate.IsHorizontal, selectedPlateSize);
+        var adjustedPlate = new PlateData(plate.Id, plate.Date, plate.Name, plate.ImageUrl, plate.Type, plate.IsHorizontal, selectedPlateSize);
         PlateClickedEvent.InvokeAsync(adjustedPlate);
     }
 }

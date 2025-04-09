@@ -35,7 +35,7 @@ public partial class LimitedPlateSelection
 
             var results = await Task.WhenAll(limitedTask, luminoTask);
 
-            platesData = [.. results.SelectMany(r => r).OrderByDescending(x => x.StartDate)];
+            platesData = [.. results.SelectMany(r => r).OrderByDescending(x => x.Date)];
             filteredPlates = platesData;
         }
         catch (Exception ex)
