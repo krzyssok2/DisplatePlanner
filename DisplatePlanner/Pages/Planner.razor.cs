@@ -168,8 +168,8 @@ public partial class Planner(
         return null;
     }
 
-    private const double minZoom = 1;
-    private const double maxZoom = 15;
+    private const double minZoom = 2;
+    private const double maxZoom = 16;
 
     private async void OnZoom(WheelEventArgs e)
     {
