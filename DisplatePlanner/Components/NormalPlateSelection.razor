@@ -31,7 +31,7 @@
         <Virtualize Items="@filteredPlates" Context="plate">
             <div class="selection-item" @onclick="() => PlateClicked(plate)">
                 <img loading="lazy" src="@plate.ImageUrl" />
-                <span class="normal-name">@plate.Name</span>
+                <span class="normal-name" title="@plate.Name">@plate.Name</span>
                 <button class="delete-button" @onclick="() => RemovePlate(plate)" @onclick:stopPropagation>
                     <XIcon StrokeThickness="4"/>
                 </button>

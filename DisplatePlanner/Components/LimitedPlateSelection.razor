@@ -18,7 +18,7 @@
                     @(typeDictionary.TryGetValue(plate.Type, out var name) ? name : "?")
                 </span>
                 <img loading="lazy" src="@plate.ImageUrl" />
-                <span class="limited-name">@plate.Name</span>
+                <span class="limited-name" title="@plate.Name">@plate.Name</span>
             </div>
         </Virtualize>
     }

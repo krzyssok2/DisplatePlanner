@@ -13,86 +13,86 @@
     <div class="icon-container">
         <div class="icon-pair">
             <input type="color" style="height: 100%; width:100%;" @onchange="OnColorChanged"/>
-            <button @onclick="ClearColor">
+            <button @onclick="ClearColor" title="Clear plate wall color">
                 <XIcon/>
             </button>
         </div>
 
         <div class="icon-pair">
-            <button @onclick="ZoomOut">
+            <button @onclick="ZoomOut" title="Zoom out (Ctrl+Mousewheel)">
                 <ZoomOutIcon />
             </button>
             
-            <button @onclick="ZoomIn">
+            <button @onclick="ZoomIn" title="Zoom in (Ctrl+Mousewheel)">
                 <ZoomInIcon />
             </button>
             
         </div>
         
-        <div class="icon-pair">
+        <div class="icon-pair" title="Undo (Ctrl+Z)">
             <button @onclick="Undo">
                 <UndoIcon />
             </button>
            
-            <button @onclick="Redo">
+            <button @onclick="Redo" title="Redo (Ctrl+Y)">
                 <RedoIcon />
             </button>
            
         </div>
        
-        <div class="icon-pair">
+        <div class="icon-pair" title="Copy (Ctrl+C)">
             <button @onclick="Copy">
                 <CopyIcon />
             </button>
             
-            <button @onclick="Paste">
+            <button @onclick="Paste" title="Paste (Ctrl+V)">
                 <PasteIcon/>
             </button>
            
         </div>
 
         <div class="icon-pair">
-            <button @onclick="CollapseAll">
+            <button @onclick="CollapseAll" title="Collapse all (Esc)">
                 <DeselectAllIcon />
             </button>
 
-            <button @onclick="SelectAll">
+            <button @onclick="SelectAll" title="Select all (Ctrl+A)">
                 <SelectAllIcon />
             </button>            
         </div>
               
-        <div class="icon-pair">
+        <div class="icon-pair" title="Rotate (Ctrt+R)">
             <button @onclick="RotateSelectedPlates">
                 <RotateIcon/>
             </button>
            
-            <button @onclick="ArrangePlatesInOneLine">
+            <button @onclick="ArrangePlatesInOneLine" title="Arrange in line (1)">
                 <AlignPlatesIcon />
             </button>
             
         </div>
 
         <div class="icon-pair">
-            <button @onclick="MoveLeft">
+            <button @onclick="MoveLeft" title="Move left (LeftArrow)">
                 <MoveArrowIcon Direction="left" />
             </button>
             
-            <button @onclick="MoveRight">
+            <button @onclick="MoveRight" title="Move right (RightArrow)">
                 <MoveArrowIcon Direction="right" />
             </button>            
         </div>
        
         <div class="icon-pair">
-            <button @onclick="MoveUp">
+            <button @onclick="MoveUp" title="Move up (UpArrow)">
                 <MoveArrowIcon Direction="up" />
             </button>
            
-            <button @onclick="MoveDown">
+            <button @onclick="MoveDown" title="Move down (DownArrow)">
                 <MoveArrowIcon Direction="down" />
             </button>            
         </div>
 
-        <button @onclick="RemoveSelectedPlates">
+        <button @onclick="RemoveSelectedPlates" title="Delete (Del)">
             <DeleteIcon />
         </button>                    
     </div>
