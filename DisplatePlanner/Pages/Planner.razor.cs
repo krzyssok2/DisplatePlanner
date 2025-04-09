@@ -71,8 +71,9 @@ public partial class Planner(
             {
                 plates = await plateStateService.RetrievePreviousSessionPlates();
                 selectedColor = await localStorageService.GetItemAsync<string>("canvasColor");
-                StateHasChanged();
                 hasLoaded = true;
+                StateHasChanged();
+                CalculateGridSize();
             }
         }
     }
@@ -167,23 +168,37 @@ public partial class Planner(
         return null;
     }
 
-    private void OnZoom(WheelEventArgs e)
+    private const double minZoom = 1;
+    private const double maxZoom = 15;
+
+    private async void OnZoom(WheelEventArgs e)
     {
         if (!e.CtrlKey || CurrentState != State.None) return;
 
-        if (e.DeltaY > 0)
-        {
-            ZoomIn();
-        }
-        else
-        {
-            ZoomOut();
-        }
+        var scroll = await GetGridScrollData();
+        if (scroll == null) return;
+
+        // Calculate the zoom factor
+        double zoomFactor = e.DeltaY > 0 ? 0.9 : 1.1;
+        double newZoomLevel = Math.Clamp(zoomLevel * zoomFactor, minZoom, maxZoom);
+
+        // Calculate the focus point relative to the grid
+        double focusX = (e.ClientX - gridContainerStartX + scroll.ScrollLeft) / zoomLevel;
+        double focusY = (e.ClientY - gridContainerStartY + scroll.ScrollTop) / zoomLevel;
+
+        zoomLevel = newZoomLevel;
+
+        // Adjust scroll to keep the focus point centered
+        double newScrollLeft = focusX * newZoomLevel - (e.ClientX - gridContainerStartX);
+        double newScrollTop = focusY * newZoomLevel - (e.ClientY - gridContainerStartY);
+
+        await jsRuntime.InvokeVoidAsync("setScrollPosition", "grid", newScrollLeft, newScrollTop);
+        StateHasChanged();
     }
 
-    private void ZoomIn() => zoomLevel = Math.Max(zoomLevel - 1, 2);
+    private void ZoomOut() => zoomLevel = Math.Max(zoomLevel * 0.9, minZoom);
 
-    private void ZoomOut() => zoomLevel = Math.Min(zoomLevel + 1, 15.0);
+    private void ZoomIn() => zoomLevel = Math.Min(zoomLevel * 1.1, maxZoom);
 
     private void AddPlate(PlateData selectedPlate)
     {

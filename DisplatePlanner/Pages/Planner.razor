@@ -184,7 +184,9 @@
 
         return {
             scrollTop: element.scrollTop,
-            scrollLeft: element.scrollLeft
+            scrollLeft: element.scrollLeft,
+            scrollWidth: element.scrollWidth,
+            scrollHeight: element.scrollHeight
         };
     }
 
@@ -198,6 +200,14 @@
                     }
                 }, { passive: false });
             }
+        }
+    };
+
+        window.setScrollPosition = (elementId, scrollLeft, scrollTop) => {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.scrollLeft = scrollLeft;
+            element.scrollTop = scrollTop;
         }
     };
 </script>
