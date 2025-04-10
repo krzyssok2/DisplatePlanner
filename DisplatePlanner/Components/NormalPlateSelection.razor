@@ -3,7 +3,7 @@
 
 <input type="text" @bind="searchTerm" @oninput="FilterPlates" placeholder="Search" class="search-box" />
 <NormalPlateSearch PlateAddedEvent="AddPlate" />
-<div style="padding: 8px; border-bottom: 1px solid #ccc; display: flex; align-items: center; gap: 10px;">
+<div class="size-container">
     <span>Size:</span>
     <InputRadioGroup @bind-Value="selectedPlateSize">
         <label>

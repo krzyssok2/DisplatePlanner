@@ -50,7 +50,7 @@
         --footer-height: 50px;
         --topbar-height: 75px;
         --page-padding: 1rem;
-        --full-page-height: calc(100vh - var(--footer-height) - var(--topbar-height) - 3 * var(--page-padding));
+        --full-page-height: calc(100vh - var(--footer-height) - var(--topbar-height) - 2 * var(--page-padding));
 
         display: flex;
         flex-direction: column;
@@ -125,7 +125,10 @@
         }
 
     .topbar {
-        position: relative;
+        background: var(--background);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
         border-bottom: 1px solid;
         height: var(--topbar-height);
         max-height: var(--topbar-height);

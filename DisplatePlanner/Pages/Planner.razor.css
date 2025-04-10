@@ -87,7 +87,7 @@
 
 .Plate {
     position: absolute;
-    background: red;
+    background: black;
     cursor: move;
     z-index: 0;
     display: flex;
@@ -96,6 +96,7 @@
 }
 
     .Plate.selected {
+        background: red;
         z-index: 9999; /* Set to a higher value to ensure it's above other plates */
     }
 

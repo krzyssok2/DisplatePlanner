@@ -82,6 +82,20 @@
     text-overflow: ellipsis;
 }
 
+.size-container {
+    padding: 8px;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+@media screen and (max-width: 768px) {
+    .size-container span {
+        display: none;
+    }
+}
+
 @keyframes spin {
     from {
         transform: rotate(0deg);
