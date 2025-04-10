@@ -290,6 +290,19 @@ public partial class Planner(
         var dx = e.ClientX - offsetX + scrollX;
         var dy = e.ClientY - offsetY + scrollY;
 
+        // Move in straight line behaviour
+        if (e.ShiftKey)
+        {
+            if (Math.Abs(dx) > Math.Abs(dy))
+            {
+                dy = 0;
+            }
+            else
+            {
+                dx = 0;
+            }
+        }
+
         if (Math.Abs(dx) > 3 || Math.Abs(dy) > 3)
         {
             var zoomAdjustedX = GetSnappedValue(dx / zoomLevel, snapValue);
