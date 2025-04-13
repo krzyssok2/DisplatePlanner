@@ -101,12 +101,12 @@
          
          @onkeydown="HandleOnKeyDown" @onkeydown:preventDefault
          @onwheel="HandleOnZoom"   
-         @onmouseup="HandleMouseUp"
-         @ontouchend="HandleTouchEnd"
-         @onmousedown="HandleMouseDown"
-         @ontouchstart="HandleTouchStart"
-         @onmousemove="HandleMouseMove"
-         @ontouchmove="HandleTouchMove"
+         @onmouseup="HandleStateCancellation"
+         @ontouchend="HandleStateCancellation"
+         @onmousedown="HandleStartSelect"
+         @ontouchstart="HandleStartSelect"
+         @onmousemove="HandleDragOrSelect"
+         @ontouchmove="HandleDragOrSelect"
 
          autofocus="true">
         <div style="position:absolute;
@@ -120,8 +120,8 @@
                             top: @(rect.Y * zoomLevel)px;
                             left: @(rect.X * zoomLevel)px;"
                      @onclick="(e) => SelectAPlate(e,rect)"
-                     @onmousedown="(e) => StartDrag(e, rect)" @onmousedown:stopPropagation
-                     @ontouchstart="(e) => StartDrag(e, rect)" @ontouchstart:stopPropagation>
+                     @onmousedown="(e) => HandleStartDrag(e, rect)" @onmousedown:stopPropagation
+                     @ontouchstart="(e) => HandleStartDrag(e, rect)" @ontouchstart:stopPropagation>
                     <div class="PlateContainer" style="transform: rotate(@($"{rect.Rotation}deg"))">
                         <img loading="lazy" style="@(GetRotationStyle(rect, zoomLevel))" class="plate-image" tabindex="-1" src="@rect.ImageUrl" draggable="false" />
                     </div>

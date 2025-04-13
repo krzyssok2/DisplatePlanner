@@ -92,14 +92,14 @@ public partial class Planner(
         public double Y { get; set; }
     }
 
-    private async void HandleMouseDown(MouseEventArgs e)
+    private async void HandleStartSelect(MouseEventArgs e)
     {
         if (e.Button != 0) return;
 
         await HandlePointerDown(e.ClientX, e.ClientY, e.OffsetX, e.OffsetY);
     }
 
-    private async void HandleTouchStart(TouchEventArgs e)
+    private async void HandleStartSelect(TouchEventArgs e)
     {
         if (e.Touches.Length == 0) return;
 
@@ -121,12 +121,12 @@ public partial class Planner(
         CurrentState = State.Selecting;
     }
 
-    private async void HandleMouseMove(MouseEventArgs e)
+    private async void HandleDragOrSelect(MouseEventArgs e)
     {
         await HandlePointerMove(e.ClientX, e.ClientY, e.ShiftKey);
     }
 
-    private async void HandleTouchMove(TouchEventArgs e)
+    private async void HandleDragOrSelect(TouchEventArgs e)
     {
         if (e.Touches.Length == 0) return;
         var touch = e.Touches[0];
@@ -155,9 +155,9 @@ public partial class Planner(
         }
     }
 
-    private void HandleMouseUp(MouseEventArgs e) => HandlePointerUp();
+    private void HandleStateCancellation(MouseEventArgs e) => HandlePointerUp();
 
-    private void HandleTouchEnd(TouchEventArgs e) => HandlePointerUp();
+    private void HandleStateCancellation(TouchEventArgs e) => HandlePointerUp();
 
     private void HandlePointerUp()
     {
@@ -267,13 +267,13 @@ public partial class Planner(
 
     private ScrollData scrollStartDrag = new(0, 0);
 
-    private async void StartDrag(MouseEventArgs e, Plate plate)
+    private async void HandleStartDrag(MouseEventArgs e, Plate plate)
     {
         if (e.Button != 0) return;
         await StartDragCommon(e.ClientX, e.ClientY, e.ShiftKey, e.CtrlKey, plate);
     }
 
-    private async void StartDrag(TouchEventArgs e, Plate plate)
+    private async void HandleStartDrag(TouchEventArgs e, Plate plate)
     {
         if (e.Touches.Length == 0) return;
         var touch = e.Touches[0];
