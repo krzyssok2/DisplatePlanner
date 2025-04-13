@@ -10,7 +10,7 @@
 .grid {
     overflow: scroll;
     position: relative;
-    width: 100%;
+    width: 100%;    
     touch-action: none;
 }
 
@@ -47,7 +47,7 @@
 .tab {
     display: flex;
     width: 100%;
-    border-bottom:1px solid;
+    border-bottom: 1px solid;
 }
 
     .tab button {
@@ -122,9 +122,9 @@
     touch-action: none;
 }
 
-.icon-pair{
-    display:flex;
-    flex-direction:row;
+.icon-pair {
+    display: flex;
+    flex-direction: row;
 }
 
 .short-label {
