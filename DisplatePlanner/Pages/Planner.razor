@@ -114,7 +114,7 @@
                         height:@(GridLenght * zoomLevel)px;">
             @foreach (var rect in plates)
             {
-                <div class="Plate @((SelectedPlates.Contains(rect)) ? "selected" : "")"
+                <div class="Plate @((selectionService.SelectedPlates.Contains(rect)) ? "selected" : "")"
                      style="width: @(rect.Width * zoomLevel)px;
                             height: @(rect.Height * zoomLevel)px;
                             top: @(rect.Y * zoomLevel)px;
@@ -128,9 +128,9 @@
                 </div>
             }
 
-            @if (CurrentState == State.Dragging && AlignmentLines.Any())
+            @if (CurrentState == State.Dragging && alignmentService.AlignmentLines.Any())
             {
-                @foreach (var line in AlignmentLines)
+                @foreach (var line in alignmentService.AlignmentLines)
                 {
                     <div class="alignment-line"
                          style="left: @(line.X * zoomLevel)px;
@@ -143,10 +143,10 @@
             @if (CurrentState == State.Selecting)
             {
                 <div class="selection-box"
-                     style="left: @(SelectionBox.X * zoomLevel)px;
-                            top: @(SelectionBox.Y * zoomLevel)px;
-                            width: @(SelectionBox.Width * zoomLevel)px;
-                            height: @(SelectionBox.Height * zoomLevel)px;" />
+                     style="left: @(selectionService.SelectionBox.X * zoomLevel)px;
+                            top: @(selectionService.SelectionBox.Y * zoomLevel)px;
+                            width: @(selectionService.SelectionBox.Width * zoomLevel)px;
+                            height: @(selectionService.SelectionBox.Height * zoomLevel)px;" />
             }
         </div>
     </div>

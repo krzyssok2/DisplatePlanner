@@ -5,21 +5,10 @@ namespace DisplatePlanner.Services;
 
 public class SelectionService : ISelectionService
 {
-    private readonly List<Plate> SelectedPlates = [];
-    private double selectionBoxStartX, selectionBoxStartY, selectionBoxEndX, selectionBoxEndY;
-
-    private Selection SelectionBox => new(
-        Math.Min(selectionBoxStartX, selectionBoxEndX),
-        Math.Min(selectionBoxStartY, selectionBoxEndY),
-        Math.Abs(selectionBoxEndX - selectionBoxStartX),
-        Math.Abs(selectionBoxEndY - selectionBoxStartY)
-    );
-
-    public IReadOnlyList<Plate> GetSelectedPlates() => SelectedPlates;
+    public List<Plate> SelectedPlates { get; } = [];
+    public Selection SelectionBox { get; private set; } = new Selection();
 
     public bool ContainsPlate(Plate plate) => SelectedPlates.Contains(plate);
-
-    public Selection GetSelectionBox() => SelectionBox;
 
     public void SelectNewSingle(Plate plate)
     {
@@ -61,16 +50,13 @@ public class SelectionService : ISelectionService
 
     public void StartSelectionBox(double startX, double startY)
     {
-        selectionBoxStartX = startX;
-        selectionBoxStartY = startY;
-        selectionBoxEndX = startX;
-        selectionBoxEndY = startY;
+        SelectionBox.SetStart(startX, startY);
+        SelectionBox.SetEnd(startX, startY);
     }
 
     public void UpdateSelectionBox(double endX, double endY)
     {
-        selectionBoxEndX = endX;
-        selectionBoxEndY = endY;
+        SelectionBox.SetEnd(endX, endY);
     }
 
     public void SelectPlatesWithinBox(IEnumerable<Plate> plates)
@@ -80,7 +66,6 @@ public class SelectionService : ISelectionService
 
     private static bool IsPlateInSelection(Plate plate, Selection selection)
     {
-        var plateRect = new Selection(plate.X, plate.Y, plate.Width, plate.Height);
-        return selection.IntersectsWith(plateRect);
+        return selection.IntersectsWith(plate);
     }
 }

@@ -5,9 +5,7 @@ namespace DisplatePlanner.Services;
 
 public class AlignmentService : IAlignmentService
 {
-    private readonly List<AlignmentLine> AlignmentLines = [];
-
-    public IReadOnlyList<AlignmentLine> GetAlignmentLines() => AlignmentLines;
+    public List<AlignmentLine> AlignmentLines { get; private set; } = [];
 
     public void CalculateAlignmentLines(List<Plate> plates, List<Plate> draggingPlates, double snapValue)
     {
@@ -53,7 +51,7 @@ public class AlignmentService : IAlignmentService
         }
     }
 
-    private bool IsAligned(double pos1, double pos2, double snapValue) => Math.Abs(pos1 - pos2) < snapValue;
+    private static bool IsAligned(double pos1, double pos2, double snapValue) => Math.Abs(pos1 - pos2) < snapValue;
 
     private void TryAddAlignment(bool isVertical, Plate plate, Plate selectedPlate, double pos1, double pos2, double snapValue)
     {
