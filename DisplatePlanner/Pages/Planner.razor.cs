@@ -70,6 +70,7 @@ public partial class Planner(
             if (!hasLoaded)
             {
                 plates = await plateStateService.RetrievePreviousSessionPlates();
+                await SetGridContainerOffset();
                 selectedColor = await localStorageService.GetItemAsync<string>("canvasColor");
                 hasLoaded = true;
                 StateHasChanged();
@@ -78,62 +79,87 @@ public partial class Planner(
         }
     }
 
-    private async void HandleOnMouseDown(MouseEventArgs e)
+    private async Task SetGridContainerOffset()
     {
-        if (e.Button != 0)
-        {
-            return;
-        }
+        var offset = await jsRuntime.InvokeAsync<Offset>("getElementOffset", "grid");
+        gridContainerStartX = offset.X;
+        gridContainerStartY = offset.Y;
+    }
 
+    private class Offset
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+    }
+
+    private async void HandleMouseDown(MouseEventArgs e)
+    {
+        if (e.Button != 0) return;
+
+        await HandlePointerDown(e.ClientX, e.ClientY, e.OffsetX, e.OffsetY);
+    }
+
+    private async void HandleTouchStart(TouchEventArgs e)
+    {
+        if (e.Touches.Length == 0) return;
+
+        var touch = e.Touches[0];
+
+        await HandlePointerDown(touch.ClientX, touch.ClientY, 0, 0);
+    }
+
+    private async Task HandlePointerDown(double clientX, double clientY, double offsetX, double offsetY)
+    {
         var scroll = await GetGridScrollData();
         if (scroll == null)
-        {
             return;
-        }
 
-        // Get the absolute position of the grid container by using the first mouse event
-        if (gridContainerStartX == 0 && gridContainerStartY == 0)
-        {
-            gridContainerStartX = e.ClientX - e.OffsetX;
-            gridContainerStartY = e.ClientY - e.OffsetY;
-        }
-
-        // Calculate relative start position
         selectionService.StartSelectionBox(
-            (e.ClientX - gridContainerStartX + scroll.ScrollLeft) / zoomLevel,
-            (e.ClientY - gridContainerStartY + scroll.ScrollTop) / zoomLevel);
+            (clientX - gridContainerStartX + scroll.ScrollLeft) / zoomLevel,
+            (clientY - gridContainerStartY + scroll.ScrollTop) / zoomLevel);
 
         CurrentState = State.Selecting;
     }
 
-    private async void HandleOnMouseMove(MouseEventArgs e)
+    private async void HandleMouseMove(MouseEventArgs e)
+    {
+        await HandlePointerMove(e.ClientX, e.ClientY, e.ShiftKey);
+    }
+
+    private async void HandleTouchMove(TouchEventArgs e)
+    {
+        if (e.Touches.Length == 0) return;
+        var touch = e.Touches[0];
+        await HandlePointerMove(touch.ClientX, touch.ClientY);
+    }
+
+    private async Task HandlePointerMove(double clientX, double clientY, bool shiftKey = false)
     {
         switch (CurrentState)
         {
             case State.Dragging:
-                DragSelectedPlates(e);
+                DragSelectedPlates(clientX, clientY, shiftKey);
                 CalculateGridSize();
                 break;
 
             case State.Selecting:
-
                 var scroll = await GetGridScrollData();
-
-                if (scroll == null)
-                {
-                    return;
-                }
+                if (scroll == null) return;
 
                 selectionService.UpdateSelectionBox(
-                    (e.ClientX - gridContainerStartX + scroll.ScrollLeft) / zoomLevel,
-                    (e.ClientY - gridContainerStartY + scroll.ScrollTop) / zoomLevel);
+                    (clientX - gridContainerStartX + scroll.ScrollLeft) / zoomLevel,
+                    (clientY - gridContainerStartY + scroll.ScrollTop) / zoomLevel);
 
                 selectionService.SelectPlatesWithinBox(plates);
                 break;
         }
     }
 
-    private void HandleOnMouseUp(MouseEventArgs e)
+    private void HandleMouseUp(MouseEventArgs e) => HandlePointerUp();
+
+    private void HandleTouchEnd(TouchEventArgs e) => HandlePointerUp();
+
+    private void HandlePointerUp()
     {
         switch (CurrentState)
         {
@@ -244,13 +270,25 @@ public partial class Planner(
     private async void StartDrag(MouseEventArgs e, Plate plate)
     {
         if (e.Button != 0) return;
+        await StartDragCommon(e.ClientX, e.ClientY, e.ShiftKey, e.CtrlKey, plate);
+    }
 
+    private async void StartDrag(TouchEventArgs e, Plate plate)
+    {
+        if (e.Touches.Length == 0) return;
+        var touch = e.Touches[0];
+        await StartDragCommon(touch.ClientX, touch.ClientY, e.ShiftKey, e.CtrlKey, plate);
+    }
+
+    private async Task StartDragCommon(double clientX, double clientY, bool shiftKey, bool ctrlKey, Plate plate)
+    {
         CurrentState = State.Dragging;
         draggingPlates.Clear();
         plateStateService.SaveState(plates);
+
         if (!selectionService.ContainsPlate(plate))
         {
-            if (!e.ShiftKey && !e.CtrlKey)
+            if (!shiftKey && !ctrlKey)
             {
                 selectionService.SelectNewSingle(plate);
             }
@@ -269,16 +307,16 @@ public partial class Planner(
             draggingPlates.Add(plate);
         }
 
-        offsetX = e.ClientX;
-        offsetY = e.ClientY;
+        offsetX = clientX;
+        offsetY = clientY;
 
         var scroll = await GetGridScrollData();
+        scrollStartDrag = scroll ?? new(0, 0);
 
-        scrollStartDrag = scroll == null ? new(0, 0) : scroll;
         alignmentService.CalculateAlignmentLines(plates, draggingPlates, snapValue);
     }
 
-    private async void DragSelectedPlates(MouseEventArgs e)
+    private async void DragSelectedPlates(double clientX, double clientY, bool shiftKey)
     {
         if (draggingPlates.Count == 0) return;
 
@@ -287,11 +325,11 @@ public partial class Planner(
         var scrollY = scroll.ScrollTop - scrollStartDrag.ScrollTop;
         scrollStartDrag = scroll;
 
-        var dx = e.ClientX - offsetX + scrollX;
-        var dy = e.ClientY - offsetY + scrollY;
+        var dx = clientX - offsetX + scrollX;
+        var dy = clientY - offsetY + scrollY;
 
         // Move in straight line behaviour
-        if (e.ShiftKey)
+        if (shiftKey)
         {
             if (Math.Abs(dx) > Math.Abs(dy))
             {
@@ -313,8 +351,8 @@ public partial class Planner(
                 plate.IncrementCoordinates(zoomAdjustedX, zoomAdjustedY);
             }
 
-            offsetX = e.ClientX;
-            offsetY = e.ClientY;
+            offsetX = clientX;
+            offsetY = clientY;
             wasDragged = true;
 
             alignmentService.CalculateAlignmentLines(plates, draggingPlates, snapValue);

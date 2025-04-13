@@ -98,11 +98,17 @@
     </div>
 
     <div oncontextmenu="return false;" class="grid" id="grid" tabindex="0" style="background-color: @selectedColor;"
+         
          @onkeydown="HandleOnKeyDown" @onkeydown:preventDefault
-         @onwheel="HandleOnZoom"
-         @onmousemove="HandleOnMouseMove"
-         @onmouseup="HandleOnMouseUp"
-         @onmousedown="HandleOnMouseDown" autofocus="true">
+         @onwheel="HandleOnZoom"   
+         @onmouseup="HandleMouseUp"
+         @ontouchend="HandleTouchEnd"
+         @onmousedown="HandleMouseDown"
+         @ontouchstart="HandleTouchStart"
+         @onmousemove="HandleMouseMove"
+         @ontouchmove="HandleTouchMove"
+
+         autofocus="true">
         <div style="position:absolute;
                         width: @(GridWith * zoomLevel)px;
                         height:@(GridLenght * zoomLevel)px;">
@@ -114,7 +120,8 @@
                             top: @(rect.Y * zoomLevel)px;
                             left: @(rect.X * zoomLevel)px;"
                      @onclick="(e) => SelectAPlate(e,rect)"
-                     @onmousedown="(e) => StartDrag(e, rect)" @onmousedown:stopPropagation>
+                     @onmousedown="(e) => StartDrag(e, rect)" @onmousedown:stopPropagation
+                     @ontouchstart="(e) => StartDrag(e, rect)" @ontouchstart:stopPropagation>
                     <div class="PlateContainer" style="transform: rotate(@($"{rect.Rotation}deg"))">
                         <img loading="lazy" style="@(GetRotationStyle(rect, zoomLevel))" class="plate-image" tabindex="-1" src="@rect.ImageUrl" draggable="false" />
                     </div>
@@ -210,4 +217,15 @@
             element.scrollTop = scrollTop;
         }
     };
+
+    function getElementOffset(elementId) {
+        const element = document.getElementById(elementId);
+        if (!element) return null;
+        const rect = element.getBoundingClientRect();
+
+        return {
+            x: rect.left + window.scrollX,
+            y: rect.top + window.scrollY
+        };
+    }
 </script>
