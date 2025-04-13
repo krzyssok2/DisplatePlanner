@@ -78,7 +78,7 @@ public partial class Planner(
         }
     }
 
-    private async void OnMouseDown(MouseEventArgs e)
+    private async void HandleOnMouseDown(MouseEventArgs e)
     {
         if (e.Button != 0)
         {
@@ -106,7 +106,7 @@ public partial class Planner(
         CurrentState = State.Selecting;
     }
 
-    private async void OnMouseMove(MouseEventArgs e)
+    private async void HandleOnMouseMove(MouseEventArgs e)
     {
         switch (CurrentState)
         {
@@ -133,7 +133,7 @@ public partial class Planner(
         }
     }
 
-    private void OnMouseUp(MouseEventArgs e)
+    private void HandleOnMouseUp(MouseEventArgs e)
     {
         switch (CurrentState)
         {
@@ -171,7 +171,7 @@ public partial class Planner(
     private const double minZoom = 2;
     private const double maxZoom = 16;
 
-    private async void OnZoom(WheelEventArgs e)
+    private async void HandleOnZoom(WheelEventArgs e)
     {
         if (!e.CtrlKey || CurrentState != State.None) return;
 
@@ -387,7 +387,7 @@ public partial class Planner(
         return $"""height:{styleHeight * zoomLevel}px; width:{styleWidth * zoomLevel}px;""";
     }
 
-    private void OnKeyDown(KeyboardEventArgs e)
+    private void HandleOnKeyDown(KeyboardEventArgs e)
     {
         if (CurrentState != State.None) return;
 
