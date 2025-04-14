@@ -11,27 +11,28 @@ public class ColorManagementService : IColorManagementService
     private string? _selectedColor;
     public string? SelectedColor => _selectedColor;
 
-    private ILocalStorageService _localStorageService;
+    private readonly ILocalStorageService localStorageService;
 
     public ColorManagementService(ILocalStorageService localStorageService)
     {
-        _localStorageService = localStorageService;
+        this.localStorageService = localStorageService;
+        // Retrieval from local storage happens quickly, so we fire and forget
         _ = InitializeAsync();
     }
 
-    public async Task InitializeAsync()
+    private async Task InitializeAsync()
     {
         if (!_isInitialized)
         {
             try
             {
-                _selectedColor = await _localStorageService.GetItemAsync<string>(ColorStorageKey);
+                _selectedColor = await localStorageService.GetItemAsync<string>(ColorStorageKey);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Failed to fetch previous session grid color with exception:{ex.Message}");
             }
-            
+
             _isInitialized = true;
         }
     }
@@ -39,11 +40,10 @@ public class ColorManagementService : IColorManagementService
     public async Task ChangeColor(string? newColor)
     {
         _selectedColor = newColor;
-        _isInitialized = true;
 
         if (newColor != null)
         {
-            await _localStorageService.SetItemAsync(ColorStorageKey, newColor);
+            await localStorageService.SetItemAsync(ColorStorageKey, newColor);
         }
         else
         {
@@ -54,7 +54,6 @@ public class ColorManagementService : IColorManagementService
     public async Task ClearColor()
     {
         _selectedColor = null;
-        _isInitialized = true;
-        await _localStorageService.RemoveItemAsync(ColorStorageKey);
+        await localStorageService.RemoveItemAsync(ColorStorageKey);
     }
 }
