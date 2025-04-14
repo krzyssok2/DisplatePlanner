@@ -97,7 +97,7 @@
         </button>                    
     </div>
 
-    <div oncontextmenu="return false;" class="grid" id="grid" tabindex="0" style="background-color: @selectedColor;"
+    <div oncontextmenu="return false;" class="grid" id="grid" tabindex="0" style="background-color: @colorManagementService.SelectedColor;"
          
          @onkeydown="HandleOnKeyDown" @onkeydown:preventDefault
          @onwheel="HandleOnZoom"   
@@ -110,20 +110,20 @@
 
          autofocus="true">
         <div style="position:absolute;
-                        width: @(GridWith * zoomLevel)px;
-                        height:@(GridLenght * zoomLevel)px;">
+                        width: @(GridWidth * zoomService.ZoomLevel)px;
+                        height:@(GridLength * zoomService.ZoomLevel)px;">
             @foreach (var rect in plates)
             {
                 <div class="Plate @((selectionService.SelectedPlates.Contains(rect)) ? "selected" : "")"
-                     style="width: @(rect.Width * zoomLevel)px;
-                            height: @(rect.Height * zoomLevel)px;
-                            top: @(rect.Y * zoomLevel)px;
-                            left: @(rect.X * zoomLevel)px;"
+                     style="width: @(rect.Width * zoomService.ZoomLevel)px;
+                            height: @(rect.Height * zoomService.ZoomLevel)px;
+                            top: @(rect.Y * zoomService.ZoomLevel)px;
+                            left: @(rect.X * zoomService.ZoomLevel)px;"
                      @onclick="(e) => SelectAPlate(e,rect)"
                      @onmousedown="(e) => HandleStartDrag(e, rect)" @onmousedown:stopPropagation
                      @ontouchstart="(e) => HandleStartDrag(e, rect)" @ontouchstart:stopPropagation>
                     <div class="PlateContainer" style="transform: rotate(@($"{rect.Rotation}deg"))">
-                        <img loading="lazy" style="@(GetRotationStyle(rect, zoomLevel))" class="plate-image" tabindex="-1" src="@rect.ImageUrl" draggable="false" />
+                        <img loading="lazy" style="@(GetRotationStyle(rect))" class="plate-image" tabindex="-1" src="@rect.ImageUrl" draggable="false" />
                     </div>
                 </div>
             }
@@ -133,57 +133,51 @@
                 @foreach (var line in alignmentService.AlignmentLines)
                 {
                     <div class="alignment-line"
-                         style="left: @(line.X * zoomLevel)px;
-                                top: @(line.Y * zoomLevel)px;
-                                width: @((!line.IsVertical ? line.Lenght * zoomLevel : 2))px;
-                                height: @((line.IsVertical ? line.Lenght * zoomLevel : 2))px;" />
+                         style="left: @(line.X * zoomService.ZoomLevel)px;
+                                top: @(line.Y * zoomService.ZoomLevel)px;
+                                width: @((!line.IsVertical ? line.Lenght * zoomService.ZoomLevel : 2))px;
+                                height: @((line.IsVertical ? line.Lenght * zoomService.ZoomLevel : 2))px;" />
                 }
             }
 
             @if (CurrentState == State.Selecting)
             {
                 <div class="selection-box"
-                     style="left: @(selectionService.SelectionBox.X * zoomLevel)px;
-                            top: @(selectionService.SelectionBox.Y * zoomLevel)px;
-                            width: @(selectionService.SelectionBox.Width * zoomLevel)px;
-                            height: @(selectionService.SelectionBox.Height * zoomLevel)px;" />
+                     style="left: @(selectionService.SelectionBox.X * zoomService.ZoomLevel)px;
+                            top: @(selectionService.SelectionBox.Y * zoomService.ZoomLevel)px;
+                            width: @(selectionService.SelectionBox.Width * zoomService.ZoomLevel)px;
+                            height: @(selectionService.SelectionBox.Height * zoomService.ZoomLevel)px;" />
             }
         </div>
     </div>
 
     <div class="plate-search-container">
-        <button class="collapse-button" @onclick="() => isSelectionCollapsed = !isSelectionCollapsed">
+        <button class="collapse-button" @onclick="() => ToggleSearchSelection()">
             @(isSelectionCollapsed ? ">" : "<")
         </button>
 
         <div class="collapsible-container @(isSelectionCollapsed ? "collapsed" : "expanded")">
             <div class="tab">
-                <button @onclick="() => ShowLimited = true" class="@(ShowLimited ? "active" : string.Empty)">
+                <button @onclick="() => ToggleLimited(true)" class="@(showLimited ? "active" : string.Empty)">
                     <span class="button-label full-label">Limited</span>
                     <span class="button-label short-label" title="Limited">LE</span>
                 </button>
 
-                <button @onclick="() => ShowLimited = false" class="@(!ShowLimited ? "active" : string.Empty)">
+                <button @onclick="() => ToggleLimited(false)" class="@(!showLimited ? "active" : string.Empty)">
                     <span class="button-label full-label">Regular</span>
                     <span class="button-label short-label" title="Regular">RA</span>
                 </button>
             </div>
 
-            <div style="@(ShowLimited ? "" : "display:none")" class="selection-container">
+            <div style="@(showLimited ? "" : "display:none")" class="selection-container">
                 <LimitedPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)" />
             </div>
-            <div style="@(!ShowLimited ? "" : "display:none")" class="selection-container">
+            <div style="@(!showLimited ? "" : "display:none")" class="selection-container">
                 <NormalPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)" />
             </div>
         </div>
     </div>
 </div>
-
-
-
-<style>
-
-</style>
 
 <script>
     function getScrollPosition(elementId) {

@@ -4,7 +4,7 @@ namespace DisplatePlanner.Interfaces;
 
 public interface ISelectionService
 {
-    List<Plate> SelectedPlates { get; }
+    IReadOnlyList<Plate> SelectedPlates { get; }
     Selection SelectionBox { get; }
 
     bool ContainsPlate(Plate plate);

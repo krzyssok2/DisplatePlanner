@@ -5,11 +5,12 @@ namespace DisplatePlanner.Services;
 
 public class AlignmentService : IAlignmentService
 {
-    public List<AlignmentLine> AlignmentLines { get; private set; } = [];
+    private readonly List<AlignmentLine> _alignmentLines = [];
+    public IReadOnlyList<AlignmentLine> AlignmentLines => _alignmentLines;
 
     public void CalculateAlignmentLines(List<Plate> plates, List<Plate> draggingPlates, double snapValue)
     {
-        AlignmentLines.Clear();
+        _alignmentLines.Clear();
 
         foreach (var plate in plates)
         {
@@ -25,7 +26,7 @@ public class AlignmentService : IAlignmentService
 
     public void ClearAlignmentLines()
     {
-        AlignmentLines.Clear();
+        _alignmentLines.Clear();
     }
 
     private void CheckAlignment(Plate plate, Plate selectedPlate, bool isVertical, double snapValue)
@@ -63,7 +64,7 @@ public class AlignmentService : IAlignmentService
 
     private void AddAlignmentLine(bool isVertical, double position, Plate plate, Plate selectedPlate)
     {
-        AlignmentLines.Add(new AlignmentLine(isVertical,
+        _alignmentLines.Add(new AlignmentLine(isVertical,
             isVertical ? position : Math.Min(plate.X, selectedPlate.X),
             isVertical ? Math.Min(plate.Y, selectedPlate.Y) : position,
             isVertical

@@ -5,15 +5,16 @@ namespace DisplatePlanner.Services;
 
 public class SelectionService : ISelectionService
 {
-    public List<Plate> SelectedPlates { get; } = [];
+    private readonly List<Plate> _selectedPlates = [];
+    public IReadOnlyList<Plate> SelectedPlates => _selectedPlates;
     public Selection SelectionBox { get; private set; } = new Selection();
 
-    public bool ContainsPlate(Plate plate) => SelectedPlates.Contains(plate);
+    public bool ContainsPlate(Plate plate) => _selectedPlates.Contains(plate);
 
     public void SelectNewSingle(Plate plate)
     {
         ClearSelection();
-        SelectedPlates.Add(plate);
+        _selectedPlates.Add(plate);
     }
 
     public void SelectNewPlates(ICollection<Plate> plates)
@@ -22,13 +23,13 @@ public class SelectionService : ISelectionService
         AddPlates(plates);
     }
 
-    public void ClearSelection() => SelectedPlates.Clear();
+    public void ClearSelection() => _selectedPlates.Clear();
 
     public void AddPlate(Plate plate)
     {
-        if (!SelectedPlates.Contains(plate))
+        if (!_selectedPlates.Contains(plate))
         {
-            SelectedPlates.Add(plate);
+            _selectedPlates.Add(plate);
         }
     }
 
@@ -42,9 +43,9 @@ public class SelectionService : ISelectionService
 
     public void InvertSelection(Plate plate)
     {
-        if (!SelectedPlates.Remove(plate))
+        if (!_selectedPlates.Remove(plate))
         {
-            SelectedPlates.Add(plate);
+            _selectedPlates.Add(plate);
         }
     }
 

@@ -17,6 +17,8 @@ builder.Services.AddScoped<IAlignmentService, AlignmentService>();
 builder.Services.AddScoped<ISelectionService, SelectionService>();
 builder.Services.AddScoped<IClipboardService, ClipboardService>();
 builder.Services.AddScoped<IJsInteropService, JsInteropService>();
+builder.Services.AddScoped<IZoomService, ZoomService>();
+builder.Services.AddScoped<IColorManagementService, ColorManagementService>();
 builder.Services.AddSingleton<ThemeService>();
 builder.Services.AddScoped<IndexedDbService>();
 

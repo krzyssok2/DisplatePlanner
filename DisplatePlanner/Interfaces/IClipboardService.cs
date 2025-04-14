@@ -6,5 +6,5 @@ public interface IClipboardService
 {
     public void CopyPlatesToClipboard(IEnumerable<Plate> plates);
 
-    public ICollection<Plate>? PastePlatesFromClipboard(ICollection<Plate> plates);
+    public List<Plate> CreateNewPlatesFromClipboard();
 }
