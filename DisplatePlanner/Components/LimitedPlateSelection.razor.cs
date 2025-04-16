@@ -48,7 +48,7 @@ public partial class LimitedPlateSelection
     {
         try
         {
-            var response = await httpClient.GetFromJsonAsync<LimitedResponse>("https://sapi.displate.com/artworks/limited?miso=US");
+            var response = await httpClient.GetFromJsonAsync<LimitedResponse>("https://corsproxy.io/?url=https://sapi.displate.com/artworks/limited?miso=US");
             return response?.Data
                 .Select(x => new PlateData(x.ItemCollectionId,
                                  DateTime.Parse(x.Edition.StartDate),
