@@ -1,10 +1,10 @@
 {
   "mainAssemblyName": "DisplatePlanner",
   "resources": {
-    "hash": "sha256-Sp357j3xLS8lEtwe3m5D9ueVu449Lckh/orPicbHq9U=",
+    "hash": "sha256-L7JJ8NIQy26YpzjYZ5wUw9Djs8KQoMpuQRyzVLKqJLE=",
     "fingerprinting": {
       "Blazored.LocalStorage.12n6dz54qr.wasm": "Blazored.LocalStorage.wasm",
-      "DisplatePlanner.w66ow156ho.wasm": "DisplatePlanner.wasm",
+      "DisplatePlanner.951bup6jzo.wasm": "DisplatePlanner.wasm",
       "Microsoft.AspNetCore.Components.Forms.c3g4sc1mk8.wasm": "Microsoft.AspNetCore.Components.Forms.wasm",
       "Microsoft.AspNetCore.Components.3wun53qn2g.wasm": "Microsoft.AspNetCore.Components.wasm",
       "Microsoft.AspNetCore.Components.Web.tjh88j5rcn.wasm": "Microsoft.AspNetCore.Components.Web.wasm",
@@ -76,7 +76,7 @@
     },
     "assembly": {
       "Blazored.LocalStorage.12n6dz54qr.wasm": "sha256-OaMAAd5n7ORfyur5e3QIyEVKJ76MKIvwbg7/icnnYcU=",
-      "DisplatePlanner.w66ow156ho.wasm": "sha256-WMkR0LeXsdVspIW7I0LsyrrwY9DTr48k0W9Jx50nxrE=",
+      "DisplatePlanner.951bup6jzo.wasm": "sha256-jdzebV5mrPYI4CiMlDFu7Ky1M83JquQH6lN3kpdWjRU=",
       "Microsoft.AspNetCore.Components.Forms.c3g4sc1mk8.wasm": "sha256-eAbNW/FAGvEOaj3WYb2pEVbFiypCGzRa4r6vEMyDVoQ=",
       "Microsoft.AspNetCore.Components.3wun53qn2g.wasm": "sha256-3ZKdQ1ML0G7t+yVy6oAf+K+K0p/gjKmooXRcxK5wkxs=",
       "Microsoft.AspNetCore.Components.Web.tjh88j5rcn.wasm": "sha256-2U7RBvxd7IsXonvogbwTbhhikbggFjitncEX7KvOwAY=",
