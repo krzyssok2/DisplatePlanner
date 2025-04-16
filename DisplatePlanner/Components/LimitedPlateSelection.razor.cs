@@ -1,4 +1,5 @@
 using DisplatePlanner.Enums;
+using DisplatePlanner.Helpers;
 using DisplatePlanner.Models;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
@@ -71,8 +72,7 @@ public partial class LimitedPlateSelection
         try
         {
             //Luminos are pulled from Json as they got discontinued, no future updates expected
-            var response = await httpClient.GetFromJsonAsync<LuminoResponse>("/lumino.json");
-            return response?.LuminoListings.Data
+            return Constants.AllLuminos
                 .Select(x => new PlateData(x.ExternalId, x.StartDate, x.Title, x.Image.X2, PlateType.Lumino, false))
                 .ToList() ?? [];
         }
