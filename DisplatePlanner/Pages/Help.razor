@@ -1,0 +1,98 @@
+﻿@page "/help"
+<PageTitle>Help</PageTitle>
+
+<div class="help-container">
+    <h1>Need Help?</h1>
+    <p>Lost in a sea of Displates? Don’t worry I got your back. Here is how to get the most out of DisplatePlanner.</p>
+
+    <section>
+        <h2>Getting Started</h2>
+        <ul>
+            <li>Head over to the <a href="/planner">Planner</a> page.</li>
+            <li>Select the plates you are interested in</li>
+            <li>Drag your plates around the canvas.</li>
+            <li>And finally... Have fun planning!</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Common Questions</h2>
+        <details>
+            <summary>Where is my data saved?</summary>
+            <p>Your planner data lies in your browser local storage. If you will clear your browser cache, data will be gone</p>
+        </details>
+        <details>
+            <summary>Why does DisplatePlanner take so long to load?</summary>
+            <p>
+                DisplatePlanner runs entirely in your browser using Blazor WebAssembly. That means everything is happening locally.
+                The first time you open the tool, your browser needs to download all the necessary files to get things up and running. This might take a while depending on your connection.
+                The good news is that once it is loaded, future visits will be much faster since your browser will have everything cached
+            </p>
+        </details>
+        <details>
+            <summary>How do I add regular plates?</summary>
+            <p>
+                Go to Displate website and find the plate you want to add. Copy the link or DisplateId(last digits in the URL) and paste them into the field and then click add. The plate will appear in the list bellow.
+            </p>
+        </details>
+        <details>
+            <summary>What are the controls?</summary>
+            <p>You can select plates from the right. You can manipulate plates using buttons on the left. Planner canvas supports key shortcuts, so you can hover over the button to see the key combination.
+               I personally would recommend planning on your PC with the mouse.
+            </p>
+        </details>
+        <details>
+            <summary>Why some displates look so bright or diffrent from real ones?</summary>
+            <p>All plate images are pulled straight from Displate API, its out of my control</p>
+        </details>
+        <details>
+            <summary>Does tool support mobile?</summary>
+            <p>Tool supports mobile to some extent, but not all features are available. I would recommend using this tool on desktop exclusively</p>
+        </details>
+        <details>
+            <summary>Is limited edition plates up to date?</summary>
+            <p>Limited edition list is pulled from displate API every time you refresh the page. Luminos got discontinued, so they are being pulled from historical data which is saved in the tool itself in case Displate removes them from their API</p>
+        </details>
+    </section>
+
+    <section>
+        <h2>Still Stuck?</h2>
+        <p>Something is acting weird or you just want to suggest a feature? Feel free to open an issue on <a href="https://github.com/krzyssok2/DisplatePlanner" target="_blank">GitHub</a> or hit me up on discord: .krzys2 <img height="32" src="discordProfile.png" /></p>
+    </section>
+</div>
+
+<style>
+    .help-container {
+        display: flex;
+        flex-direction: column;
+        max-width: 1400px;
+        padding: 0 40px;
+        width:100%;
+        margin: 0 auto;
+    }
+
+    .help-container h1 {
+        font-size: 2.5rem;
+    }
+
+    .help-container h2 {
+        font-size: 1.5rem;
+        margin-top: 12px;
+    }
+
+    .help-container ul {
+        padding-left: 20px;
+    }
+
+    .help-container details {
+        padding: 12px;
+        margin-bottom:5px;
+        border:1px solid;
+        border-radius: 8px;
+    }
+
+    .help-container summary {
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>

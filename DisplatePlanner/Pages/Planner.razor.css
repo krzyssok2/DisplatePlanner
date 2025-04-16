@@ -10,7 +10,8 @@
 .grid {
     overflow: scroll;
     position: relative;
-    width: 100%;
+    width: 100%;    
+    touch-action: none;
 }
 
 .plate-search-container {
@@ -46,7 +47,7 @@
 .tab {
     display: flex;
     width: 100%;
-    border-bottom:1px solid;
+    border-bottom: 1px solid;
 }
 
     .tab button {
@@ -87,7 +88,7 @@
 
 .Plate {
     position: absolute;
-    background: red;
+    background: black;
     cursor: move;
     z-index: 0;
     display: flex;
@@ -96,6 +97,7 @@
 }
 
     .Plate.selected {
+        background: red;
         z-index: 9999; /* Set to a higher value to ensure it's above other plates */
     }
 
@@ -117,11 +119,12 @@
     display: flex;
     flex-direction: column;
     border-right: 1px solid;
+    touch-action: none;
 }
 
-.icon-pair{
-    display:flex;
-    flex-direction:row;
+.icon-pair {
+    display: flex;
+    flex-direction: row;
 }
 
 .short-label {

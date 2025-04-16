@@ -13,7 +13,6 @@ public class PlateStateService(ILocalStorageService localStorageService) : IPlat
 
     public void SaveState(ICollection<Plate> plates)
     {
-        // Save the current state
         var lastHistory = PlatesHistory.Last?.Value;
 
         if (lastHistory != null && plates.SequenceEqual(lastHistory))
@@ -24,13 +23,11 @@ public class PlateStateService(ILocalStorageService localStorageService) : IPlat
         var clonedPlates = ClonePlates(plates);
         PlatesHistory.AddLast(clonedPlates);
 
-        // Trim history if it exceeds the limit
         if (PlatesHistory.Count > historyLimit)
         {
             PlatesHistory.RemoveFirst();
         }
 
-        // Clear redo history when a new state is saved (breaking the redo chain)
         RedoHistory.Clear();
 
         _ = SaveStateToLocalStorage(plates);
@@ -40,12 +37,10 @@ public class PlateStateService(ILocalStorageService localStorageService) : IPlat
     {
         if (PlatesHistory.Count > 0)
         {
-            // Move the current state to redo history
             RedoHistory.AddLast(ClonePlates(plates));
 
-            // Restore the previous state
             plates.Clear();
-            plates.AddRange(PlatesHistory.Last!.Value); // Modify the original list contents
+            plates.AddRange(PlatesHistory.Last!.Value);
             PlatesHistory.RemoveLast();
 
             _ = SaveStateToLocalStorage(plates);
@@ -56,12 +51,10 @@ public class PlateStateService(ILocalStorageService localStorageService) : IPlat
     {
         if (RedoHistory.Count > 0)
         {
-            // Move the current state to undo history
             PlatesHistory.AddLast(ClonePlates(plates));
 
-            // Restore the most recent redo state
             plates.Clear();
-            plates.AddRange(RedoHistory.Last!.Value); // Modify the original list contents
+            plates.AddRange(RedoHistory.Last!.Value);
             RedoHistory.RemoveLast();
 
             _ = SaveStateToLocalStorage(plates);

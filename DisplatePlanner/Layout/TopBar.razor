@@ -11,19 +11,22 @@
         <li>
             <NavLink href="planner" @onclick="()=> isMenuOpen = false">Planner</NavLink>
         </li>
+        <li>
+            <NavLink href="help" @onclick="()=> isMenuOpen = false">Help</NavLink>
+        </li>
     </ul>
 
     <div style="margin-left: auto; display:flex; flex-direction:row;align-items: center;">
         <div class="donation-button">
             <a href="https://ko-fi.com/krzys2" target="_blank" rel="noopener noreferrer" class="donate-link" title="Support me on Ko-Fi!">
                 <img src="https://storage.ko-fi.com/cdn/brandasset/v2/kofi_symbol.png" alt="Ko-fi" class="kofi-logo" />
-                <span class="donate-text">Support me on Ko-Fi</span>
+                <span class="donate-text">Buy me a coffee</span>
             </a>
         </div>
 
-        <DisplatePlanner.Components.ThemeSelector />
+        <DisplatePlanner.Components.ThemeSelector/>
         <button class="hamburger" @onclick="ToggleMenu">
-            <HamburgerIcon/>
+            <HamburgerIcon Size="32"/>
         </button>
     </div>  
 
