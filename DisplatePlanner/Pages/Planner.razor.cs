@@ -107,8 +107,6 @@ public partial class Planner(
     private async Task HandlePointerDown(double clientX, double clientY)
     {
         var scroll = await GetGridScrollData();
-        if (scroll == null)
-            return;
 
         selectionService.StartSelectionBox(
             (clientX - gridContainerStartX + scroll.ScrollLeft) / zoomService.ZoomLevel,
@@ -140,7 +138,6 @@ public partial class Planner(
 
             case State.Selecting:
                 var scroll = await GetGridScrollData();
-                if (scroll == null) return;
 
                 selectionService.UpdateSelectionBox(
                     (clientX - gridContainerStartX + scroll.ScrollLeft) / zoomService.ZoomLevel,
@@ -176,14 +173,13 @@ public partial class Planner(
         CurrentState = State.None;
     }
 
-    private async Task<ScrollData?> GetGridScrollData() => await jsInteropService.GetScrollPosition(gridElementId);
+    private async Task<ScrollData> GetGridScrollData() => await jsInteropService.GetScrollPosition(gridElementId) ?? new ScrollData(0, 0);
 
     private async void HandleOnZoom(WheelEventArgs e)
     {
         if (!e.CtrlKey || CurrentState != State.None) return;
 
         var scroll = await GetGridScrollData();
-        if (scroll == null) return;
 
         // Calculate the focus point relative to the grid
         double focusX = (e.ClientX - gridContainerStartX + scroll.ScrollLeft) / zoomService.ZoomLevel;
@@ -213,7 +209,7 @@ public partial class Planner(
 
     private void ZoomIn() => zoomService.ZoomIn();
 
-    private void AddPlate(PlateData selectedPlate)
+    private async Task AddPlate(PlateData selectedPlate)
     {
         if (plates.Count >= plateLimit)
         {
@@ -222,8 +218,10 @@ public partial class Planner(
 
         plateStateService.SaveState(plates);
 
-        var newX = 0;
-        var newY = 0;
+        var scroll = await GetGridScrollData();
+
+        var newX = scroll.ScrollLeft / zoomService.ZoomLevel;
+        var newY = scroll.ScrollTop / zoomService.ZoomLevel;
 
         while (plates.Any(existing => existing.X == newX && existing.Y == newY))
         {
@@ -297,8 +295,7 @@ public partial class Planner(
         offsetX = clientX;
         offsetY = clientY;
 
-        var scroll = await GetGridScrollData();
-        scrollStartDrag = scroll ?? new(0, 0);
+        scrollStartDrag = await GetGridScrollData();
 
         alignmentService.CalculateAlignmentLines(plates, draggingPlates, snapValue);
     }
@@ -307,7 +304,7 @@ public partial class Planner(
     {
         if (draggingPlates.Count == 0) return;
 
-        var scroll = await GetGridScrollData() ?? new ScrollData(0, 0);
+        var scroll = await GetGridScrollData();
         var scrollX = scroll.ScrollLeft - scrollStartDrag.ScrollLeft;
         var scrollY = scroll.ScrollTop - scrollStartDrag.ScrollTop;
         scrollStartDrag = scroll;
