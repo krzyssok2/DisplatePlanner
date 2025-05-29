@@ -1,9 +1,10 @@
-using Blazored.LocalStorage;
 using DisplatePlanner.Enums;
 using DisplatePlanner.Interfaces;
 using DisplatePlanner.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
+using System.Text.Json;
 
 namespace DisplatePlanner.Pages;
 
@@ -12,7 +13,6 @@ public partial class Planner(
     ISelectionService selectionService,
     IAlignmentService alignmentService,
     IPlateStateService plateStateService,
-    ILocalStorageService localStorageService,
     IJsInteropService jsInteropService,
     IColorManagementService colorManagementService,
     IZoomService zoomService)
@@ -486,6 +486,10 @@ public partial class Planner(
             case "R" when e.CtrlKey:
                 RotateSelectedPlates();
                 break;
+
+            case "S" when e.CtrlKey:
+                Swap();
+                break;
         }
     }
 
@@ -512,4 +516,73 @@ public partial class Planner(
     private async Task OnColorChanged(ChangeEventArgs e) => await colorManagementService.ChangeColor(e.Value?.ToString());
 
     private async Task ClearColor() => await colorManagementService.ClearColor();
+
+    private void Swap()
+    {
+        if (selectionService.SelectedPlates.Count != 2)
+        {
+            return;
+        }
+
+        var plate1 = selectionService.SelectedPlates[0];
+        var plate2 = selectionService.SelectedPlates[1];
+
+        var plate1X = plate1.X;
+        var plate1Y = plate1.Y;
+        var plate2X = plate2.X;
+        var plate2Y = plate2.Y;
+
+        plate1.SetCoordinates(plate2X, plate2Y);
+        plate2.SetCoordinates(plate1X, plate1Y);
+
+        plateStateService.SaveState(plates);
+    }
+
+    private async Task Export() => await jsInteropService.ExportFileToUser(plates);
+
+    private async Task Import(InputFileChangeEventArgs args)
+    {
+        selectionService.ClearSelection();
+
+        if (args.FileCount != 1)
+        {
+            return;
+        }
+
+        try
+        {
+            var file = args.File;
+
+            using var stream = file.OpenReadStream();
+
+            using var reader = new StreamReader(stream);
+
+            var jsonContent = await reader.ReadToEndAsync();
+
+            var plateList = JsonSerializer.Deserialize<List<Plate>>(jsonContent);
+
+            if (plateList == null || plateList.Count == 0)
+            {
+                Console.WriteLine("No plates found in the JSON file.");
+                return;
+            }
+
+            plateStateService.SaveState(plates);
+
+            if (plateList.Count > plateLimit)
+            {
+                plates.Clear();
+                plates.AddRange(plateList.Take(100));
+            }
+            else
+            {
+                plates.Clear();
+                plates.AddRange(plateList);
+            }
+        }
+        catch (JsonException ex)
+        {
+            Console.WriteLine($"Failed to import with error: {ex.Message}");
+        }
+    }
 }

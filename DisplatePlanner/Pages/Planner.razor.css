@@ -10,7 +10,7 @@
 .grid {
     overflow: scroll;
     position: relative;
-    width: 100%;    
+    width: 100%;
     touch-action: none;
 }
 
@@ -138,5 +138,12 @@
 
     .short-label {
         display: inline;
+    }
+}
+
+@media screen and (max-height: 490px){
+    .icon-container {
+        min-width: 97px;
+        overflow-y: scroll;
     }
 }
