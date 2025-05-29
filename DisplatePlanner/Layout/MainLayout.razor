@@ -59,7 +59,7 @@
         color: var(--text);
     }
 
-        .layout-wrapper div, a, button, input {
+        .layout-wrapper div, a, button, input, label {
             border-color: var(--text) !important;
             color: var(--text) !important
         }
@@ -93,13 +93,13 @@
         }
 
         .layout-wrapper *::-webkit-scrollbar {
-            width: 8px;
-            height:8px;
+            width: 16px;
+            height:16px;
         }
 
         .layout-wrapper *::-webkit-scrollbar-thumb {
             background-color: var(--secondary);
-            border-radius: 4px;
+            border-radius: 16px;
         }
 
         .layout-wrapper *::-webkit-scrollbar-track {
@@ -122,6 +122,19 @@
 
         .layout-wrapper .plate-search-container{
             background: var(--primary);
+        }
+
+        .layout-wrapper .fake-button{
+            padding: 1px;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: solid 2px;
+
+        }
+        .layout-wrapper .fake-button:hover {
+            background-color: var(--secondary);
         }
 
     .topbar {

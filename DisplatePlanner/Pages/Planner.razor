@@ -20,6 +20,20 @@
         </div>
 
         <div class="icon-pair">
+            <div class="fake-button" title="Import wall">
+                <InputFile OnChange="Import" accept=".json" style="display:none" id="fileInput" />
+
+                <label for="fileInput" style="cursor: pointer;">
+                    <Import />
+                </label>
+            </div>
+
+            <button @onclick="Export" title="Export wall">
+                <Export />
+            </button>
+        </div>
+
+        <div class="icon-pair">
             <button @onclick="ZoomOut" title="Zoom out (Ctrl+Mousewheel)">
                 <ZoomOutIcon />
             </button>
@@ -92,6 +106,10 @@
                 <MoveArrowIcon Direction="down" />
             </button>            
         </div>
+
+        <button @onclick="Swap" title="Swap 2 selected plates (Ctrl+S)">
+            <SwapIcon />
+        </button>
 
         <button @onclick="RemoveSelectedPlates" title="Delete (Del)">
             <DeleteIcon />
@@ -205,12 +223,21 @@
         }
     };
 
-        window.setScrollPosition = (elementId, scrollLeft, scrollTop) => {
+    window.setScrollPosition = (elementId, scrollLeft, scrollTop) => {
         const element = document.getElementById(elementId);
         if (element) {
             element.scrollLeft = scrollLeft;
             element.scrollTop = scrollTop;
         }
+    };
+
+    window.downloadFile = (fileName, contentType, base64Data) => {
+        const link = document.createElement('a');
+        link.download = fileName;
+        link.href = `data:${contentType};base64,${base64Data}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     function getElementOffset(elementId) {

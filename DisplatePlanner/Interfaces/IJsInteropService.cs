@@ -11,4 +11,6 @@ public interface IJsInteropService
     Task SetScrollPosition(string elementId, double scrollLeft, double scrollTop);
 
     Task AddZoomPreventingHandler(string elementId, string eventName);
+
+    Task ExportFileToUser(IReadOnlyList<Plate> plates);
 }

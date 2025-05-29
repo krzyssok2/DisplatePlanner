@@ -1,0 +1,20 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg"
+     width="@Size" height="@Size"
+     fill="none" stroke="currentColor"
+     stroke-width="2" stroke-linecap="round"
+     stroke-linejoin="round" viewBox="0 0 24 24">
+
+    <!-- Right-pointing arrow (top) -->
+    <line x1="5" y1="8" x2="19" y2="8" />
+    <polyline points="15 5 19 8 15 11 15 5" />
+
+    <!-- Left-pointing arrow (bottom) -->
+    <line x1="19" y1="16" x2="5" y2="16" />
+    <polyline points="9 13 5 16 9 19 9 13" />
+
+</svg>
+
+
+@code {
+    [Parameter] public int Size { get; set; } = 24;
+}
