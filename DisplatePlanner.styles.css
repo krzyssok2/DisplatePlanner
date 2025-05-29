@@ -397,7 +397,7 @@ section[b-02epnzqlwt] {
 .grid[b-rjs04k5m5o] {
     overflow: scroll;
     position: relative;
-    width: 100%;    
+    width: 100%;
     touch-action: none;
 }
 
@@ -525,5 +525,12 @@ section[b-02epnzqlwt] {
 
     .short-label[b-rjs04k5m5o] {
         display: inline;
+    }
+}
+
+@media screen and (max-height: 490px){
+    .icon-container[b-rjs04k5m5o] {
+        min-width: 97px;
+        overflow-y: scroll;
     }
 }
