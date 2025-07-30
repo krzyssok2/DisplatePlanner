@@ -64,6 +64,11 @@
         background: linear-gradient(135deg, #4A90E2, #8A2BE2);
     }
 
+    .ribbon.EventExclusive {
+        color: #FFD700;
+        background: linear-gradient(135deg, #2C2C2C, #444444);
+    }
+
 .loading-container {
     display: flex;
     align-items: center;
