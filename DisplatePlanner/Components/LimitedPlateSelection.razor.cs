@@ -22,9 +22,12 @@ public partial class LimitedPlateSelection
         { PlateType.Lumino, "LUM" }
     };
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await LoadPlates();
+        if (firstRender)
+        {
+            await LoadPlates();
+        }
     }
 
     private async Task LoadPlates()
@@ -38,6 +41,7 @@ public partial class LimitedPlateSelection
 
             platesData = [.. results.SelectMany(r => r).OrderByDescending(x => x.Date)];
             filteredPlates = platesData;
+            StateHasChanged();
         }
         catch (Exception ex)
         {
