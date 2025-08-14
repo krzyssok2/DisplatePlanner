@@ -20,23 +20,20 @@
 
     private bool isDarkMode;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
+        var theme = await LocalStorageService.GetItemAsync<string>(storageThemeKey);
+
+        if (theme == null)
         {
-            var theme = await LocalStorageService.GetItemAsync<string>(storageThemeKey);
+            var userPreffersDarkModel = await JS.InvokeAsync<bool>("isDarkMode");
+            
 
-            if (theme == null)
-            {
-                var userPreffersDarkModel = await JS.InvokeAsync<bool>("isDarkMode");
-
-
-                theme = userPreffersDarkModel ? darkTheme : whiteTheme;
-            }
-
-            isDarkMode = theme.Equals(darkTheme);
-            ThemeService.IsDarkMode = isDarkMode;
+            theme = userPreffersDarkModel ? darkTheme : whiteTheme;
         }
+
+        isDarkMode = theme.Equals(darkTheme);
+        ThemeService.IsDarkMode = isDarkMode;
     }
 
     private async Task ToggleTheme()
