@@ -1,25 +1,261 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>DisplatePlanner</title>
-    <base href="/DisplatePlanner/" />
-    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/app.css" />
-    <link rel="icon" type="image/png" href="favicon.png" />
-    <link href="DisplatePlanner.styles.css" rel="stylesheet" />
+    <base href="/"/>
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/app.css"/>
+    <link rel="icon" type="image/png" href="favicon.png"/>
+    <link href="DisplatePlanner.styles.css" rel="stylesheet"/>
+
+<!-- %%-PRERENDERING-HEADOUTLET-BEGIN-%% -->
+<title>Home</title>
+<!-- %%-PRERENDERING-HEADOUTLET-END-%% -->
 </head>
 
 <body>
     <div id="app">
-        <svg class="loading-progress">
-            <circle r="40%" cx="50%" cy="50%" />
-            <circle r="40%" cx="50%" cy="50%" />
-        </svg>
-        <div class="loading-progress-text"></div>
-    </div>
+<!-- %%-PRERENDERING-BEGIN-%% -->
+<div class="layout-wrapper white-mode"><div class="topbar"><nav class="nav-menu" b-lmp0sej3rj><div class="brand" b-lmp0sej3rj><a href="" class="active" aria-current="page">DisplatePlanner</a></div>
+
+    <ul class="nav-links " b-lmp0sej3rj><li b-lmp0sej3rj><a href="" class="active" aria-current="page">Home</a></li>
+        <li b-lmp0sej3rj><a href="planner">Planner</a></li>
+        <li b-lmp0sej3rj><a href="help">Help</a></li></ul>
+
+    <div style="margin-left: auto; display:flex; flex-direction:row;align-items: center;" b-lmp0sej3rj><div class="donation-button" b-lmp0sej3rj><a href="https://ko-fi.com/krzys2" target="_blank" rel="noopener noreferrer" class="donate-link" title="Support me on Ko-Fi!" b-lmp0sej3rj><img src="https://storage.ko-fi.com/cdn/brandasset/v2/kofi_symbol.png" alt="Ko-fi" class="kofi-logo" b-lmp0sej3rj>
+                <span class="donate-text" b-lmp0sej3rj>Buy me a coffee</span></a></div>
+
+        <button class="theme-toggle"><svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 0111.21 3 7 7 0 1012 21a9 9 0 009-8.21z"></path></svg></button>
+
+
+<style>
+    .theme-toggle {
+        background: none !important;
+        align-content:center;
+        border: none;
+        cursor: pointer;
+        color: var(--primary);
+        transition: background-color 0.3s ease;
+    }
+
+        .theme-toggle:hover {
+            color: orange !important
+        }
+</style>
+
+<script>
+        window.isDarkMode = () => {
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    };
+</script>
+        <button class="hamburger" b-lmp0sej3rj><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"></line>
+    <line x1="3" y1="12" x2="21" y2="12"></line>
+    <line x1="3" y1="18" x2="21" y2="18"></line></svg></button></div></nav>
+
+
+
+<style b-lmp0sej3rj>
+    .donation-button {
+        margin-right:1rem;
+    }
+
+    .kofi-logo {
+        height: 24px;
+    }
+
+    .donate-link {
+        display: flex;
+        align-items: center;
+        border:1px solid;
+        gap: 8px;
+        background-color: var(--donate-bg);
+        text-decoration: none;
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+        .donate-link:hover {
+            transform: scale(1.05);
+        }
+
+        /* Emoji style */
+        .donate-link .emoji {
+            font-size: 1.2rem;
+        }
+</style></div>
+
+    <div class="main-content">
+
+<div class="home-container" b-02epnzqlwt><section class="main-section" b-02epnzqlwt><div class="main-section-text" b-02epnzqlwt><h1 b-02epnzqlwt>Too many plates? No space in sight?</h1>
+            <p b-02epnzqlwt>Why risk chaos when you can plan it right!</p>
+            <p b-02epnzqlwt>
+                With <b b-02epnzqlwt>DisplatePlanner</b>, you can arrange and visualize your collection before even nailing your next magnet.
+            </p>
+            <div b-02epnzqlwt><a href="planner" class="startButton" b-02epnzqlwt><span b-02epnzqlwt>Start Planning Now!</span></a></div></div>
+        <div class="hero-video" b-02epnzqlwt><video autoplay muted loop playsinline b-02epnzqlwt><source src="videos/preview.mp4" type="video/mp4" b-02epnzqlwt>
+                Your browser might not support this video.
+            </video></div></section>
+
+    <section class="features-section" b-02epnzqlwt><div class="feature" b-02epnzqlwt><h2 b-02epnzqlwt> Move, Drag, Rotate & Align</h2>
+            <p b-02epnzqlwt>
+                Arrange your plates exactly how you desire - rotate, align, and preview your wall without any immediate commitment.
+            </p></div>
+        <div class="feature" b-02epnzqlwt><h2 b-02epnzqlwt>Browse both LEs and regular plates</h2>
+            <p b-02epnzqlwt>Check out upcoming and released LEs alongside regular plates - find your perfect layout.</p></div>
+        <div class="feature" b-02epnzqlwt><h2 b-02epnzqlwt>Dark mode</h2>
+            <p b-02epnzqlwt>For those sleepless collectors camping their dream #1 plate - to protect your eyes from flashbangs.</p></div>
+        <div class="feature" b-02epnzqlwt><h2 b-02epnzqlwt>No Servers, Just Speed</h2>
+            <p b-02epnzqlwt>DisplatePlanner runs entirely in your browser. Your data stays local, ensuring lightning-fast speed after initial load.</p></div></section>
+
+    <section class="donation-section" b-02epnzqlwt><div class="donation-text" b-02epnzqlwt><h3 b-02epnzqlwt>❤ Like the project?</h3>
+            <p b-02epnzqlwt>
+                DisplatePlanner is a free passion project, made with love. If you’ve found it useful, feel free to support my future work by donating — no pressure at all!
+            </p></div></section></div></div>
+
+    <div class="bottombar"><footer class="footer" b-etfifowdf2><p b-etfifowdf2>Made with ❤ by krzys2 for Displate community</p></footer></div></div>
+
+
+<style>  
+    .dark-mode{
+        --text: #E0E0E0;
+        --placeholder: #AAAAAA;
+        --background: #1A1A1A;
+        --primary: #444444;
+        --secondary: #888888;
+        --accent: #FF4C4C; 
+    }
+
+    .white-mode {
+        --text: #333333;
+        --placeholder: #888888;
+        --background: #FFFFFF;
+        --primary: #E0E0E0;
+        --secondary: #CCCCCC;
+        --accent: #FF5C5C;
+    }
+
+    .layout-wrapper {
+        --footer-height: 50px;
+        --topbar-height: 75px;
+        --page-padding: 1rem;
+        --full-page-height: calc(100vh - var(--footer-height) - var(--topbar-height) - 2 * var(--page-padding));
+
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background: var(--background);
+        color: var(--text);
+    }
+
+        .layout-wrapper div, a, button, input, label {
+            border-color: var(--text) !important;
+            color: var(--text) !important
+        }
+
+        .layout-wrapper input {
+            background-color: var(--primary);
+        }
+
+        .layout-wrapper input::placeholder{
+                color: var(--placeholder);
+        }
+
+        .layout-wrapper button{
+            background-color: var(--primary);
+        }
+
+        .layout-wrapper button:hover {
+            background-color: var(--secondary);
+        }
+
+            .layout-wrapper button.active {
+                background-color: var(--secondary);
+            }
+
+        .layout-wrapper .nav-links a.active {
+            text-decoration: underline var(--accent);
+        }
+
+        .layout-wrapper .selection-item:hover{
+            background: var(--secondary)
+        }
+
+        .layout-wrapper *::-webkit-scrollbar {
+            width: 16px;
+            height:16px;
+        }
+
+        .layout-wrapper *::-webkit-scrollbar-thumb {
+            background-color: var(--secondary);
+            border-radius: 16px;
+        }
+
+        .layout-wrapper *::-webkit-scrollbar-track {
+            background-color: var(--primary);
+        }
+
+        .layout-wrapper *::-webkit-scrollbar-corner {
+            background-color: transparent;
+        }
+
+        .layout-wrapper .brand a{
+            background: linear-gradient(to right, var(--text) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .layout-wrapper .icon-container{
+            background: var(--primary);
+        }
+
+        .layout-wrapper .plate-search-container{
+            background: var(--primary);
+        }
+
+        .layout-wrapper .fake-button{
+            padding: 1px;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: solid 2px;
+
+        }
+        .layout-wrapper .fake-button:hover {
+            background-color: var(--secondary);
+        }
+
+    .topbar {
+        background: var(--background);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 1px solid;
+        height: var(--topbar-height);
+        max-height: var(--topbar-height);
+    }
+
+    .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: var(--page-padding);       
+    }
+
+    .bottombar {
+        border-top: 1px solid;
+        height: var(--footer-height);        
+        padding: 1rem;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+</style>
+        <blazor-focus-on-navigate selector="h1"></blazor-focus-on-navigate>
+<!-- %%-PRERENDERING-END-%% -->
+</div>
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.
@@ -28,5 +264,5 @@
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="indexedDb.js"></script>
-</body>
-</html>
+
+</body></html>

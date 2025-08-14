@@ -9,18 +9,18 @@
     <link href="DisplatePlanner.styles.css" rel="stylesheet"/>
 
 <!-- %%-PRERENDERING-HEADOUTLET-BEGIN-%% -->
-<title>Home</title>
+<title>Help</title>
 <!-- %%-PRERENDERING-HEADOUTLET-END-%% -->
 </head>
 
 <body>
     <div id="app">
 <!-- %%-PRERENDERING-BEGIN-%% -->
-<div class="layout-wrapper white-mode"><div class="topbar"><nav class="nav-menu" b-lmp0sej3rj><div class="brand" b-lmp0sej3rj><a href="" class="active" aria-current="page">DisplatePlanner</a></div>
+<div class="layout-wrapper white-mode"><div class="topbar"><nav class="nav-menu" b-lmp0sej3rj><div class="brand" b-lmp0sej3rj><a href="">DisplatePlanner</a></div>
 
-    <ul class="nav-links " b-lmp0sej3rj><li b-lmp0sej3rj><a href="" class="active" aria-current="page">Home</a></li>
+    <ul class="nav-links " b-lmp0sej3rj><li b-lmp0sej3rj><a href="">Home</a></li>
         <li b-lmp0sej3rj><a href="planner">Planner</a></li>
-        <li b-lmp0sej3rj><a href="help">Help</a></li></ul>
+        <li b-lmp0sej3rj><a href="help" class="active" aria-current="page">Help</a></li></ul>
 
     <div style="margin-left: auto; display:flex; flex-direction:row;align-items: center;" b-lmp0sej3rj><div class="donation-button" b-lmp0sej3rj><a href="https://ko-fi.com/krzys2" target="_blank" rel="noopener noreferrer" class="donate-link" title="Support me on Ko-Fi!" b-lmp0sej3rj><img src="https://storage.ko-fi.com/cdn/brandasset/v2/kofi_symbol.png" alt="Ko-fi" class="kofi-logo" b-lmp0sej3rj>
                 <span class="donate-text" b-lmp0sej3rj>Buy me a coffee</span></a></div>
@@ -89,31 +89,77 @@
 
     <div class="main-content">
 
-<div class="home-container" b-02epnzqlwt><section class="main-section" b-02epnzqlwt><div class="main-section-text" b-02epnzqlwt><h1 b-02epnzqlwt>Too many plates? No space in sight?</h1>
-            <p b-02epnzqlwt>Why risk chaos when you can plan it right!</p>
-            <p b-02epnzqlwt>
-                With <b b-02epnzqlwt>DisplatePlanner</b>, you can arrange and visualize your collection before even nailing your next magnet.
-            </p>
-            <div b-02epnzqlwt><a href="planner" class="startButton" b-02epnzqlwt><span b-02epnzqlwt>Start Planning Now!</span></a></div></div>
-        <div class="hero-video" b-02epnzqlwt><video autoplay muted loop playsinline b-02epnzqlwt><source src="videos/preview.mp4" type="video/mp4" b-02epnzqlwt>
-                Your browser might not support this video.
-            </video></div></section>
+<div class="help-container"><h1>Need Help?</h1>
+    <p>Lost in a sea of Displates? Don’t worry I got your back. Here is how to get the most out of DisplatePlanner.</p>
 
-    <section class="features-section" b-02epnzqlwt><div class="feature" b-02epnzqlwt><h2 b-02epnzqlwt> Move, Drag, Rotate & Align</h2>
-            <p b-02epnzqlwt>
-                Arrange your plates exactly how you desire - rotate, align, and preview your wall without any immediate commitment.
-            </p></div>
-        <div class="feature" b-02epnzqlwt><h2 b-02epnzqlwt>Browse both LEs and regular plates</h2>
-            <p b-02epnzqlwt>Check out upcoming and released LEs alongside regular plates - find your perfect layout.</p></div>
-        <div class="feature" b-02epnzqlwt><h2 b-02epnzqlwt>Dark mode</h2>
-            <p b-02epnzqlwt>For those sleepless collectors camping their dream #1 plate - to protect your eyes from flashbangs.</p></div>
-        <div class="feature" b-02epnzqlwt><h2 b-02epnzqlwt>No Servers, Just Speed</h2>
-            <p b-02epnzqlwt>DisplatePlanner runs entirely in your browser. Your data stays local, ensuring lightning-fast speed after initial load.</p></div></section>
+    <section><h2>Getting Started</h2>
+        <ul><li>Head over to the <a href="/planner">Planner</a> page.</li>
+            <li>Select the plates you are interested in</li>
+            <li>Drag your plates around the canvas.</li>
+            <li>And finally... Have fun planning!</li></ul></section>
 
-    <section class="donation-section" b-02epnzqlwt><div class="donation-text" b-02epnzqlwt><h3 b-02epnzqlwt>❤ Like the project?</h3>
-            <p b-02epnzqlwt>
-                DisplatePlanner is a free passion project, made with love. If you’ve found it useful, feel free to support my future work by donating — no pressure at all!
-            </p></div></section></div></div>
+    <section><h2>Common Questions</h2>
+        <details><summary>Where is my data saved?</summary>
+            <p>Your planner data lies in your browser local storage. If you will clear your browser cache, data will be gone</p></details>
+        <details><summary>Why does DisplatePlanner take so long to load?</summary>
+            <p>
+                DisplatePlanner runs entirely in your browser using Blazor WebAssembly. That means everything is happening locally.
+                The first time you open the tool, your browser needs to download all the necessary files to get things up and running. This might take a while depending on your connection.
+                The good news is that once it is loaded, future visits will be much faster since your browser will have everything cached
+            </p></details>
+        <details><summary>How do I add regular plates?</summary>
+            <p>
+                Go to Displate website and find the plate you want to add. Copy the link or DisplateId(last digits in the URL) and paste them into the field and then click add. The plate will appear in the list bellow.
+            </p></details>
+        <details><summary>What are the controls?</summary>
+            <p>You can select plates from the right. You can manipulate plates using buttons on the left. Planner canvas supports key shortcuts, so you can hover over the button to see the key combination.
+               I personally would recommend planning on your PC with the mouse.
+            </p></details>
+        <details><summary>Why some displates look so bright or diffrent from real ones?</summary>
+            <p>All plate images are pulled straight from Displate API, its out of my control</p></details>
+        <details><summary>Does tool support mobile?</summary>
+            <p>Tool supports mobile to some extent, but not all features are available. I would recommend using this tool on desktop exclusively</p></details>
+        <details><summary>Is limited edition plates up to date?</summary>
+            <p>Limited edition list is pulled from displate API every time you refresh the page. Luminos got discontinued, so they are being pulled from historical data which is saved in the tool itself in case Displate removes them from their API</p></details></section>
+
+    <section><h2>Still Stuck?</h2>
+        <p>Something is acting weird or you just want to suggest a feature? Feel free to open an issue on <a href="https://github.com/krzyssok2/DisplatePlanner" target="_blank">GitHub</a> or hit me up on discord: .krzys2 <img height="32" src="discordProfile.png"></p></section></div>
+
+<style>
+    .help-container {
+        display: flex;
+        flex-direction: column;
+        max-width: 1400px;
+        padding: 0 40px;
+        width:100%;
+        margin: 0 auto;
+    }
+
+    .help-container h1 {
+        font-size: 2.5rem;
+    }
+
+    .help-container h2 {
+        font-size: 1.5rem;
+        margin-top: 12px;
+    }
+
+    .help-container ul {
+        padding-left: 20px;
+    }
+
+    .help-container details {
+        padding: 12px;
+        margin-bottom:5px;
+        border:1px solid;
+        border-radius: 8px;
+    }
+
+    .help-container summary {
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style></div>
 
     <div class="bottombar"><footer class="footer" b-etfifowdf2><p b-etfifowdf2>Made with ❤ by krzys2 for Displate community</p></footer></div></div>
 
