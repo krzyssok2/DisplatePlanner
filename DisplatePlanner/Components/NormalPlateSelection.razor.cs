@@ -15,24 +15,20 @@ public partial class NormalPlateSelection(IndexedDbService indexedDbService)
     private List<PlateData>? filteredPlates;
     private PlateSize selectedPlateSize = PlateSize.M;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
+        try
         {
-            try
-            {
-                var plates = await indexedDbService.GetAllPlatesAsync();
-                platesData = plates;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                platesData = [];
-            }
-
-            filteredPlates = platesData;
-            StateHasChanged();
+            var plates = await indexedDbService.GetAllPlatesAsync();
+            platesData = plates;
         }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            platesData = [];
+        }
+
+        filteredPlates = platesData;
     }
 
     private void AddPlate(PlateData plate)

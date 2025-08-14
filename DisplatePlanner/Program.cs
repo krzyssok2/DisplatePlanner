@@ -9,22 +9,17 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-ConfigureServices(builder.Services, builder.HostEnvironment.BaseAddress);
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+builder.Services.AddBlazoredLocalStorageAsSingleton();
+
+builder.Services.AddScoped<IPlateStateService, PlateStateService>();
+builder.Services.AddScoped<IAlignmentService, AlignmentService>();
+builder.Services.AddScoped<ISelectionService, SelectionService>();
+builder.Services.AddScoped<IClipboardService, ClipboardService>();
+builder.Services.AddScoped<IJsInteropService, JsInteropService>();
+builder.Services.AddSingleton<IZoomService, ZoomService>();
+builder.Services.AddSingleton<IColorManagementService, ColorManagementService>();
+builder.Services.AddSingleton<ThemeService>();
+builder.Services.AddScoped<IndexedDbService>();
 
 await builder.Build().RunAsync();
-
-static void ConfigureServices(IServiceCollection services, string baseAddress)
-{
-    services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(baseAddress) });
-    services.AddBlazoredLocalStorageAsSingleton();
-
-    services.AddScoped<IPlateStateService, PlateStateService>();
-    services.AddScoped<IAlignmentService, AlignmentService>();
-    services.AddScoped<ISelectionService, SelectionService>();
-    services.AddScoped<IClipboardService, ClipboardService>();
-    services.AddScoped<IJsInteropService, JsInteropService>();
-    services.AddSingleton<IZoomService, ZoomService>();
-    services.AddSingleton<IColorManagementService, ColorManagementService>();
-    services.AddSingleton<ThemeService>();
-    services.AddScoped<IndexedDbService>();
-}
