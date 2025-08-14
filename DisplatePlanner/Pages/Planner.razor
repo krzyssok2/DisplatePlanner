@@ -117,7 +117,6 @@
     </div>
 
     <div oncontextmenu="return false;" class="grid" id="grid" tabindex="0" style="background-color: @colorManagementService.SelectedColor;"
-         
          @onkeydown="HandleOnKeyDown" @onkeydown:preventDefault
          @onwheel="HandleOnZoom"   
          @onmouseup="HandleStateCancellation"
@@ -126,7 +125,6 @@
          @ontouchstart="HandleStartSelect"
          @onmousemove="HandleDragOrSelect"
          @ontouchmove="HandleDragOrSelect"
-
          autofocus="true">
         <div style="position:absolute;
                         width: @(GridWidth * zoomService.ZoomLevel)px;
@@ -167,6 +165,15 @@
                             width: @(selectionService.SelectionBox.Width * zoomService.ZoomLevel)px;
                             height: @(selectionService.SelectionBox.Height * zoomService.ZoomLevel)px;" />
             }
+        </div>
+
+        @{
+            var bounding = GetSelectedPlatesBoundingBox();
+        }
+        <div class="ruler-box">
+            <span class="ruler-title">Ruler</span>
+            <span>Width: @bounding.widthCm:F1 cm / @bounding.widthIn:F2 in</span><br />
+            <span>Height: @bounding.heightCm:F1 cm / @bounding.heightIn:F2 in</span>
         </div>
     </div>
 

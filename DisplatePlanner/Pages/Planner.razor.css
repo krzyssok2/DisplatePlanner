@@ -147,3 +147,23 @@
         overflow-y: scroll;
     }
 }
+
+.ruler-box {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    background: black;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    z-index: 10;
+    min-width: 120px;
+    color: #222;
+}
+.ruler-title {
+    font-weight: bold;
+    font-size: 1rem;
+    display: block;
+    margin-bottom: 2px;
+}

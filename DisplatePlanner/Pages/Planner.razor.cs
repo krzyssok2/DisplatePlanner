@@ -585,4 +585,23 @@ public partial class Planner(
             Console.WriteLine($"Failed to import with error: {ex.Message}");
         }
     }
+
+    // Ruler calculation for selected plates
+    public (double widthCm, double heightCm, double widthIn, double heightIn) GetSelectedPlatesBoundingBox()
+    {
+        var selected = selectionService.SelectedPlates;
+        if (selected == null || selected.Count == 0)
+            return (0, 0, 0, 0);
+
+        double minX = selected.Min(p => p.X);
+        double minY = selected.Min(p => p.Y);
+        double maxX = selected.Max(p => p.X + p.Width);
+        double maxY = selected.Max(p => p.Y + p.Height);
+
+        double widthCm = maxX - minX;
+        double heightCm = maxY - minY;
+        double widthIn = widthCm * 0.393701;
+        double heightIn = heightCm * 0.393701;
+        return (widthCm, heightCm, widthIn, heightIn);
+    }
 }
