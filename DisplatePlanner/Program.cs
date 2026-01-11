@@ -16,6 +16,7 @@ builder.Services.AddScoped<IPlateStateService, PlateStateService>();
 builder.Services.AddScoped<IAlignmentService, AlignmentService>();
 builder.Services.AddScoped<ISelectionService, SelectionService>();
 builder.Services.AddScoped<IClipboardService, ClipboardService>();
+builder.Services.AddScoped<IRulerService, RulerService>();
 builder.Services.AddScoped<IJsInteropService, JsInteropService>();
 builder.Services.AddSingleton<IZoomService, ZoomService>();
 builder.Services.AddSingleton<IColorManagementService, ColorManagementService>();

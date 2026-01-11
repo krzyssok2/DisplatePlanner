@@ -14,6 +14,7 @@ public partial class Planner(
     IAlignmentService alignmentService,
     IPlateStateService plateStateService,
     IJsInteropService jsInteropService,
+    IRulerService rulerService,
     IColorManagementService colorManagementService,
     IZoomService zoomService)
 {
@@ -25,7 +26,6 @@ public partial class Planner(
     private const double snapValue = 0.25;
 
     private List<Plate> plates = [];
-    private List<Plate> draggingPlates = [];
 
     private double offsetX = 0;
     private double offsetY = 0;
@@ -73,8 +73,10 @@ public partial class Planner(
             if (!hasLoaded)
             {
                 plates = await plateStateService.RetrievePreviousSessionPlates();
+                await rulerService.Initialize();
                 await SetGridContainerOffset();
                 hasLoaded = true;
+                selectionService.ClearSelection();
                 StateHasChanged();
                 CalculateGridSize();
             }
@@ -90,14 +92,20 @@ public partial class Planner(
 
     private async void HandleStartSelect(MouseEventArgs e)
     {
-        if (e.Button != 0) return;
+        if (e.Button != 0)
+        {
+            return;
+        }
 
         await HandlePointerDown(e.ClientX, e.ClientY);
     }
 
     private async void HandleStartSelect(TouchEventArgs e)
     {
-        if (e.Touches.Length == 0) return;
+        if (e.Touches.Length == 0)
+        {
+            return;
+        }
 
         var touch = e.Touches[0];
 
@@ -122,8 +130,13 @@ public partial class Planner(
 
     private async void HandleDragOrSelect(TouchEventArgs e)
     {
-        if (e.Touches.Length == 0) return;
+        if (e.Touches.Length == 0)
+        {
+            return;
+        }
+
         var touch = e.Touches[0];
+
         await HandlePointerMove(touch.ClientX, touch.ClientY);
     }
 
@@ -134,7 +147,7 @@ public partial class Planner(
             case State.Dragging:
                 DragSelectedPlates(clientX, clientY, shiftKey);
                 CalculateGridSize();
-                break;
+                return;
 
             case State.Selecting:
                 var scroll = await GetGridScrollData();
@@ -144,7 +157,10 @@ public partial class Planner(
                     (clientY - gridContainerStartY + scroll.ScrollTop) / zoomService.ZoomLevel);
 
                 selectionService.SelectPlatesWithinBox(plates);
-                break;
+                return;
+
+            default:
+                return;
         }
     }
 
@@ -160,7 +176,6 @@ public partial class Planner(
                 GridLength = 0;
                 GridWidth = 0;
                 CalculateGridSize();
-                draggingPlates.Clear();
                 alignmentService.ClearAlignmentLines();
                 plateStateService.SaveState(plates);
                 break;
@@ -177,7 +192,10 @@ public partial class Planner(
 
     private async void HandleOnZoom(WheelEventArgs e)
     {
-        if (!e.CtrlKey || CurrentState != State.None) return;
+        if (!e.CtrlKey || CurrentState != State.None)
+        {
+            return;
+        }
 
         var scroll = await GetGridScrollData();
 
@@ -254,13 +272,21 @@ public partial class Planner(
 
     private async void HandleStartDrag(MouseEventArgs e, Plate plate)
     {
-        if (e.Button != 0) return;
+        if (e.Button != 0)
+        {
+            return;
+        }
+
         await StartDragCommon(e.ClientX, e.ClientY, e.ShiftKey, e.CtrlKey, plate);
     }
 
     private async void HandleStartDrag(TouchEventArgs e, Plate plate)
     {
-        if (e.Touches.Length == 0) return;
+        if (e.Touches.Length == 0)
+        {
+            return;
+        }
+
         var touch = e.Touches[0];
         await StartDragCommon(touch.ClientX, touch.ClientY, e.ShiftKey, e.CtrlKey, plate);
     }
@@ -268,7 +294,6 @@ public partial class Planner(
     private async Task StartDragCommon(double clientX, double clientY, bool shiftKey, bool ctrlKey, Plate plate)
     {
         CurrentState = State.Dragging;
-        draggingPlates.Clear();
         plateStateService.SaveState(plates);
 
         if (!selectionService.ContainsPlate(plate))
@@ -283,26 +308,20 @@ public partial class Planner(
             }
         }
 
-        if (selectionService.ContainsPlate(plate))
-        {
-            draggingPlates.AddRange(selectionService.SelectedPlates);
-        }
-        else
-        {
-            draggingPlates.Add(plate);
-        }
-
         offsetX = clientX;
         offsetY = clientY;
 
         scrollStartDrag = await GetGridScrollData();
 
-        alignmentService.CalculateAlignmentLines(plates, draggingPlates, snapValue);
+        alignmentService.CalculateAlignmentLines(plates, selectionService.SelectedPlates, snapValue);
     }
 
     private async void DragSelectedPlates(double clientX, double clientY, bool shiftKey)
     {
-        if (draggingPlates.Count == 0) return;
+        if (selectionService.SelectedPlates.Count == 0)
+        {
+            return;
+        }
 
         var scroll = await GetGridScrollData();
         var scrollX = scroll.ScrollLeft - scrollStartDrag.ScrollLeft;
@@ -330,7 +349,7 @@ public partial class Planner(
             var zoomAdjustedX = GetSnappedValue(dx / zoomService.ZoomLevel, snapValue);
             var zoomAdjustedY = GetSnappedValue(dy / zoomService.ZoomLevel, snapValue);
 
-            foreach (var plate in draggingPlates)
+            foreach (var plate in selectionService.SelectedPlates)
             {
                 plate.IncrementCoordinates(zoomAdjustedX, zoomAdjustedY);
             }
@@ -339,7 +358,7 @@ public partial class Planner(
             offsetY = clientY;
             wasDragged = true;
 
-            alignmentService.CalculateAlignmentLines(plates, draggingPlates, snapValue);
+            alignmentService.CalculateAlignmentLines(plates, selectionService.SelectedPlates, snapValue);
         }
     }
 
@@ -381,6 +400,7 @@ public partial class Planner(
         foreach (var plate in selectionService.SelectedPlates)
         {
             plate.SetCoordinates(currentX, fixedY);
+            rulerService.UpdateRulerBySelectedPlates(selectionService.SelectedPlates);
             currentX += plate.Width;
         }
     }
@@ -431,7 +451,10 @@ public partial class Planner(
 
     private void HandleOnKeyDown(KeyboardEventArgs e)
     {
-        if (CurrentState != State.None) return;
+        if (CurrentState != State.None)
+        {
+            return;
+        }
 
         switch (e.Key.ToUpper())
         {
@@ -510,7 +533,6 @@ public partial class Planner(
     private void CollapseAll()
     {
         selectionService.ClearSelection();
-        draggingPlates.Clear();
     }
 
     private async Task OnColorChanged(ChangeEventArgs e) => await colorManagementService.ChangeColor(e.Value?.ToString());
@@ -585,4 +607,6 @@ public partial class Planner(
             Console.WriteLine($"Failed to import with error: {ex.Message}");
         }
     }
+
+    public void SwitchToNextRulerType() => rulerService.SwitchToNextRulerType();
 }

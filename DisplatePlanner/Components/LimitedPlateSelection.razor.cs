@@ -19,7 +19,8 @@ public partial class LimitedPlateSelection
     {
         { PlateType.LimitedEdition, "LE" },
         { PlateType.UltraLimitedEdition, "ULE" },
-        { PlateType.Lumino, "LUM" }
+        { PlateType.Lumino, "LUM" },
+        { PlateType.EventExclusive, "EVENT" }
     };
 
     protected override async Task OnInitializedAsync()
@@ -45,6 +46,10 @@ public partial class LimitedPlateSelection
         }
     }
 
+    private const string UltraLimitedEdition = "ultra";
+    private const string EventExclusive = "event_exclusive";
+    private const string StandardEdition = "standard";
+
     private async Task<List<PlateData>> GetLimitedPlates()
     {
         try
@@ -55,9 +60,15 @@ public partial class LimitedPlateSelection
                                  DateTime.Parse(x.Edition.StartDate),
                                  x.Title,
                                  x.Images.Main.Url,
-                                 x.Edition.Type == "ultra" ? PlateType.UltraLimitedEdition : PlateType.LimitedEdition,
+                                 x.Edition.Type switch
+                                 {
+                                     StandardEdition => PlateType.LimitedEdition,
+                                     UltraLimitedEdition => PlateType.UltraLimitedEdition,
+                                     EventExclusive => PlateType.EventExclusive,
+                                     _ => PlateType.Unknown
+                                 },
                                  x.Images.Main.Width > x.Images.Main.Height,
-                                 x.Edition.Type == "ultra" ? PlateSize.L : PlateSize.M))
+                                 x.Edition.Type == UltraLimitedEdition ? PlateSize.L : PlateSize.M))
                 .ToList() ?? [];
         }
         catch (Exception ex)

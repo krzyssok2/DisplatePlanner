@@ -53,6 +53,12 @@
             <summary>Is limited edition plates up to date?</summary>
             <p>Limited edition list is pulled from displate API every time you refresh the page. Luminos got discontinued, so they are being pulled from historical data which is saved in the tool itself in case Displate removes them from their API</p>
         </details>
+        <details>
+            <summary>Are ruler dimensions accurate?</summary>
+            <p>
+                Ruler dimensions are fully accurate in the metric system only. Other units are approximated to two decimal places.
+            </p>
+        </details>
     </section>
 
     <section>
@@ -67,32 +73,39 @@
         flex-direction: column;
         max-width: 1400px;
         padding: 0 40px;
-        width:100%;
+        width: 100%;
         margin: 0 auto;
     }
 
-    .help-container h1 {
-        font-size: 2.5rem;
-    }
+        .help-container h1 {
+            font-size: 2.5rem;
+        }
 
-    .help-container h2 {
-        font-size: 1.5rem;
-        margin-top: 12px;
-    }
+        .help-container h2 {
+            font-size: 1.5rem;
+        }
 
-    .help-container ul {
-        padding-left: 20px;
-    }
+        .help-container ul {
+            padding-left: 20px;
+        }
 
-    .help-container details {
-        padding: 12px;
-        margin-bottom:5px;
-        border:1px solid;
-        border-radius: 8px;
-    }
+        .help-container details {
+            padding: 12px;
+            margin-bottom: 5px;
+            border: 1px solid;
+            border-radius: 8px;
+        }
 
-    .help-container summary {
-        font-weight: bold;
-        cursor: pointer;
-    }
+        .help-container summary {
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .help-container details p {
+            margin-bottom: 0;
+        }
+
+        .help-container section {
+            margin-bottom: 0.5rem;
+        }
 </style>

@@ -117,16 +117,14 @@
     </div>
 
     <div oncontextmenu="return false;" class="grid" id="grid" tabindex="0" style="background-color: @colorManagementService.SelectedColor;"
-         
          @onkeydown="HandleOnKeyDown" @onkeydown:preventDefault
          @onwheel="HandleOnZoom"   
          @onmouseup="HandleStateCancellation"
          @ontouchend="HandleStateCancellation"
          @onmousedown="HandleStartSelect"
          @ontouchstart="HandleStartSelect"
-         @onmousemove="HandleDragOrSelect"
-         @ontouchmove="HandleDragOrSelect"
-
+         @onmousemove="HandleDragOrSelect" @onmousemove:stopPropagation
+         @ontouchmove="HandleDragOrSelect" @ontouchmove:stopPropagation
          autofocus="true">
         <div style="position:absolute;
                         width: @(GridWidth * zoomService.ZoomLevel)px;
@@ -167,6 +165,20 @@
                             width: @(selectionService.SelectionBox.Width * zoomService.ZoomLevel)px;
                             height: @(selectionService.SelectionBox.Height * zoomService.ZoomLevel)px;" />
             }
+        </div>
+
+        <div class="ruler-box" @ontouchstart:stopPropagation @onmousedown:stopPropagation>            
+            <div class="ruler-text">
+                @if (rulerService.IsAproximated)
+                {
+                    <span>~ </span>
+                }
+                <span> @rulerService.Width x @rulerService.Height</span>
+            </div>
+
+            <button class="ruler-button" @onclick="() => SwitchToNextRulerType()">
+                @rulerService.CurrentRulerTypeDisplayName
+            </button>
         </div>
     </div>
 

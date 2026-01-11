@@ -8,7 +8,7 @@ public class AlignmentService : IAlignmentService
     private readonly List<AlignmentLine> _alignmentLines = [];
     public IReadOnlyList<AlignmentLine> AlignmentLines => _alignmentLines;
 
-    public void CalculateAlignmentLines(List<Plate> plates, List<Plate> draggingPlates, double snapValue)
+    public void CalculateAlignmentLines(List<Plate> plates, IReadOnlyCollection<Plate> draggingPlates, double snapValue)
     {
         _alignmentLines.Clear();
 
