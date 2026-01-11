@@ -26,7 +26,6 @@ public partial class Planner(
     private const double snapValue = 0.25;
 
     private List<Plate> plates = [];
-    private List<Plate> draggingPlates = [];
 
     private double offsetX = 0;
     private double offsetY = 0;
@@ -137,6 +136,7 @@ public partial class Planner(
         }
 
         var touch = e.Touches[0];
+
         await HandlePointerMove(touch.ClientX, touch.ClientY);
     }
 
@@ -147,7 +147,7 @@ public partial class Planner(
             case State.Dragging:
                 DragSelectedPlates(clientX, clientY, shiftKey);
                 CalculateGridSize();
-                break;
+                return;
 
             case State.Selecting:
                 var scroll = await GetGridScrollData();
@@ -157,7 +157,10 @@ public partial class Planner(
                     (clientY - gridContainerStartY + scroll.ScrollTop) / zoomService.ZoomLevel);
 
                 selectionService.SelectPlatesWithinBox(plates);
-                break;
+                return;
+
+            default:
+                return;
         }
     }
 
@@ -173,7 +176,6 @@ public partial class Planner(
                 GridLength = 0;
                 GridWidth = 0;
                 CalculateGridSize();
-                draggingPlates.Clear();
                 alignmentService.ClearAlignmentLines();
                 plateStateService.SaveState(plates);
                 break;
@@ -281,7 +283,6 @@ public partial class Planner(
     private async Task StartDragCommon(double clientX, double clientY, bool shiftKey, bool ctrlKey, Plate plate)
     {
         CurrentState = State.Dragging;
-        draggingPlates.Clear();
         plateStateService.SaveState(plates);
 
         if (!selectionService.ContainsPlate(plate))
@@ -296,26 +297,17 @@ public partial class Planner(
             }
         }
 
-        if (selectionService.ContainsPlate(plate))
-        {
-            draggingPlates.AddRange(selectionService.SelectedPlates);
-        }
-        else
-        {
-            draggingPlates.Add(plate);
-        }
-
         offsetX = clientX;
         offsetY = clientY;
 
         scrollStartDrag = await GetGridScrollData();
 
-        alignmentService.CalculateAlignmentLines(plates, draggingPlates, snapValue);
+        alignmentService.CalculateAlignmentLines(plates, selectionService.SelectedPlates, snapValue);
     }
 
     private async void DragSelectedPlates(double clientX, double clientY, bool shiftKey)
     {
-        if (draggingPlates.Count == 0) return;
+        if (selectionService.SelectedPlates.Count == 0) return;
 
         var scroll = await GetGridScrollData();
         var scrollX = scroll.ScrollLeft - scrollStartDrag.ScrollLeft;
@@ -343,7 +335,7 @@ public partial class Planner(
             var zoomAdjustedX = GetSnappedValue(dx / zoomService.ZoomLevel, snapValue);
             var zoomAdjustedY = GetSnappedValue(dy / zoomService.ZoomLevel, snapValue);
 
-            foreach (var plate in draggingPlates)
+            foreach (var plate in selectionService.SelectedPlates)
             {
                 plate.IncrementCoordinates(zoomAdjustedX, zoomAdjustedY);
             }
@@ -352,7 +344,7 @@ public partial class Planner(
             offsetY = clientY;
             wasDragged = true;
 
-            alignmentService.CalculateAlignmentLines(plates, draggingPlates, snapValue);
+            alignmentService.CalculateAlignmentLines(plates, selectionService.SelectedPlates, snapValue);
         }
     }
 
@@ -394,6 +386,7 @@ public partial class Planner(
         foreach (var plate in selectionService.SelectedPlates)
         {
             plate.SetCoordinates(currentX, fixedY);
+            rulerService.UpdateRulerBySelectedPlates(selectionService.SelectedPlates);
             currentX += plate.Width;
         }
     }
@@ -523,7 +516,6 @@ public partial class Planner(
     private void CollapseAll()
     {
         selectionService.ClearSelection();
-        draggingPlates.Clear();
     }
 
     private async Task OnColorChanged(ChangeEventArgs e) => await colorManagementService.ChangeColor(e.Value?.ToString());
