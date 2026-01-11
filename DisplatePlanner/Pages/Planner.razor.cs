@@ -14,6 +14,7 @@ public partial class Planner(
     IAlignmentService alignmentService,
     IPlateStateService plateStateService,
     IJsInteropService jsInteropService,
+    IRulerService rulerService,
     IColorManagementService colorManagementService,
     IZoomService zoomService)
 {
@@ -73,8 +74,10 @@ public partial class Planner(
             if (!hasLoaded)
             {
                 plates = await plateStateService.RetrievePreviousSessionPlates();
+                await rulerService.Initialize();
                 await SetGridContainerOffset();
                 hasLoaded = true;
+                selectionService.ClearSelection();
                 StateHasChanged();
                 CalculateGridSize();
             }
@@ -90,14 +93,20 @@ public partial class Planner(
 
     private async void HandleStartSelect(MouseEventArgs e)
     {
-        if (e.Button != 0) return;
+        if (e.Button != 0)
+        {
+            return;
+        }
 
         await HandlePointerDown(e.ClientX, e.ClientY);
     }
 
     private async void HandleStartSelect(TouchEventArgs e)
     {
-        if (e.Touches.Length == 0) return;
+        if (e.Touches.Length == 0)
+        {
+            return;
+        }
 
         var touch = e.Touches[0];
 
@@ -122,7 +131,11 @@ public partial class Planner(
 
     private async void HandleDragOrSelect(TouchEventArgs e)
     {
-        if (e.Touches.Length == 0) return;
+        if (e.Touches.Length == 0)
+        {
+            return;
+        }
+
         var touch = e.Touches[0];
         await HandlePointerMove(touch.ClientX, touch.ClientY);
     }
@@ -586,22 +599,5 @@ public partial class Planner(
         }
     }
 
-    // Ruler calculation for selected plates
-    public (double widthCm, double heightCm, double widthIn, double heightIn) GetSelectedPlatesBoundingBox()
-    {
-        var selected = selectionService.SelectedPlates;
-        if (selected == null || selected.Count == 0)
-            return (0, 0, 0, 0);
-
-        double minX = selected.Min(p => p.X);
-        double minY = selected.Min(p => p.Y);
-        double maxX = selected.Max(p => p.X + p.Width);
-        double maxY = selected.Max(p => p.Y + p.Height);
-
-        double widthCm = maxX - minX;
-        double heightCm = maxY - minY;
-        double widthIn = widthCm * 0.393701;
-        double heightIn = heightCm * 0.393701;
-        return (widthCm, heightCm, widthIn, heightIn);
-    }
+    public void SwitchToNextRulerType() => rulerService.SwitchToNextRulerType();
 }

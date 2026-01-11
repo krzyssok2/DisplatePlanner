@@ -141,7 +141,7 @@
     }
 }
 
-@media screen and (max-height: 490px){
+@media screen and (max-height: 490px) {
     .icon-container {
         min-width: 97px;
         overflow-y: scroll;
@@ -149,21 +149,30 @@
 }
 
 .ruler-box {
-    position: absolute;
-    left: 0px;
-    bottom: 0px;
-    background: black;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    padding: 8px 16px;
-    font-size: 0.95rem;
-    z-index: 10;
-    min-width: 120px;
-    color: #222;
+    position: fixed;
+    display: flex;
+    bottom: calc(var(--footer-height) + var(--page-padding) + 17px);
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    background: var(--primary);
+    z-index: 10000;
 }
-.ruler-title {
-    font-weight: bold;
-    font-size: 1rem;
-    display: block;
-    margin-bottom: 2px;
+
+.ruler-text {
+    padding: 4px 8px;
+    min-width:150px;
 }
+
+.ruler-button {
+    border: 0px;
+    min-width:36px;
+    border-left: 1px solid;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+    .ruler-button:hover {
+        border: 0px;
+        border-left: 1px solid;
+    }

@@ -3,7 +3,7 @@ using DisplatePlanner.Models;
 
 namespace DisplatePlanner.Services;
 
-public class SelectionService : ISelectionService
+public class SelectionService(IRulerService rulerService) : ISelectionService
 {
     private readonly List<Plate> _selectedPlates = [];
     public IReadOnlyList<Plate> SelectedPlates => _selectedPlates;
@@ -14,7 +14,7 @@ public class SelectionService : ISelectionService
     public void SelectNewSingle(Plate plate)
     {
         ClearSelection();
-        _selectedPlates.Add(plate);
+        AddPlate(plate);
     }
 
     public void SelectNewPlates(ICollection<Plate> plates)
@@ -23,13 +23,18 @@ public class SelectionService : ISelectionService
         AddPlates(plates);
     }
 
-    public void ClearSelection() => _selectedPlates.Clear();
+    public void ClearSelection()
+    {
+        _selectedPlates.Clear();
+        rulerService.UpdateRulerBySelectedPlates(_selectedPlates);
+    }
 
     public void AddPlate(Plate plate)
     {
         if (!_selectedPlates.Contains(plate))
         {
             _selectedPlates.Add(plate);
+            rulerService.UpdateRulerBySelectedPlates(_selectedPlates);
         }
     }
 
@@ -45,7 +50,11 @@ public class SelectionService : ISelectionService
     {
         if (!_selectedPlates.Remove(plate))
         {
-            _selectedPlates.Add(plate);
+            AddPlate(plate);
+        }
+        else
+        {
+            rulerService.UpdateRulerBySelectedPlates(_selectedPlates);
         }
     }
 
