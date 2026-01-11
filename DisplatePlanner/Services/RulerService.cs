@@ -7,7 +7,7 @@ namespace DisplatePlanner.Services;
 
 public class RulerService(ILocalStorageService localStorageService) : IRulerService
 {
-    public RulerType CurrentRulerType { get; private set; } = RulerType.MetricMeter;
+    public RulerType CurrentRulerType { get; private set; } = RulerType.MetricCentimeter;
 
     public string CurrentRulerTypeDisplayName
     {
