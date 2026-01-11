@@ -6,10 +6,10 @@ namespace DisplatePlanner.Interfaces;
 public interface IRulerService
 {
     public RulerType CurrentRulerType { get; }
-
-    public double Width { get; }
-
-    public double Height { get; }
+    public string CurrentRulerTypeDisplayName { get; }
+    public bool IsAproximated { get; }
+    public string Width { get; }
+    public string Height { get; }
 
     public Task Initialize();
 

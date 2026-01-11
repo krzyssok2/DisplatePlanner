@@ -2,7 +2,9 @@
 
 public enum RulerType
 {
-    None,
-    Metric,
-    Imperial
+    None = 0,
+    MetricCentimeter = 1,
+    MetricMeter = 2,
+    ImperialInch = 3,
+    ImperialFoot = 4
 }

@@ -131,23 +131,6 @@
     display: none;
 }
 
-@media screen and (max-width: 768px) {
-    .full-label {
-        display: none;
-    }
-
-    .short-label {
-        display: inline;
-    }
-}
-
-@media screen and (max-height: 490px) {
-    .icon-container {
-        min-width: 97px;
-        overflow-y: scroll;
-    }
-}
-
 .ruler-box {
     position: fixed;
     display: flex;
@@ -161,12 +144,12 @@
 
 .ruler-text {
     padding: 4px 8px;
-    min-width:150px;
+    min-width: 150px;
 }
 
 .ruler-button {
     border: 0px;
-    min-width:36px;
+    min-width: 36px;
     border-left: 1px solid;
     cursor: pointer;
     transition: 0.2s;
@@ -176,3 +159,26 @@
         border: 0px;
         border-left: 1px solid;
     }
+
+@media screen and (max-width: 768px) {
+    .full-label {
+        display: none;
+    }
+
+    .short-label {
+        display: inline;
+    }
+}
+
+@media screen and (max-width: 580px) {
+    .ruler-box {
+        display:none;
+    }
+}
+
+@media screen and (max-height: 490px) {
+    .icon-container {
+        min-width: 97px;
+        overflow-y: scroll;
+    }
+}

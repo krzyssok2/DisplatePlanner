@@ -7,15 +7,40 @@ namespace DisplatePlanner.Services;
 
 public class RulerService(ILocalStorageService localStorageService) : IRulerService
 {
-    public RulerType CurrentRulerType { get; private set; } = RulerType.Metric;
+    public RulerType CurrentRulerType { get; private set; } = RulerType.MetricMeter;
 
-    public double Width => GetDimenion(WidthPixels);
+    public string CurrentRulerTypeDisplayName
+    {
+        get
+        {
+            return CurrentRulerType switch
+            {
+                RulerType.MetricCentimeter => "cm",
+                RulerType.MetricMeter => "m",
+                RulerType.ImperialInch => "in",
+                RulerType.ImperialFoot => "ft",
+                _ => string.Empty,
+            };
+        }
+    }
 
-    public double Height => GetDimenion(HeightPixels);
+    public bool IsAproximated => CurrentRulerType is not RulerType.MetricCentimeter and not RulerType.MetricMeter;
+
+    public string Width => GetDimension(WidthPixels).ToString($"F{RoundingDigits[CurrentRulerType]}");
+
+    public string Height => GetDimension(HeightPixels).ToString($"F{RoundingDigits[CurrentRulerType]}");
 
     private double WidthPixels = 0;
 
     private double HeightPixels = 0;
+
+    public static readonly Dictionary<RulerType, int> RoundingDigits = new()
+    {
+        { RulerType.MetricCentimeter, 2 },
+        { RulerType.MetricMeter, 4 },
+        { RulerType.ImperialInch, 2 },
+        { RulerType.ImperialFoot, 2 }
+    };
 
     private readonly RulerType[] _availabelTypes = [.. Enum.GetValues<RulerType>().Where(t => t != RulerType.None)];
     private bool _isInitialized = false;
@@ -69,33 +94,20 @@ public class RulerService(ILocalStorageService localStorageService) : IRulerServ
 
         WidthPixels = maxX - minX;
         HeightPixels = maxY - minY;
-
-        switch (CurrentRulerType)
-        {
-            case RulerType.Metric:
-                WidthPixels = Math.Round(WidthPixels, 2);
-                HeightPixels = Math.Round(HeightPixels, 2);
-                return;
-
-            case RulerType.Imperial:
-                WidthPixels = Math.Round(WidthPixels * 0.393701, 2);
-                HeightPixels = Math.Round(HeightPixels * 0.393701, 2);
-                return;
-        }
     }
 
-    private double GetDimenion(double value)
+    private const double CmPerInch = 2.54;
+    private const double CmPerFoot = 30.48;
+
+    private double GetDimension(double value)
     {
-        switch (CurrentRulerType)
+        return CurrentRulerType switch
         {
-            case RulerType.Metric:
-                return Math.Round(value, 2);
-
-            case RulerType.Imperial:
-                return Math.Round(value * 0.393701, 2);
-
-            default:
-                return 0;
-        }
+            RulerType.MetricCentimeter => value,
+            RulerType.MetricMeter => Math.Round(value / 100, RoundingDigits[CurrentRulerType], MidpointRounding.AwayFromZero),
+            RulerType.ImperialInch => Math.Round(value / CmPerInch, RoundingDigits[CurrentRulerType], MidpointRounding.AwayFromZero),
+            RulerType.ImperialFoot => Math.Round(value / CmPerFoot, RoundingDigits[CurrentRulerType], MidpointRounding.AwayFromZero),
+            _ => 0,
+        };
     }
 }

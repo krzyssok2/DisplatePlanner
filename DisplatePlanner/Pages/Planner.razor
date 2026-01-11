@@ -167,18 +167,17 @@
             }
         </div>
 
-        <div class="ruler-box" @ontouchstart:stopPropagation @onmousedown:stopPropagation>
-            <span class="ruler-text">@rulerService.Width x @rulerService.Height</span>
-            <button class="ruler-button" @onclick="() => SwitchToNextRulerType()">
-                @switch (rulerService.CurrentRulerType)
+        <div class="ruler-box" @ontouchstart:stopPropagation @onmousedown:stopPropagation>            
+            <div class="ruler-text">
+                @if (rulerService.IsAproximated)
                 {
-                    case RulerType.Metric:
-                        <span>cm</span>
-                        break;
-                    case RulerType.Imperial:
-                        <span>in</span>
-                        break;
+                    <span>~ </span>
                 }
+                <span> @rulerService.Width x @rulerService.Height</span>
+            </div>
+
+            <button class="ruler-button" @onclick="() => SwitchToNextRulerType()">
+                @rulerService.CurrentRulerTypeDisplayName
             </button>
         </div>
     </div>
