@@ -192,7 +192,10 @@ public partial class Planner(
 
     private async void HandleOnZoom(WheelEventArgs e)
     {
-        if (!e.CtrlKey || CurrentState != State.None) return;
+        if (!e.CtrlKey || CurrentState != State.None)
+        {
+            return;
+        }
 
         var scroll = await GetGridScrollData();
 
@@ -269,13 +272,21 @@ public partial class Planner(
 
     private async void HandleStartDrag(MouseEventArgs e, Plate plate)
     {
-        if (e.Button != 0) return;
+        if (e.Button != 0)
+        {
+            return;
+        }
+
         await StartDragCommon(e.ClientX, e.ClientY, e.ShiftKey, e.CtrlKey, plate);
     }
 
     private async void HandleStartDrag(TouchEventArgs e, Plate plate)
     {
-        if (e.Touches.Length == 0) return;
+        if (e.Touches.Length == 0)
+        {
+            return;
+        }
+
         var touch = e.Touches[0];
         await StartDragCommon(touch.ClientX, touch.ClientY, e.ShiftKey, e.CtrlKey, plate);
     }
@@ -307,7 +318,10 @@ public partial class Planner(
 
     private async void DragSelectedPlates(double clientX, double clientY, bool shiftKey)
     {
-        if (selectionService.SelectedPlates.Count == 0) return;
+        if (selectionService.SelectedPlates.Count == 0)
+        {
+            return;
+        }
 
         var scroll = await GetGridScrollData();
         var scrollX = scroll.ScrollLeft - scrollStartDrag.ScrollLeft;
@@ -437,7 +451,10 @@ public partial class Planner(
 
     private void HandleOnKeyDown(KeyboardEventArgs e)
     {
-        if (CurrentState != State.None) return;
+        if (CurrentState != State.None)
+        {
+            return;
+        }
 
         switch (e.Key.ToUpper())
         {
