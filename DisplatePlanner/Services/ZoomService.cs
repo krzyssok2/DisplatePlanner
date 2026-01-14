@@ -10,9 +10,29 @@ public class ZoomService : IZoomService
     private double _zoomLevel = 5;
     public double ZoomLevel => _zoomLevel;
 
-    public void ZoomIn() => ZoomAdjustment(1.1);
+    public bool ZoomIn()
+    {
+        if (_zoomLevel == maxZoom)
+        {
+            return false;
+        }
 
-    public void ZoomOut() => ZoomAdjustment(0.9);
+        ZoomAdjustment(1.1);
+
+        return true;
+    }
+
+    public bool ZoomOut()
+    {
+        if (_zoomLevel == minZoom)
+        {
+            return false;
+        }
+
+        ZoomAdjustment(0.9);
+
+        return true;
+    }
 
     private void ZoomAdjustment(double zoomFactor) => _zoomLevel = Math.Clamp(_zoomLevel * zoomFactor, minZoom, maxZoom);
 }

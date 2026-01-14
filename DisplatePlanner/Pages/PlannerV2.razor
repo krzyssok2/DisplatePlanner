@@ -1,0 +1,223 @@
+﻿@page "/plannerV2"
+<PageTitle>Planner2</PageTitle>
+
+@using Blazored.LocalStorage
+@using DisplatePlanner.Components
+@using DisplatePlanner.Enums
+@using DisplatePlanner.Interfaces
+@using DisplatePlanner.Models
+@using DisplatePlanner.Services
+@using Excubo.Blazor.Canvas
+@using Microsoft.AspNetCore.Components.Web
+@using System.Linq
+
+<div class="planner-page">
+    <div class="icon-container">
+        <div class="icon-pair">
+            <input type="color" style="height: 100%; width:100%;" @onchange="OnColorChanged"/>
+            <button @onclick="ClearColor" title="Clear plate wall color">
+                <XIcon/>
+            </button>
+        </div>
+
+        <div class="icon-pair">
+            <div class="fake-button" title="Import wall">
+                <InputFile OnChange="Import" accept=".json" style="display:none" id="fileInput" />
+
+                <label for="fileInput" style="cursor: pointer;">
+                    <Import />
+                </label>
+            </div>
+
+            <button @onclick="Export" title="Export wall">
+                <Export />
+            </button>
+        </div>
+
+        <div class="icon-pair">
+            <button @onclick="ZoomOut" title="Zoom out (Ctrl+Mousewheel)">
+                <ZoomOutIcon />
+            </button>
+            
+            <button @onclick="ZoomIn" title="Zoom in (Ctrl+Mousewheel)">
+                <ZoomInIcon />
+            </button>
+            
+        </div>
+        
+        <div class="icon-pair" title="Undo (Ctrl+Z)">
+            <button @onclick="Undo">
+                <UndoIcon />
+            </button>
+           
+            <button @onclick="Redo" title="Redo (Ctrl+Y)">
+                <RedoIcon />
+            </button>
+           
+        </div>
+       
+        <div class="icon-pair" title="Copy (Ctrl+C)">
+            <button @onclick="Copy">
+                <CopyIcon />
+            </button>
+            
+            <button @onclick="Paste" title="Paste (Ctrl+V)">
+                <PasteIcon/>
+            </button>
+           
+        </div>
+
+        <div class="icon-pair">
+            <button @onclick="CollapseAll" title="Collapse all (Esc)">
+                <DeselectAllIcon />
+            </button>
+
+            <button @onclick="SelectAll" title="Select all (Ctrl+A)">
+                <SelectAllIcon />
+            </button>            
+        </div>
+              
+        <div class="icon-pair" title="Rotate (Ctrt+R)">
+            <button @onclick="RotateSelectedPlates">
+                <RotateIcon/>
+            </button>
+           
+            <button @onclick="ArrangePlatesInOneLine" title="Arrange in line (1)">
+                <AlignPlatesIcon />
+            </button>
+            
+        </div>
+
+        <div class="icon-pair">
+            <button @onclick="MoveLeft" title="Move left (LeftArrow)">
+                <MoveArrowIcon Direction="left" />
+            </button>
+            
+            <button @onclick="MoveRight" title="Move right (RightArrow)">
+                <MoveArrowIcon Direction="right" />
+            </button>            
+        </div>
+       
+        <div class="icon-pair">
+            <button @onclick="MoveUp" title="Move up (UpArrow)">
+                <MoveArrowIcon Direction="up" />
+            </button>
+           
+            <button @onclick="MoveDown" title="Move down (DownArrow)">
+                <MoveArrowIcon Direction="down" />
+            </button>            
+        </div>
+
+        <button @onclick="Swap" title="Swap 2 selected plates (Ctrl+S)">
+            <SwapIcon />
+        </button>
+
+        <button @onclick="RemoveSelectedPlates" title="Delete (Del)">
+            <DeleteIcon />
+        </button>                    
+    </div>
+
+    <div oncontextmenu="return false;" class="grid" id="grid" tabindex="0" style="background-color: @colorManagementService.SelectedColor;"
+         @onkeydown="HandleOnKeyDown" @onkeydown:preventDefault
+         @onwheel="HandleOnZoom" 
+         @onmouseup="HandleStateCancellation"
+         @ontouchend="HandleStateCancellation"
+         @onmousedown="HandleStartSelect"
+         @ontouchstart="HandleStartSelect"
+         @onmousemove="HandleDragOrSelect"
+         @ontouchmove="HandleDragOrSelect"
+         autofocus="true">
+
+         <div style="display:none">
+             @foreach(var plate in plates.DistinctBy(i => i.ImageUrl))
+             {
+                <img id="@plate.ImageUrl" src="@plate.ImageUrl"/>
+            })
+         </div>
+
+        <Canvas @ref="helper_canvas" width="@testWidth" height="@testLenght" />
+    </div>
+
+    <div class="plate-search-container">
+        <button class="collapse-button" @onclick="() => ToggleSearchSelection()">
+            @(isSelectionCollapsed ? ">" : "<")
+        </button>
+
+        <div class="collapsible-container @(isSelectionCollapsed ? "collapsed" : "expanded")">
+            <div class="tab">
+                <button @onclick="() => ToggleLimited(true)" class="@(showLimited ? "active" : string.Empty)">
+                    <span class="button-label full-label">Limited</span>
+                    <span class="button-label short-label" title="Limited">LE</span>
+                </button>
+
+                <button @onclick="() => ToggleLimited(false)" class="@(!showLimited ? "active" : string.Empty)">
+                    <span class="button-label full-label">Regular</span>
+                    <span class="button-label short-label" title="Regular">RA</span>
+                </button>
+            </div>
+
+            <div style="@(showLimited ? "" : "display:none")" class="selection-container">
+                <LimitedPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)" />
+            </div>
+            <div style="@(!showLimited ? "" : "display:none")" class="selection-container">
+                <NormalPlateSelection PlateClickedEvent="(plate) => AddPlate(plate)" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function getScrollPosition(elementId) {
+        const element = document.getElementById(elementId);
+
+        return {
+            scrollTop: element.scrollTop,
+            scrollLeft: element.scrollLeft,
+            scrollWidth: element.scrollWidth,
+            scrollHeight: element.scrollHeight
+        };
+    }
+
+    window.myUtils = {
+        addZoomPreventingHandler: function (elementId, eventName) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.addEventListener(eventName, e => {
+                    if (e.ctrlKey) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+            }
+        }
+    };
+
+    window.setScrollPosition = (elementId, scrollLeft, scrollTop) => {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.scrollLeft = scrollLeft;
+            element.scrollTop = scrollTop;
+        }
+    };
+
+    window.downloadFile = (fileName, contentType, base64Data) => {
+        const link = document.createElement('a');
+        link.download = fileName;
+        link.href = `data:${contentType};base64,${base64Data}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    function getElementOffset(elementId) {
+        const element = document.getElementById(elementId);
+        if (!element) return null;
+        const rect = element.getBoundingClientRect();
+
+        return {
+            x: rect.left + window.scrollX,
+            y: rect.top + window.scrollY,
+            width: rect.width,
+            height: rect.height
+        };
+    }
+</script>

@@ -6,13 +6,16 @@ namespace DisplatePlanner.Models;
 public class Plate
 {
     [JsonIgnore]
+    public Guid Id { get; private set; } = Guid.NewGuid();
+
+    [JsonIgnore]
     public double Width { get; private set; }
 
     [JsonIgnore]
     public double Height { get; private set; }
 
     public double X { get; private set; }
-    public double Y { get; private set; }  
+    public double Y { get; private set; }
     public int Rotation { get; private set; }
 
     public PlateSize Size { get; }

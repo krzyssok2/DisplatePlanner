@@ -4,7 +4,7 @@ public interface IZoomService
 {
     double ZoomLevel { get; }
 
-    void ZoomIn();
+    bool ZoomIn();
 
-    void ZoomOut();
+    bool ZoomOut();
 }
