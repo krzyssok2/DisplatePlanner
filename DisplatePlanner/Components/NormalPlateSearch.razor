@@ -54,7 +54,7 @@
 
         try
         {
-            var response = await httpClient.GetAsync($"https://corsproxy.io/?url=https://sapi.displate.com/artworks/{id}");
+            var response = await httpClient.GetAsync($"https://displate-artworks.krzys2.workers.dev/?id={id}");
 
             if (!response.IsSuccessStatusCode)
             {
