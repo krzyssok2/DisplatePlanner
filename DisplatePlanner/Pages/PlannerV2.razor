@@ -7,7 +7,6 @@
 @using DisplatePlanner.Interfaces
 @using DisplatePlanner.Models
 @using DisplatePlanner.Services
-@using Excubo.Blazor.Canvas
 @using Microsoft.AspNetCore.Components.Web
 @using System.Linq
 
@@ -135,7 +134,7 @@
             })
          </div>
 
-        <Canvas @ref="helper_canvas" width="@testWidth" height="@testLenght" />
+        <canvas id="helper_canvas" width="@testWidth" height="@testLenght" />
     </div>
 
     <div class="plate-search-container">

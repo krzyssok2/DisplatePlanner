@@ -1,7 +1,6 @@
 using DisplatePlanner.Enums;
 using DisplatePlanner.Interfaces;
 using DisplatePlanner.Models;
-using Excubo.Blazor.Canvas;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
@@ -33,7 +32,6 @@ public partial class PlannerV2(
     private double offsetX = 0;
     private double offsetY = 0;
     private bool wasDragged = false;
-    private bool hasLoaded = false;
 
     private double gridContainerStartX, gridContainerStartY;
 
@@ -70,140 +68,82 @@ public partial class PlannerV2(
         }
     }
 
-    private Canvas helper_canvas;
-    private bool _needsRerender = false;
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender)
+        if (firstRender)
         {
-            return;
-        }
+            await jsInteropService.AddZoomPreventingHandler(gridElementId, "wheel");
 
-        await jsInteropService.AddZoomPreventingHandler(gridElementId, "wheel");
-
-        if (!hasLoaded)
-        {
             plates = await plateStateService.RetrievePreviousSessionPlates();
             await rulerService.Initialize();
             await SetGridContainerOffset();
-            hasLoaded = true;
+
             selectionService.ClearSelection();
             CalculateGridSize();
-            return;
+            StateHasChanged();
+            await Task.Delay(1);
+
+            await RedrawZoom();
+            await Redraw();
+            StateHasChanged();
+            await Task.Delay(50);
         }
+    }
+
+    private async Task Redraw()
+    {
+        var renderData = new
+        {
+            zoomLevel = zoomService.ZoomLevel,
+            canvasWidth = testWidth,
+            canvasHeight = testLenght,
+
+            plates = plates.Select(p => new
+            {
+                id = p.Id.ToString(),
+                x = p.X,
+                y = p.Y,
+                width = p.Width,
+                height = p.Height,
+                imageUrl = p.ImageUrl
+            }).ToArray(),
+
+            selectedPlates = selectionService.SelectedPlates.Select(p => new
+            {
+                id = p.Id.ToString(),
+                x = p.X,
+                y = p.Y,
+                width = p.Width,
+                height = p.Height
+            }).ToArray(),
+
+            state = CurrentState.ToString(),
+
+            selectionBox = CurrentState == State.Selecting ? new
+            {
+                x = selectionService.SelectionBox.X,
+                y = selectionService.SelectionBox.Y,
+                width = selectionService.SelectionBox.Width,
+                height = selectionService.SelectionBox.Height
+            } : null,
+
+            alignmentLines = CurrentState == State.Dragging
+                ? alignmentService.AlignmentLines.Select(line => new
+                {
+                    x = line.X,
+                    y = line.Y,
+                    length = line.Lenght, // Note: fixed typo from 'Lenght' to 'length'
+                    isVertical = line.IsVertical
+                }).ToArray()
+                : null
+        };
+
+        await js.InvokeVoidAsync("canvasRenderer.render", "helper_canvas", renderData);
     }
 
     private async Task RedrawZoom()
     {
-        await using var ctx = await helper_canvas.GetContext2DAsync();
-        await using var batch = ctx.CreateBatch();
-
-        await batch.SetTransformAsync(
-            zoomService.ZoomLevel, 0,
-            0, zoomService.ZoomLevel,
-            0, 0
-        );
-    }
-
-    private bool isFirstDraw = true;
-
-    private Dictionary<string, string> dumbCache = new();
-
-    private async Task Redraw()
-    {
-        await using var ctx = await helper_canvas.GetContext2DAsync();
-        await using var batch = ctx.CreateBatch();
-
-        if (isFirstDraw)
-        {
-            isFirstDraw = false;
-            await batch.SetTransformAsync(zoomService.ZoomLevel, 0, 0, zoomService.ZoomLevel, 0, 0);
-        }
-
-        await batch.ClearRectAsync(0, 0, testWidth, testLenght);
-
-        await batch.LineWidthAsync(1 / zoomService.ZoomLevel);
-        await batch.StrokeStyleAsync("black");
-
-        await batch.SaveAsync();
-        if (selectionService.SelectedPlates.Count > 0)
-        {
-            await batch.StrokeStyleAsync("red");
-            await batch.LineWidthAsync(1.5);
-            foreach (var plate in selectionService.SelectedPlates)
-            {
-                await batch.StrokeRectAsync(plate.X - 0.1, plate.Y - 0.1, plate.Width + 0.1, plate.Height + 0.1);
-            }
-        }
-        await batch.RestoreAsync();
-
-        await batch.ImageSmoothingQualityAsync(ImageSmoothingQuality.High);
-        await batch.ImageSmoothingEnabledAsync(true);
-        for (int i = 0; i < plates.Count; i++)
-        {
-            var plate = plates[i];
-
-            if (dumbCache.TryGetValue(plate.ImageUrl, out var cachedImg))
-            {
-                await batch.DrawImageAsync(cachedImg, plate.X, plate.Y, plate.Width, plate.Height);
-            }
-            else
-            {
-                var jsVarName = $"img_{plate.Id.ToString().Replace("-", string.Empty)}";
-                await js.InvokeVoidAsync("eval", $"{jsVarName} = document.getElementById('{plate.ImageUrl}')");
-                await batch.DrawImageAsync(jsVarName, plate.X, plate.Y, plate.Width, plate.Height);
-
-                dumbCache.Add(plate.ImageUrl, jsVarName);
-            }
-        }
-
-        if (CurrentState == State.Selecting)
-        {
-            await batch.SaveAsync();
-            await batch.SetLineDashAsync([
-                6 / zoomService.ZoomLevel,
-                2 / zoomService.ZoomLevel
-            ]);
-            await batch.StrokeStyleAsync("black");
-            await batch.FillStyleAsync("rgba(0, 0, 255, 0.2)");
-
-            await batch.FillRectAsync(
-                selectionService.SelectionBox.X,
-                selectionService.SelectionBox.Y,
-                selectionService.SelectionBox.Width,
-                selectionService.SelectionBox.Height
-            );
-            await batch.StrokeRectAsync(
-                selectionService.SelectionBox.X,
-                selectionService.SelectionBox.Y,
-                selectionService.SelectionBox.Width,
-                selectionService.SelectionBox.Height
-            );
-
-            await batch.RestoreAsync();
-        }
-
-        if (CurrentState == State.Dragging)
-        {
-            foreach (var line in alignmentService.AlignmentLines)
-            {
-                await batch.StrokeStyleAsync("blue");
-                await batch.BeginPathAsync();
-                await batch.MoveToAsync(line.X, line.Y);
-
-                if (line.IsVertical)
-                {
-                    await batch.LineToAsync(line.X, line.Y + line.Lenght);
-                }
-                else
-                {
-                    await batch.LineToAsync(line.X + line.Lenght, line.Y);
-                }
-
-                await batch.StrokeAsync();
-            }
-        }
+        await js.InvokeVoidAsync("canvasRenderer.setZoom", "helper_canvas", zoomService.ZoomLevel);
     }
 
     private Offset _offset = new Offset();
@@ -614,10 +554,12 @@ public partial class PlannerV2(
                 break;
 
             case "Z" when e.CtrlKey:
+                selectionService.ClearSelection();
                 Undo();
                 break;
 
             case "Y" when e.CtrlKey:
+                selectionService.ClearSelection();
                 Redo();
                 break;
 
