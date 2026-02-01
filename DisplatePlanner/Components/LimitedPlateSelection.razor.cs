@@ -42,6 +42,8 @@ public partial class LimitedPlateSelection
 
             platesData = [.. results.SelectMany(r => r).OrderByDescending(x => x.Date)];
             filteredPlates = platesData;
+
+            StateHasChanged();
         }
         catch (Exception ex)
         {

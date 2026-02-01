@@ -31,6 +31,8 @@ public partial class NormalPlateSelection(IndexedDbService indexedDbService)
             }
 
             filteredPlates = platesData;
+
+            StateHasChanged();
         }
     }
 
