@@ -23,9 +23,12 @@ public partial class LimitedPlateSelection
         { PlateType.EventExclusive, "EVENT" }
     };
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await LoadPlates();
+        if (firstRender)
+        {
+            await LoadPlates();
+        }
     }
 
     private async Task LoadPlates()
