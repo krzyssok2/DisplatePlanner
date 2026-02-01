@@ -23,9 +23,12 @@ public partial class LimitedPlateSelection
         { PlateType.EventExclusive, "EVENT" }
     };
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await LoadPlates();
+        if (firstRender)
+        {
+            await LoadPlates();
+        }
     }
 
     private async Task LoadPlates()
@@ -39,6 +42,8 @@ public partial class LimitedPlateSelection
 
             platesData = [.. results.SelectMany(r => r).OrderByDescending(x => x.Date)];
             filteredPlates = platesData;
+
+            StateHasChanged();
         }
         catch (Exception ex)
         {
@@ -54,7 +59,7 @@ public partial class LimitedPlateSelection
     {
         try
         {
-            var response = await httpClient.GetFromJsonAsync<LimitedResponse>("https://corsproxy.io/?url=https://sapi.displate.com/artworks/limited?miso=US");
+            var response = await httpClient.GetFromJsonAsync<LimitedResponse>("https://displate-sapi-limited-all.krzys2.workers.dev");
             return response?.Data
                 .Select(x => new PlateData(x.ItemCollectionId,
                                  DateTime.Parse(x.Edition.StartDate),
