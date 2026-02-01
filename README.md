@@ -8,7 +8,7 @@ Plan your Displate wall at comfort of your pc screen
 - All local, fully in your browser
 
 # Try it here
-You can try out the tool hosted on [github pages](https://krzyssok2.github.io/DisplatePlanner/)
+You can try out the tool hosted on [cloudflare pages](https://displate-planner.krzys2.com/)
 
 # Support
 DisplatePlanner is a free passion project, made with love. If you’ve found the tool useful, feel free to support my future work by donating on [ko-fi](https://ko-fi.com/krzys2) — no pressure at all!
