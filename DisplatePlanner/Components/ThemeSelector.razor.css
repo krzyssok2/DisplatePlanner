@@ -1,0 +1,12 @@
+﻿.theme-toggle {
+    background: none !important;
+    align-content: center;
+    border: none;
+    cursor: pointer;
+    color: var(--primary);
+    transition: background-color 0.3s ease;
+}
+
+    .theme-toggle:hover {
+        color: orange !important
+    }
