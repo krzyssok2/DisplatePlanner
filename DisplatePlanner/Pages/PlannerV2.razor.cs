@@ -21,7 +21,6 @@ public partial class PlannerV2(
     IJSRuntime js)
 {
     private const string gridElementId = "grid";
-    private const int ExtraSpaceForCanvas = 64;
 
     private State CurrentState = State.None;
     private const int plateLimit = 100;
@@ -29,17 +28,10 @@ public partial class PlannerV2(
 
     private List<Plate> plates = [];
 
-    private double offsetX = 0;
-    private double offsetY = 0;
-    private bool wasDragged = false;
-
     private double gridContainerStartX, gridContainerStartY;
 
-    private double GridLength = 0;
-    private double GridWidth = 0;
-
-    private double testLenght => _offset.Height;
-    private double testWidth => _offset.Width;
+    private double TestLenght => _offset.Height;
+    private double TestWidth => _offset.Width;
 
     private bool isSelectionCollapsed = false;
 
@@ -48,25 +40,6 @@ public partial class PlannerV2(
     private bool showLimited = true;
 
     private void ToggleLimited(bool value) => showLimited = value;
-
-    private void CalculateGridSize()
-    {
-        var maxPlateY = plates.MaxBy(i => i.Y);
-        var maxPlateX = plates.MaxBy(i => i.X);
-
-        var maxValueY = (maxPlateY?.Y + maxPlateY?.Height + ExtraSpaceForCanvas) ?? 0;
-        var maxValueX = (maxPlateX?.X + maxPlateX?.Width + ExtraSpaceForCanvas) ?? 0;
-
-        if (maxValueY > GridLength)
-        {
-            GridLength = maxValueY;
-        }
-
-        if (maxValueX > GridWidth)
-        {
-            GridWidth = maxValueX;
-        }
-    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -79,24 +52,23 @@ public partial class PlannerV2(
             await SetGridContainerOffset();
 
             selectionService.ClearSelection();
-            CalculateGridSize();
-            StateHasChanged();
-            await Task.Delay(1);
 
             await RedrawZoom();
             await Redraw();
-            StateHasChanged();
-            await Task.Delay(50);
         }
     }
 
     private async Task Redraw()
     {
+        StateHasChanged();
+        await Task.Delay(1);
         var renderData = new
         {
             zoomLevel = zoomService.ZoomLevel,
-            canvasWidth = testWidth,
-            canvasHeight = testLenght,
+            scrollLeft = virtualScrollLeft,
+            scrollTop = virtualScrollTop,
+            canvasWidth = TestWidth,
+            canvasHeight = TestLenght,
 
             plates = plates.Select(p => new
             {
@@ -143,10 +115,24 @@ public partial class PlannerV2(
 
     private async Task RedrawZoom()
     {
-        await js.InvokeVoidAsync("canvasRenderer.setZoom", "helper_canvas", zoomService.ZoomLevel);
+        StateHasChanged();
+        await Task.Delay(1);
+
+        var scroll = VirtualScrollData;
+        await js.InvokeVoidAsync("canvasRenderer.setZoom", "helper_canvas", zoomService.ZoomLevel, scroll.ScrollLeft, scroll.ScrollTop);
     }
 
-    private Offset _offset = new Offset();
+    // Virtual scroll offsets for canvas infinite scrolling
+    private double virtualScrollLeft = 0;
+
+    private double virtualScrollTop = 0;
+
+    // Last pointer position in world coordinates while dragging
+    private double lastWorldPointerX = 0;
+
+    private double lastWorldPointerY = 0;
+
+    private Offset _offset = new();
 
     private async Task SetGridContainerOffset()
     {
@@ -189,10 +175,10 @@ public partial class PlannerV2(
 
     private async Task HandlePointerDown(double clientX, double clientY, bool shift = false, bool ctrl = false)
     {
-        var scroll = await GetGridScrollData();
+        var scroll = VirtualScrollData;
 
-        var clickedX = (clientX - gridContainerStartX + scroll.ScrollLeft) / zoomService.ZoomLevel;
-        var clickedY = (clientY - gridContainerStartY + scroll.ScrollTop) / zoomService.ZoomLevel;
+        var clickedX = (clientX - gridContainerStartX) / zoomService.ZoomLevel + scroll.ScrollLeft;
+        var clickedY = (clientY - gridContainerStartY) / zoomService.ZoomLevel + scroll.ScrollTop;
 
         var selectedPlates = selectionService.SelectedPlates;
 
@@ -233,15 +219,14 @@ public partial class PlannerV2(
         {
             case State.Dragging:
                 DragSelectedPlates(clientX, clientY, shiftKey);
-                CalculateGridSize();
                 break;
 
             case State.Selecting:
-                var scroll = await GetGridScrollData();
+                var scroll = VirtualScrollData;
 
                 selectionService.UpdateSelectionBox(
-                    (clientX - gridContainerStartX + scroll.ScrollLeft) / zoomService.ZoomLevel,
-                    (clientY - gridContainerStartY + scroll.ScrollTop) / zoomService.ZoomLevel);
+                    (clientX - gridContainerStartX) / zoomService.ZoomLevel + scroll.ScrollLeft,
+                    (clientY - gridContainerStartY) / zoomService.ZoomLevel + scroll.ScrollTop);
 
                 selectionService.SelectPlatesWithinBox(plates);
                 break;
@@ -262,9 +247,6 @@ public partial class PlannerV2(
         switch (CurrentState)
         {
             case State.Dragging:
-                GridLength = 0;
-                GridWidth = 0;
-                CalculateGridSize();
                 alignmentService.ClearAlignmentLines();
                 plateStateService.SaveState(plates);
                 break;
@@ -283,45 +265,55 @@ public partial class PlannerV2(
         await Redraw();
     }
 
-    private async Task<ScrollData> GetGridScrollData() => await jsInteropService.GetScrollPosition(gridElementId) ?? new ScrollData(0, 0);
+    private ScrollData VirtualScrollData => new(virtualScrollLeft, virtualScrollTop);
 
     private async void HandleOnZoom(WheelEventArgs e)
     {
-        if (!e.CtrlKey || CurrentState != State.None)
+        if (e.CtrlKey && CurrentState == State.None)
         {
-            return;
-        }
+            // Zoom: compute focus using the current (old) zoom
+            var scroll = VirtualScrollData;
+            var oldZoom = zoomService.ZoomLevel;
 
-        if (e.DeltaY > 0)
-        {
-            if (!zoomService.ZoomOut())
+            double focusX = (e.ClientX - gridContainerStartX) / oldZoom + scroll.ScrollLeft;
+            double focusY = (e.ClientY - gridContainerStartY) / oldZoom + scroll.ScrollTop;
+
+            // Apply zoom change
+            if (e.DeltaY > 0)
             {
-                return;
+                if (!zoomService.ZoomOut())
+                {
+                    return;
+                }
             }
+            else
+            {
+                if (!zoomService.ZoomIn())
+                {
+                    return;
+                }
+            }
+
+            var newZoom = zoomService.ZoomLevel;
+
+            // Compute new virtual scroll so focusX remains under the same screen position
+            double newScrollLeft = focusX - (e.ClientX - gridContainerStartX) / newZoom;
+            double newScrollTop = focusY - (e.ClientY - gridContainerStartY) / newZoom;
+
+            virtualScrollLeft = newScrollLeft;
+            virtualScrollTop = newScrollTop;
+
+            await RedrawZoom();
+            await Redraw();
         }
         else
         {
-            if (!zoomService.ZoomIn())
-            {
-                return;
-            }
+            virtualScrollLeft += (e.DeltaX) / zoomService.ZoomLevel;
+            virtualScrollTop += (e.DeltaY) / zoomService.ZoomLevel;
+
+            await Redraw();
+            StateHasChanged();
         }
-
-        // Calculate the zoom factor
-        var scroll = await GetGridScrollData();
-
-        // Calculate the focus point relative to the grid
-        double focusX = (e.ClientX - gridContainerStartX + scroll.ScrollLeft) / zoomService.ZoomLevel;
-        double focusY = (e.ClientY - gridContainerStartY + scroll.ScrollTop) / zoomService.ZoomLevel;
-
-        // Adjust scroll to keep the focus point centered
-        double newScrollLeft = focusX * zoomService.ZoomLevel - (e.ClientX - gridContainerStartX);
-        double newScrollTop = focusY * zoomService.ZoomLevel - (e.ClientY - gridContainerStartY);
-
-        await jsInteropService.SetScrollPosition(gridElementId, newScrollLeft, newScrollTop);
-
-        await RedrawZoom();
-        StateHasChanged();
     }
 
     private void ZoomOut() => zoomService.ZoomOut();
@@ -337,10 +329,10 @@ public partial class PlannerV2(
 
         plateStateService.SaveState(plates);
 
-        var scroll = await GetGridScrollData();
+        var scroll = VirtualScrollData;
 
-        var newX = scroll.ScrollLeft / zoomService.ZoomLevel;
-        var newY = scroll.ScrollTop / zoomService.ZoomLevel;
+        var newX = scroll.ScrollLeft;
+        var newY = scroll.ScrollTop;
 
         while (plates.Any(existing => existing.X == newX && existing.Y == newY))
         {
@@ -349,11 +341,13 @@ public partial class PlannerV2(
         }
 
         plates.Add(new Plate(selectedPlate.ImageUrl, selectedPlate.Size, selectedPlate.IsHorizontal, newX, newY));
-        StateHasChanged();
         await Redraw();
     }
 
     private ScrollData scrollStartDrag = new(0, 0);
+
+    private double dragOffsetX = 0;
+    private double dragOffsetY = 0;
 
     private async Task StartDragCommon(double clientX, double clientY, bool shiftKey, bool ctrlKey, Plate plate)
     {
@@ -379,14 +373,19 @@ public partial class PlannerV2(
             }
         }
 
-        await ChangeState(State.Dragging);
+        dragOffsetX = clientX;
+        dragOffsetY = clientY;
 
-        offsetX = clientX;
-        offsetY = clientY;
+        // initialize last world pointer position
+        var scroll = VirtualScrollData;
+        lastWorldPointerX = (clientX - gridContainerStartX) / zoomService.ZoomLevel + scroll.ScrollLeft;
+        lastWorldPointerY = (clientY - gridContainerStartY) / zoomService.ZoomLevel + scroll.ScrollTop;
 
-        scrollStartDrag = await GetGridScrollData();
+        scrollStartDrag = scroll;
 
         alignmentService.CalculateAlignmentLines(plates, selectionService.SelectedPlates, snapValue);
+
+        await ChangeState(State.Dragging);
     }
 
     private async void DragSelectedPlates(double clientX, double clientY, bool shiftKey)
@@ -396,40 +395,34 @@ public partial class PlannerV2(
             return;
         }
 
-        var scroll = await GetGridScrollData();
+        var scroll = VirtualScrollData;
         var scrollX = scroll.ScrollLeft - scrollStartDrag.ScrollLeft;
         var scrollY = scroll.ScrollTop - scrollStartDrag.ScrollTop;
         scrollStartDrag = scroll;
 
-        var dx = clientX - offsetX + scrollX;
-        var dy = clientY - offsetY + scrollY;
+        // Calculate pointer movement in screen pixels
+        var screenDx = clientX - dragOffsetX;
+        var screenDy = clientY - dragOffsetY;
 
-        // Move in straight line behaviour
-        if (shiftKey)
+        // Proceed when either pointer moved or virtual scroll changed
+        if (Math.Abs(screenDx) > 3 || Math.Abs(screenDy) > 3 || Math.Abs(scrollX) > double.Epsilon || Math.Abs(scrollY) > double.Epsilon)
         {
-            if (Math.Abs(dx) > Math.Abs(dy))
-            {
-                dy = 0;
-            }
-            else
-            {
-                dx = 0;
-            }
-        }
+            // Compute world pointer now and delta from last world pointer to avoid trailing
+            var currentWorldX = (clientX - gridContainerStartX) / zoomService.ZoomLevel + scroll.ScrollLeft;
+            var currentWorldY = (clientY - gridContainerStartY) / zoomService.ZoomLevel + scroll.ScrollTop;
 
-        if (Math.Abs(dx) > 3 || Math.Abs(dy) > 3)
-        {
-            var zoomAdjustedX = GetSnappedValue(dx / zoomService.ZoomLevel, snapValue);
-            var zoomAdjustedY = GetSnappedValue(dy / zoomService.ZoomLevel, snapValue);
+            var worldDeltaX = currentWorldX - lastWorldPointerX;
+            var worldDeltaY = currentWorldY - lastWorldPointerY;
 
             foreach (var plate in selectionService.SelectedPlates)
             {
-                plate.IncrementCoordinates(zoomAdjustedX, zoomAdjustedY);
+                plate.IncrementCoordinates(worldDeltaX, worldDeltaY);
             }
 
-            offsetX = clientX;
-            offsetY = clientY;
-            wasDragged = true;
+            dragOffsetX = clientX;
+            dragOffsetY = clientY;
+            lastWorldPointerX = currentWorldX;
+            lastWorldPointerY = currentWorldY;
 
             alignmentService.CalculateAlignmentLines(plates, selectionService.SelectedPlates, snapValue);
         }
@@ -509,8 +502,6 @@ public partial class PlannerV2(
 
         selectionService.SelectNewPlates(newPlates);
     }
-
-    private static double GetSnappedValue(double value, double snapValue) => Math.Round(value / snapValue) * snapValue;
 
     private async Task HandleOnKeyDown(KeyboardEventArgs e)
     {

@@ -1,3 +1,3 @@
 ﻿namespace DisplatePlanner.Models;
 
-public record ScrollData(double ScrollTop, double ScrollLeft);
+public record ScrollData(double ScrollLeft, double ScrollTop);

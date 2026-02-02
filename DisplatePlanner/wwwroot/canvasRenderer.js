@@ -10,11 +10,20 @@
         const ctx = canvas.getContext('2d');
 
         // Clear canvas
+        ctx.setTransform(1, 0, 0, 1, 0, 0); // reset
         ctx.clearRect(0, 0, renderData.canvasWidth, renderData.canvasHeight);
 
         // Enable image smoothing once
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
+
+        // Apply zoom and virtual scroll translation so we draw only the viewport area
+        const zoom = renderData.zoomLevel || 1;
+        const scrollLeft = renderData.scrollLeft || 0;
+        const scrollTop = renderData.scrollTop || 0;
+
+        // Use transform: scale then translate by negative scroll to pan
+        ctx.setTransform(zoom, 0, 0, zoom, -scrollLeft * zoom, -scrollTop * zoom);
 
         // Create a Set of selected plate IDs for quick lookup
         const selectedIds = new Set(
@@ -73,7 +82,7 @@
             ctx.restore();
         });
 
-        // Draw selection box
+        // Draw selection box (selectionBox coordinates are in world space already)
         if (renderData.state === 'Selecting' && renderData.selectionBox) {
             ctx.save();
             ctx.setLineDash([
@@ -117,11 +126,13 @@
         }
     },
 
-    setZoom: function (canvasId, zoomLevel) {
+    setZoom: function (canvasId, zoomLevel, scrollLeft, scrollTop) {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
-        ctx.setTransform(zoomLevel, 0, 0, zoomLevel, 0, 0);
+        scrollLeft = scrollLeft || 0;
+        scrollTop = scrollTop || 0;
+        ctx.setTransform(zoomLevel, 0, 0, zoomLevel, -scrollLeft * zoomLevel, -scrollTop * zoomLevel);
     },
 
     clearCache: function () {

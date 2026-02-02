@@ -1,5 +1,6 @@
 ﻿@page "/plannerV2"
 <PageTitle>Planner2</PageTitle>
+<meta name="description" content="Plan and visualize your Displate collection with DisplatePlanner's wall planner. Arrange, rotate, and preview your layout before making any commitments to your real wall.">
 
 @using Blazored.LocalStorage
 @using DisplatePlanner.Components
@@ -116,7 +117,7 @@
         </button>                    
     </div>
 
-    <div oncontextmenu="return false;" class="grid" id="grid" tabindex="0" style="background-color: @colorManagementService.SelectedColor;"
+    <div oncontextmenu="return false;" class="grid" id="@gridElementId" tabindex="0" style="background-color: @colorManagementService.SelectedColor;"
          @onkeydown="HandleOnKeyDown" @onkeydown:preventDefault
          @onwheel="HandleOnZoom" 
          @onmouseup="HandleStateCancellation"
@@ -134,7 +135,21 @@
             })
          </div>
 
-        <canvas id="helper_canvas" width="@testWidth" height="@testLenght" />
+        <canvas id="helper_canvas" width="@TestWidth" height="@TestLenght" />
+
+        <div class="ruler-box" @ontouchstart:stopPropagation @onmousedown:stopPropagation>
+            <div class="ruler-text">
+                @if (rulerService.IsAproximated)
+                {
+                    <span>~ </span>
+                }
+                <span> @rulerService.Width x @rulerService.Height</span>
+            </div>
+
+            <button class="ruler-button" @onclick="() => SwitchToNextRulerType()">
+                @rulerService.CurrentRulerTypeDisplayName
+            </button>
+        </div>
     </div>
 
     <div class="plate-search-container">
