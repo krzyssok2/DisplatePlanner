@@ -8,6 +8,9 @@ public interface IJsInteropService
 
     Task<ScrollData?> GetScrollPosition(string elementId);
 
+    Task<ElementSize?> GetElementClientSize(string elementId);
+    Task RegisterResizeObserver(string elementId, object dotNetRef);
+
     Task SetScrollPosition(string elementId, double scrollLeft, double scrollTop);
 
     Task AddZoomPreventingHandler(string elementId, string eventName);

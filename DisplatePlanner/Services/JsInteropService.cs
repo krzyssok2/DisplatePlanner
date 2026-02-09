@@ -21,6 +21,19 @@ public class JsInteropService(IJSRuntime jsRuntime) : IJsInteropService
         }
     }
 
+    public async Task<ElementSize?> GetElementClientSize(string elementId)
+    {
+        try
+        {
+            return await jsRuntime.InvokeAsync<ElementSize>("getElementClientSize", elementId);
+        }
+        catch (JSException ex)
+        {
+            Console.WriteLine($"Error getting element size for element{elementId} with error message: {ex.Message}");
+            return null;
+        }
+    }
+
     public async Task<ScrollData?> GetScrollPosition(string elementId)
     {
         try
@@ -33,7 +46,29 @@ public class JsInteropService(IJSRuntime jsRuntime) : IJsInteropService
             return null;
         }
     }
+    public async Task RegisterScrollWheelHandler(string elementId, object dotNetRef)
+    {
+        try
+        {
+            await jsRuntime.InvokeVoidAsync("myUtils.registerScrollWheelHandler", elementId, dotNetRef);
+        }
+        catch (JSException ex)
+        {
+            Console.WriteLine($"Error registering scroll wheel handler for element: {elementId} with error message: {ex.Message}");
+        }
+    }
 
+    public async Task RegisterResizeObserver(string elementId, object dotNetRef)
+    {
+        try
+        {
+            await jsRuntime.InvokeVoidAsync("myUtils.registerResizeObserver", elementId, dotNetRef);
+        }
+        catch (JSException ex)
+        {
+            Console.WriteLine($"Error registering resize observer for element: {elementId} with error message: {ex.Message}");
+        }
+    }
     public async Task SetScrollPosition(string elementId, double scrollLeft, double scrollTop)
     {
         try

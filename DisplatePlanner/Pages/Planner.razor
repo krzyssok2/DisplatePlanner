@@ -117,7 +117,7 @@
         </button>                    
     </div>
 
-    <div oncontextmenu="return false;" class="grid" id="grid" tabindex="0" style="background-color: @colorManagementService.SelectedColor;"
+    <div oncontextmenu="return false;" class="grid" id="@gridElementId" tabindex="0" style="background-color: @colorManagementService.SelectedColor;"
          @onkeydown="HandleOnKeyDown" @onkeydown:preventDefault
          @onwheel="HandleOnZoom"   
          @onmouseup="HandleStateCancellation"
@@ -236,6 +236,23 @@
         }
     };
 
+    // Resize observer to notify Blazor when the grid container resizes
+    window.myUtils.registerResizeObserver = function (elementId, dotNetRef) {
+        const element = document.getElementById(elementId);
+        if (!element) return;
+
+        const ro = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                const rect = entry.contentRect;
+                dotNetRef.invokeMethodAsync('OnContainerResized', rect.width, rect.height);
+            }
+        });
+
+        ro.observe(element);
+        // store on element so it can be disconnected later if needed
+        element.__resizeObserver = ro;
+    };
+
     window.setScrollPosition = (elementId, scrollLeft, scrollTop) => {
         const element = document.getElementById(elementId);
         if (element) {
@@ -261,6 +278,17 @@
         return {
             x: rect.left + window.scrollX,
             y: rect.top + window.scrollY
+        };
+    }
+
+    function getElementClientSize(elementId) {
+        const element = document.getElementById(elementId);
+        if (!element) return null;
+        const rect = element.getBoundingClientRect();
+
+        return {
+            width: rect.width,
+            height: rect.height
         };
     }
 </script>
