@@ -6,13 +6,19 @@ namespace DisplatePlanner.Models;
 public class Plate
 {
     [JsonIgnore]
-    public double Width { get; private set; }
+    public double Width => IsSideways ? BaseHeight : BaseWidth;
 
     [JsonIgnore]
-    public double Height { get; private set; }
+    public double Height => IsSideways ? BaseWidth : BaseHeight;
+
+    [JsonIgnore]
+    public double BaseWidth { get; private set; }
+
+    [JsonIgnore]
+    public double BaseHeight { get; private set; }
 
     public double X { get; private set; }
-    public double Y { get; private set; }  
+    public double Y { get; private set; }
     public int Rotation { get; private set; }
 
     public PlateSize Size { get; }
@@ -34,14 +40,7 @@ public class Plate
         IsHorizontal = isHorizontal;
         SetDimensions();
 
-        if (rotation != 0)
-        {
-            int rotations = (rotation / 90) % 4;
-            for (int i = 0; i < rotations; i++)
-            {
-                Rotate();
-            }
-        }
+        Rotation = ((rotation % 360) + 360) % 360;
     }
 
     public void IncrementCoordinates(double x, double y)
@@ -69,7 +68,6 @@ public class Plate
 
     public void Rotate()
     {
-        (Width, Height) = (Height, Width);
         Rotation = (Rotation + 90) % 360;
     }
 
@@ -94,14 +92,16 @@ public class Plate
 
     private void SetDimensions()
     {
-        var sizeMap = new Dictionary<PlateSize, (double Width, double Height)>
+        var (w, h) = Size switch
         {
-            { PlateSize.L, (67.5, 48) },
-            { PlateSize.M, (45, 32) },
-            { PlateSize.S, (15, 10) }
+            PlateSize.L => (67.5, 48d),
+            PlateSize.M => (45d, 32d),
+            PlateSize.S => (15d, 10d),
+            _ => (45d, 32d),
         };
 
-        var (w, h) = sizeMap.GetValueOrDefault(Size, (45, 32));
-        (Width, Height) = IsHorizontal ? (w, h) : (h, w);
+        (BaseWidth, BaseHeight) = IsHorizontal ? (w, h) : (h, w);
     }
+
+    private bool IsSideways => Rotation is 90 or 270;
 }

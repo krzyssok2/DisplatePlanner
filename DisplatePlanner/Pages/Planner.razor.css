@@ -96,6 +96,17 @@
     align-items: center;
 }
 
+.PlateContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.plate-image {
+    width: 100%;
+    height: 100%;
+}
+
     .Plate.selected {
         background: red;
         z-index: 9999; /* Set to a higher value to ensure it's above other plates */
