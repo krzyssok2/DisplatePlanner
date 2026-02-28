@@ -370,16 +370,6 @@ public partial class Planner(
         }
     }
 
-    private string GetRotationStyle(Plate plate)
-    {
-        var isSideways = plate.Rotation == 90 || plate.Rotation == 270;
-
-        var styleWidth = isSideways ? plate.Height : plate.Width;
-        var styleHeight = isSideways ? plate.Width : plate.Height;
-
-        return $"""height:{styleHeight * zoomService.ZoomLevel}px; width:{styleWidth * zoomService.ZoomLevel}px;""";
-    }
-
     private async Task OnColorChanged(ChangeEventArgs e) => await colorManagementService.ChangeColor(e.Value?.ToString());
 
     private async Task ClearColor() => await colorManagementService.ClearColor();
