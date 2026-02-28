@@ -119,7 +119,7 @@ public partial class Planner(
         gridContainerStartY = offset?.Y ?? 0;
     }
 
-    private async void HandleStartSelect(MouseEventArgs e)
+    private async Task HandleStartSelect(MouseEventArgs e)
     {
         if (e.Button != 0)
         {
@@ -129,7 +129,7 @@ public partial class Planner(
         await HandlePointerDown(e.ClientX, e.ClientY);
     }
 
-    private async void HandleStartSelect(TouchEventArgs e)
+    private async Task HandleStartSelect(TouchEventArgs e)
     {
         if (e.Touches.Length == 0)
         {
@@ -152,12 +152,12 @@ public partial class Planner(
         CurrentState = State.Selecting;
     }
 
-    private async void HandleDragOrSelect(MouseEventArgs e)
+    private async Task HandleDragOrSelect(MouseEventArgs e)
     {
         await HandlePointerMove(e.ClientX, e.ClientY, e.ShiftKey);
     }
 
-    private async void HandleDragOrSelect(TouchEventArgs e)
+    private async Task HandleDragOrSelect(TouchEventArgs e)
     {
         if (e.Touches.Length == 0)
         {
@@ -193,9 +193,9 @@ public partial class Planner(
         }
     }
 
-    private async void HandleStateCancellation(MouseEventArgs e) => await HandlePointerUpAsync();
+    private async Task HandleStateCancellation(MouseEventArgs e) => await HandlePointerUpAsync();
 
-    private async void HandleStateCancellation(TouchEventArgs e) => await HandlePointerUpAsync();
+    private async Task HandleStateCancellation(TouchEventArgs e) => await HandlePointerUpAsync();
 
     private async Task HandlePointerUpAsync()
     {
@@ -216,7 +216,7 @@ public partial class Planner(
 
     private async Task<ScrollData> GetGridScrollData() => await jsInteropService.GetScrollPosition(gridElementId) ?? new ScrollData(0, 0);
 
-    private async void HandleOnZoom(WheelEventArgs e)
+    private async Task HandleOnZoom(WheelEventArgs e)
     {
         if (!e.CtrlKey || CurrentState != State.None)
         {
@@ -296,7 +296,7 @@ public partial class Planner(
 
     private ScrollData scrollStartDrag = new(0, 0);
 
-    private async void HandleStartDrag(MouseEventArgs e, Plate plate)
+    private async Task HandleStartDrag(MouseEventArgs e, Plate plate)
     {
         if (e.Button != 0)
         {
@@ -306,7 +306,7 @@ public partial class Planner(
         await StartDragCommon(e.ClientX, e.ClientY, e.ShiftKey, e.CtrlKey, plate);
     }
 
-    private async void HandleStartDrag(TouchEventArgs e, Plate plate)
+    private async Task HandleStartDrag(TouchEventArgs e, Plate plate)
     {
         if (e.Touches.Length == 0)
         {
