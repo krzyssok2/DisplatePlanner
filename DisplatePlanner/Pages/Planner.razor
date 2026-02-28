@@ -35,84 +35,84 @@
         </div>
 
         <div class="icon-pair">
-            <button @onclick="ZoomOut" title="Zoom out (Ctrl+Mousewheel)">
+            <button @onclick="zoomService.ZoomOut" title="Zoom out (Ctrl+Mousewheel)">
                 <ZoomOutIcon />
             </button>
-            
-            <button @onclick="ZoomIn" title="Zoom in (Ctrl+Mousewheel)">
+
+            <button @onclick="zoomService.ZoomIn" title="Zoom in (Ctrl+Mousewheel)">
                 <ZoomInIcon />
             </button>
             
         </div>
         
         <div class="icon-pair" title="Undo (Ctrl+Z)">
-            <button @onclick="Undo">
+            <button @onclick="wallService.Undo">
                 <UndoIcon />
             </button>
-           
-            <button @onclick="Redo" title="Redo (Ctrl+Y)">
+
+            <button @onclick="wallService.Redo" title="Redo (Ctrl+Y)">
                 <RedoIcon />
             </button>
            
         </div>
        
         <div class="icon-pair" title="Copy (Ctrl+C)">
-            <button @onclick="Copy">
+            <button @onclick="wallService.Copy">
                 <CopyIcon />
             </button>
-            
-            <button @onclick="Paste" title="Paste (Ctrl+V)">
+
+            <button @onclick="wallService.Paste" title="Paste (Ctrl+V)">
                 <PasteIcon/>
             </button>
            
         </div>
 
         <div class="icon-pair">
-            <button @onclick="CollapseAll" title="Collapse all (Esc)">
+            <button @onclick="wallService.ClearSelection" title="Collapse all (Esc)">
                 <DeselectAllIcon />
             </button>
 
-            <button @onclick="SelectAll" title="Select all (Ctrl+A)">
+            <button @onclick="wallService.SelectAll" title="Select all (Ctrl+A)">
                 <SelectAllIcon />
             </button>            
         </div>
               
         <div class="icon-pair" title="Rotate (Ctrt+R)">
-            <button @onclick="RotateSelectedPlates">
+            <button @onclick="wallService.RotateSelectedPlates">
                 <RotateIcon/>
             </button>
-           
-            <button @onclick="ArrangePlatesInOneLine" title="Arrange in line (1)">
+
+            <button @onclick="wallService.ArrangePlatesInOneLine" title="Arrange in line (1)">
                 <AlignPlatesIcon />
             </button>
             
         </div>
 
         <div class="icon-pair">
-            <button @onclick="MoveLeft" title="Move left (LeftArrow)">
+            <button @onclick="wallService.MoveLeft" title="Move left (LeftArrow)">
                 <MoveArrowIcon Direction="left" />
             </button>
-            
-            <button @onclick="MoveRight" title="Move right (RightArrow)">
+
+            <button @onclick="wallService.MoveRight" title="Move right (RightArrow)">
                 <MoveArrowIcon Direction="right" />
             </button>            
         </div>
        
         <div class="icon-pair">
-            <button @onclick="MoveUp" title="Move up (UpArrow)">
+            <button @onclick="wallService.MoveUp" title="Move up (UpArrow)">
                 <MoveArrowIcon Direction="up" />
             </button>
-           
-            <button @onclick="MoveDown" title="Move down (DownArrow)">
+
+            <button @onclick="wallService.MoveDown" title="Move down (DownArrow)">
                 <MoveArrowIcon Direction="down" />
             </button>            
         </div>
 
-        <button @onclick="Swap" title="Swap 2 selected plates (Ctrl+S)">
+        <button @onclick="wallService.Swap" title="Swap 2 selected plates (Ctrl+S)">
             <SwapIcon />
         </button>
 
-        <button @onclick="RemoveSelectedPlates" title="Delete (Del)">
+        <button @onclick="wallService.RemoveSelectedPlates" title="Delete (Del)">
             <DeleteIcon />
         </button>                    
     </div>
@@ -130,9 +130,9 @@
         <div style="position:absolute;
                         width: @(GridWidth * zoomService.ZoomLevel)px;
                         height:@(GridLength * zoomService.ZoomLevel)px;">
-            @foreach (var rect in plates)
+            @foreach (var rect in wallService.Plates)
             {
-                <div class="Plate @((selectionService.SelectedPlates.Contains(rect)) ? "selected" : "")"
+                <div class="Plate @((wallService.SelectedPlates.Contains(rect)) ? "selected" : "")"
                      style="width: @(rect.Width * zoomService.ZoomLevel)px;
                             height: @(rect.Height * zoomService.ZoomLevel)px;
                             top: @(rect.Y * zoomService.ZoomLevel)px;
@@ -146,9 +146,9 @@
                 </div>
             }
 
-            @if (CurrentState == State.Dragging && alignmentService.AlignmentLines.Any())
+            @if (CurrentState == State.Dragging && wallService.AlignmentLines.Any())
             {
-                @foreach (var line in alignmentService.AlignmentLines)
+                @foreach (var line in wallService.AlignmentLines)
                 {
                     <div class="alignment-line"
                          style="left: @(line.X * zoomService.ZoomLevel)px;
@@ -161,24 +161,24 @@
             @if (CurrentState == State.Selecting)
             {
                 <div class="selection-box"
-                     style="left: @(selectionService.SelectionBox.X * zoomService.ZoomLevel)px;
-                            top: @(selectionService.SelectionBox.Y * zoomService.ZoomLevel)px;
-                            width: @(selectionService.SelectionBox.Width * zoomService.ZoomLevel)px;
-                            height: @(selectionService.SelectionBox.Height * zoomService.ZoomLevel)px;" />
+                     style="left: @(wallService.SelectionBox.X * zoomService.ZoomLevel)px;
+                            top: @(wallService.SelectionBox.Y * zoomService.ZoomLevel)px;
+                            width: @(wallService.SelectionBox.Width * zoomService.ZoomLevel)px;
+                            height: @(wallService.SelectionBox.Height * zoomService.ZoomLevel)px;" />
             }
         </div>
 
         <div class="ruler-box" @ontouchstart:stopPropagation @onmousedown:stopPropagation>            
             <div class="ruler-text">
-                @if (rulerService.IsAproximated)
+                @if (wallService.IsRulerApproximated)
                 {
                     <span>~ </span>
                 }
-                <span> @rulerService.Width x @rulerService.Height</span>
+                <span> @wallService.RulerWidth x @wallService.RulerHeight</span>
             </div>
 
-            <button class="ruler-button" @onclick="() => SwitchToNextRulerType()">
-                @rulerService.CurrentRulerTypeDisplayName
+            <button class="ruler-button" @onclick="() => wallService.SwitchToNextRulerType()">
+                @wallService.RulerTypeDisplayName
             </button>
         </div>
     </div>

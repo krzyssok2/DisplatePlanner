@@ -19,6 +19,7 @@ static void ConfigureServices(IServiceCollection services, IWebAssemblyHostEnvir
 
     services.AddBlazoredLocalStorageAsSingleton();
 
+    services.AddScoped<IWallService, WallService>();
     services.AddScoped<IPlateStateService, PlateStateService>();
     services.AddScoped<IAlignmentService, AlignmentService>();
     services.AddScoped<ISelectionService, SelectionService>();
