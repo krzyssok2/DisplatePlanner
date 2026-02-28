@@ -129,7 +129,7 @@
          autofocus="true">
         <div style="position:absolute;
                         width: @(GridWidth * zoomService.ZoomLevel)px;
-                        height:@(GridLength * zoomService.ZoomLevel)px;">
+                        height:@(GridHeight * zoomService.ZoomLevel)px;">
             @foreach (var rect in wallService.Plates)
             {
                 <div class="Plate @((wallService.SelectedPlates.Contains(rect)) ? "selected" : "")"

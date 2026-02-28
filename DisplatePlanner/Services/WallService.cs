@@ -178,9 +178,6 @@ public class WallService(
 
         foreach (var p in newPlates)
         {
-            double newX = p.X + 2;
-            double newY = p.Y + 2;
-
             while (_plates.Any(existing => existing.X == p.X && existing.Y == p.Y))
             {
                 p.IncrementCoordinates(2, 2);

@@ -42,7 +42,7 @@ public class RulerService(ILocalStorageService localStorageService) : IRulerServ
         { RulerType.ImperialFoot, 2 }
     };
 
-    private readonly RulerType[] _availabelTypes = [.. Enum.GetValues<RulerType>().Where(t => t != RulerType.None)];
+    private readonly RulerType[] _availableTypes = [.. Enum.GetValues<RulerType>().Where(t => t != RulerType.None)];
     private bool _isInitialized = false;
     private const string RulerTypeLocalStorageKey = "rulerType";
 
@@ -64,15 +64,15 @@ public class RulerService(ILocalStorageService localStorageService) : IRulerServ
 
     public async Task SwitchToNextRulerType()
     {
-        if (!_availabelTypes.Contains(CurrentRulerType))
+        if (!_availableTypes.Contains(CurrentRulerType))
         {
-            CurrentRulerType = _availabelTypes.First();
+            CurrentRulerType = _availableTypes.First();
         }
         else
         {
-            var idx = Array.IndexOf(_availabelTypes, CurrentRulerType);
-            var nextIdx = (idx + 1) % _availabelTypes.Length;
-            CurrentRulerType = _availabelTypes[nextIdx];
+            var idx = Array.IndexOf(_availableTypes, CurrentRulerType);
+            var nextIdx = (idx + 1) % _availableTypes.Length;
+            CurrentRulerType = _availableTypes[nextIdx];
         }
 
         await localStorageService.SetItemAsync(RulerTypeLocalStorageKey, CurrentRulerType);

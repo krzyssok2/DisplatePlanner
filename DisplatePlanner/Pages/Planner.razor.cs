@@ -38,7 +38,7 @@ public partial class Planner(
 
     private double gridContainerStartX, gridContainerStartY;
 
-    private double GridLength = 0;
+    private double GridHeight = 0;
     private double GridWidth = 0;
 
     private bool isSelectionCollapsed = false;
@@ -82,12 +82,12 @@ public partial class Planner(
 
         // Apply size (grow always, shrink conditionally)
         var newWidth = allowShrink ? desiredW : Math.Max(GridWidth, desiredW);
-        var newHeight = allowShrink ? desiredH : Math.Max(GridLength, desiredH);
+        var newHeight = allowShrink ? desiredH : Math.Max(GridHeight, desiredH);
 
-        if (GridWidth != newWidth || GridLength != newHeight)
+        if (GridWidth != newWidth || GridHeight != newHeight)
         {
             GridWidth = newWidth;
-            GridLength = newHeight;
+            GridHeight = newHeight;
             StateHasChanged();
         }
     }
@@ -258,7 +258,7 @@ public partial class Planner(
             ?? new ElementSize(0, 0);
 
         double maxScrollLeft = Math.Max(0, GridWidth * newZoom - containerSize.Width);
-        double maxScrollTop = Math.Max(0, GridLength * newZoom - containerSize.Height);
+        double maxScrollTop = Math.Max(0, GridHeight * newZoom - containerSize.Height);
 
         // Clamp and apply scroll position
         await jsInteropService.SetScrollPosition(
